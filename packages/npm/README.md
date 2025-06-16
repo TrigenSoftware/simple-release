@@ -48,9 +48,9 @@ npm i @simple-release/npm
 import { Releaser } from '@simple-release/core'
 import { NpmProject } from '@simple-release/npm'
 
-const project = new NpmProject()
-
-await new Releaser(project)
+await new Releaser({
+  project: new NpmProject()
+})
   .bump()
   .commit()
   .tag()
@@ -65,11 +65,11 @@ Workspaces example:
 import { Releaser } from '@simple-release/core'
 import { NpmWorkspacesProject } from '@simple-release/npm'
 
-const project = new NpmWorkspacesProject({
-  mode: 'independent'
+await new Releaser({
+  project: new NpmWorkspacesProject({
+    mode: 'independent'
+  })
 })
-
-await new Releaser(project)
   .bump()
   .commit()
   .tag()
@@ -130,9 +130,9 @@ Function to compose the main manifest with secondaries. It can be needed if you 
 
 ```js
 import { ComposedProjectManifest } from '@simple-release/core'
-import { NpmProject } from '@simple-release/npm'
+import { NpmWorkspacesProject } from '@simple-release/npm'
 
-new NpmProject({
+new NpmWorkspacesProject({
   compose: (main, isRoot) => (
     isRoot
       ? main
