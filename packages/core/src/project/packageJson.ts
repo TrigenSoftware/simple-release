@@ -20,7 +20,7 @@ export class PackageJsonProject extends Project {
    * Creates a package.json based project.
    * @param options
    */
-  constructor(options: PackageJsonProjectOptions) {
+  constructor(options: PackageJsonProjectOptions = {}) {
     const { path = PackageJsonManifest.Filename } = options
 
     super({
