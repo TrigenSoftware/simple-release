@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/TrigenSoftware/simple-release/compare/v2.2.0...v2.2.1) (2025-06-27)
+
+### Bug Fixes
+
+* **core:** options object is optional for PackageJsonProject ([0a18fd1](https://github.com/TrigenSoftware/simple-release/commit/0a18fd1f681477e069a0b4fef40090a140438d7f))
+
 ## [2.2.0](https://github.com/TrigenSoftware/simple-release/compare/v2.1.2...v2.2.0) (2025-06-09)
 
 ### Features
