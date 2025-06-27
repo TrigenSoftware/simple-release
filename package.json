@@ -2,7 +2,7 @@
   "name": "simple-release-tools",
   "type": "module",
   "private": true,
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A simple tools to automate releases.",
   "author": "dangreen",
   "license": "MIT",
