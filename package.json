@@ -34,7 +34,7 @@
     "@commitlint/config-pnpm-scopes": "^19.8.1",
     "@commitlint/cz-commitlint": "^19.8.1",
     "@trigen/eslint-config": "8.0.0-alpha.33",
-    "@trigen/scripts": "8.0.0-alpha.33",
+    "@trigen/scripts": "8.0.0",
     "@vitest/coverage-v8": "^3.0.0",
     "clean-publish": "5.2.2",
     "commitizen": "^4.2.4",
