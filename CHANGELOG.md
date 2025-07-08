@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.0](https://github.com/TrigenSoftware/simple-release/compare/v2.2.1...v2.3.0) (2025-07-08)
+
+### Features
+
+* **core,npm,pnpm:** add skip option to publish step ([7213cc7](https://github.com/TrigenSoftware/simple-release/commit/7213cc76d27d9ee276b072132d5786109df94dd9))
+* **github:** add cheatsheet to a pr description ([7271454](https://github.com/TrigenSoftware/simple-release/commit/727145421f37bd98b74e5a632348ccc0de89862d))
+
 ## [2.2.1](https://github.com/TrigenSoftware/simple-release/compare/v2.2.0...v2.2.1) (2025-06-27)
 
 ### Bug Fixes
