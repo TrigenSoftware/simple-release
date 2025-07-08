@@ -5,6 +5,7 @@ import {
   type CreatePullRequestOptions,
   GitRepositoryHosting
 } from '@simple-release/core'
+import { CHEATSHEET } from './cheatsheet.js'
 
 export { Octokit }
 
@@ -154,6 +155,14 @@ export class GithubHosting extends GitRepositoryHosting {
 
 ---
 This PR was generated with [simple-release](https://github.com/TrigenSoftware/simple-release).
+
+<details>
+<summary>📄 Cheatsheet</summary>
+<br>
+
+${CHEATSHEET}
+
+</details>
 
 <!--
   Please do not edit this comment.
