@@ -55,7 +55,7 @@
     "test": "run -p lint test:unit test:types"
   },
   "dependencies": {
-    "@octokit/rest": "^20.0.0",
+    "@octokit/rest": "^22.0.0",
     "@simple-libs/child-process-utils": "^1.0.0",
     "@simple-libs/hosted-git-info": "^1.0.0",
     "argue-cli": "^2.1.0",
