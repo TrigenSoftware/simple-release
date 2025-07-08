@@ -43,7 +43,7 @@
     "nano-staged": "^0.8.0",
     "simple-git-hooks": "^2.7.0",
     "tsm": "^2.3.0",
-    "typescript": "5.2.2",
+    "typescript": "5.8.3",
     "vite": "^7.0.0",
     "vitest": "^3.0.0"
   }
