@@ -13,7 +13,7 @@ export async function getLatestTagName() {
       '--tags',
       '--abbrev=0'
     ])
-  } catch (err) {
+  } catch {
     return null
   }
 }
@@ -22,7 +22,7 @@ function getBranchName() {
   /* c8 ignore start */
   try {
     return spawn('git', ['branch', '--show-current'])
-  } catch (err) {
+  } catch {
     return spawn('git', [
       'rev-parse',
       '--abbrev-ref',
@@ -51,9 +51,7 @@ async function getRemote() {
     if (branchName) {
       remote = await getRemoteForBranch(branchName)
     }
-  } catch (err) {
-    /* Silent */
-  }
+  } catch {}
   /* c8 ignore stop */
 
   return remote
@@ -78,16 +76,14 @@ export async function getRemoteUrl() {
         'get-url',
         remoteNameOrUrl
       ])
-    } catch (err) {
+    } catch {
       try {
         remoteUrl = await spawn('git', [
           'config',
           '--get',
           `remote.${remoteNameOrUrl}.url`
         ])
-      } catch (err) {
-        /* Silent */
-      }
+      } catch {}
     }
   }
 

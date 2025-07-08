@@ -93,7 +93,7 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
             logger.verbose('fetch-options', json)
 
             super.setOptions(options)
-          } catch (error) {
+          } catch {
             logger.verbose('fetch-options', 'Failed to parse parameters comment:')
             logger.verbose('fetch-options', json)
           }

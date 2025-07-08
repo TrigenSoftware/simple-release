@@ -61,7 +61,7 @@ export class GitHubClient {
         id: release.id,
         tag: release.tag_name
       }
-    } catch (err) {
+    } catch {
       return null
     }
   }

@@ -127,9 +127,11 @@ export class Releaser<
       } = {
         ...this.stepsOptions.checkout,
         ...options,
-        ...branch ? {
-          branch
-        } : {}
+        ...branch
+          ? {
+            branch
+          }
+          : {}
       }
 
       logger.info('checkout', `Checking out branch ${headBranch}...`)

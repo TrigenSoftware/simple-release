@@ -40,9 +40,7 @@ async function getVersionAndNotes(options: Options) {
       }
 
       notes = maybeNotes
-    } catch (err) {
-      /* Silent */
-    }
+    } catch {}
   }
 
   if (!version) {

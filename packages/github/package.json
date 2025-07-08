@@ -47,7 +47,7 @@
     "prepublishOnly": "run build clear:package clean-publish",
     "postpublish": "pnpm clear:package",
     "build": "tsc -p tsconfig.build.json",
-    "lint": "eslint --parser-options tsconfigRootDir:. '**/*.{js,ts}'",
+    "lint": "eslint",
     "test:unit": "vitest run --coverage",
     "test:types": "tsc --noEmit",
     "test": "run -p lint test:unit test:types"

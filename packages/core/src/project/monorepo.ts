@@ -210,9 +210,11 @@ export abstract class MonorepoProject extends Project {
     const scope = await this.getScope(name)
     const tagPrefix = await this.getTagPrefix(scope)
     const projectPreset = {
-      ...typeof preset === 'string' ? {
-        name: preset
-      } : preset,
+      ...typeof preset === 'string'
+        ? {
+          name: preset
+        }
+        : preset,
       scope
     }
     const projectBumpOptions = {

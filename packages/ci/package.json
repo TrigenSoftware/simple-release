@@ -25,7 +25,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "lint": "eslint --parser-options tsconfigRootDir:. '**/*.{js,ts}'",
+    "lint": "eslint",
     "test:types": "tsc --noEmit",
     "test": "run -p lint test:types"
   },
