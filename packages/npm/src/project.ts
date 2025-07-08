@@ -19,6 +19,11 @@ export type NpmProjectPublishOptions = Omit<PublishOptions, 'workspaces'>
  */
 export class NpmProject extends PackageJsonProject {
   override async publish(options: NpmProjectPublishOptions = {}): Promise<void> {
+    if (options.skip) {
+      options.logger?.info('Skipping publish')
+      return
+    }
+
     await publish(this, options)
   }
 }

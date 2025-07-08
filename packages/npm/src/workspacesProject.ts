@@ -43,6 +43,11 @@ export class NpmWorkspacesProject extends PackageJsonMonorepoProject {
   }
 
   override async publish(options: NpmWorkspacesProjectPublishOptions = {}): Promise<void> {
+    if (options.skip) {
+      options.logger?.info('Skipping publish')
+      return
+    }
+
     await publish(this, {
       ...options,
       workspaces: true

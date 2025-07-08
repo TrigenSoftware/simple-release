@@ -155,6 +155,10 @@ Function to format tag prefix from scope name. By default, tag prefix will be th
 
 Publish options for `NpmProject` and `NpmWorkspacesProject`.
 
+#### `skip`
+
+If true, skip publishing. Optional.
+
 #### `access`
 
 Access level for the package. Optional.

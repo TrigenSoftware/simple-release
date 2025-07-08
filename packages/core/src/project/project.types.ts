@@ -104,4 +104,8 @@ export interface ProjectReleaseOptions {
 export interface ProjectPublishOptions {
   dryRun?: boolean
   logger?: ChildLogger
+  /**
+   * Skip publishing.
+   */
+  skip?: boolean
 }

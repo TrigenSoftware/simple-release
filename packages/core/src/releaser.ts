@@ -376,15 +376,21 @@ export class Releaser<
       const { project } = this
       const { dryRun } = this.options
       const logger = this.logger.createChild('package')
-
-      logger.info('Publishing...')
-
-      await project.publish({
+      const publishOptions = {
         dryRun,
         logger,
         ...this.stepsOptions.publish,
         ...options
-      })
+      }
+
+      if (publishOptions.skip) {
+        logger.verbose('Skipping publish')
+        return
+      }
+
+      logger.info('Publishing...')
+
+      await project.publish(publishOptions)
     })
   }
 
