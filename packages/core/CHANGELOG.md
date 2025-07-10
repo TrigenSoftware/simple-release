@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.0](https://github.com/TrigenSoftware/simple-release/compare/v2.3.0...v2.4.0) (2025-07-10)
+
+### Features
+
+* extraScopes monorepo bump parameter ([89ddc63](https://github.com/TrigenSoftware/simple-release/commit/89ddc63116b1aa9108a4e184756eb3332b03e175))
+
 ## [2.3.0](https://github.com/TrigenSoftware/simple-release/compare/v2.2.1...v2.3.0) (2025-07-08)
 
 ### Features
