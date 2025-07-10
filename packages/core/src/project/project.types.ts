@@ -64,7 +64,7 @@ export interface ProjectBumpOptions {
   /**
    * Ignore that project is private.
    */
-  force?: boolean
+  forcePrivate?: boolean
   preset?: PresetParams
   /**
    * The prefix to use for the tag.

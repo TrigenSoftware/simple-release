@@ -202,6 +202,7 @@ export abstract class MonorepoProject extends Project {
   ) {
     const {
       preset = bumpDefaultOptions.preset,
+      extraScopes = [],
       byProject,
       ...bumpOptions
     } = options
@@ -215,7 +216,7 @@ export abstract class MonorepoProject extends Project {
           name: preset
         }
         : preset,
-      scope
+      scope: [scope, ...extraScopes]
     }
     const projectBumpOptions = {
       ...bumpOptions,
@@ -299,7 +300,7 @@ export abstract class MonorepoProject extends Project {
     if (fixedVersion) {
       hasBump = await super.bump({
         ...options,
-        force: true,
+        forcePrivate: true,
         version: fixedVersion,
         tagPrefix: await this.getTagPrefix('')
       })

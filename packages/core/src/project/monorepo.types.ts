@@ -53,6 +53,11 @@ export interface MonorepoProjectBumpOptions extends Omit<ProjectBumpOptions, 'ta
    */
   force?: boolean
   /**
+   * Extra scopes to include in the project's changelog.
+   * For example, to include commits like "fix(deps): voulnerability in dependency fix" you can add "deps" to the extraScopes.
+   */
+  extraScopes?: string[]
+  /**
    * Bump options for specific projects.
    */
   byProject?: Record<string, MonorepoProjectBumpByProjectOptions>

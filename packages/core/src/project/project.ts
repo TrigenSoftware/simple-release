@@ -180,7 +180,7 @@ export abstract class Project {
       manifest
     } = this
 
-    if (options.skip || !options.force && await manifest.isPrivate()) {
+    if (options.skip || !options.forcePrivate && await manifest.isPrivate()) {
       return null
     }
 
