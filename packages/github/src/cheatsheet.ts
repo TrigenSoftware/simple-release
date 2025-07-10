@@ -24,15 +24,15 @@ You can configure the bot's behavior through a pull request comment using the \`
 | \`version\` | \`string\` | Force set specific version |
 | \`as\` | \`'major' \\| 'minor' \\| 'patch' \\| 'prerelease'\` | Release type |
 | \`prerelease\` | \`string\` | Pre-release identifier (e.g., "alpha", "beta") |
-| \`byProject\` | \`Record<string, object>\` | Per-project bump options for monorepos |
 | \`firstRelease\` | \`boolean\` | Whether this is the first release |
 | \`skip\` | \`boolean\` | Skip version bump |
-| \`force\` | \`boolean\` | Ignore that project is private |
+| \`byProject\` | \`Record<string, object>\` | Per-project bump options for monorepos |
 
 #### Publish
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
+| \`skip\` | \`boolean\` | Skip publishing |
 | \`access\` | \`'public' \\| 'restricted'\` | Package access level |
 | \`tag\` | \`string\` | Tag for npm publication |
 
