@@ -16,6 +16,9 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 - 🧩 Flexible and extensible with custom addons for different project types.
 - 🚀 Has [GitHub Action](https://github.com/TrigenSoftware/simple-release-action) to automate releases in CI/CD pipelines.
 
+> [!TIP]
+> New to Сonventional Сommits? [Check out The Complete Guide](./GUIDE.md).
+
 ## Available packages
 
 | Name | Description | Version | Dependencies |
