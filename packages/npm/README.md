@@ -18,7 +18,7 @@
 [node-url]: https://nodejs.org
 
 [deps]: https://img.shields.io/librariesio/release/npm/@simple-release/npm
-[deps-url]: https://libraries.io/npm/@simple-release%2Fnpm/tree
+[deps-url]: https://libraries.io/npm/@simple-release%2Fnpm
 
 [size]: https://packagephobia.com/badge?p=@simple-release/npm
 [size-url]: https://packagephobia.com/result?p=@simple-release/npm

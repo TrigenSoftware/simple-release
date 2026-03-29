@@ -18,7 +18,7 @@
 [node-url]: https://nodejs.org
 
 [deps]: https://img.shields.io/librariesio/release/npm/@simple-release/pnpm
-[deps-url]: https://libraries.io/npm/@simple-release%2Fpnpm/tree
+[deps-url]: https://libraries.io/npm/@simple-release%2Fpnpm
 
 [size]: https://packagephobia.com/badge?p=@simple-release/pnpm
 [size-url]: https://packagephobia.com/result?p=@simple-release/pnpm

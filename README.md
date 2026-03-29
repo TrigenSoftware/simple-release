@@ -37,7 +37,7 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 [core-npm-url]: https://www.npmjs.com/package/@simple-release/core
 
 [core-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/core
-[core-deps-url]: https://libraries.io/npm/@simple-release%2Fcore/tree
+[core-deps-url]: https://libraries.io/npm/@simple-release%2Fcore
 
 <!-- config -->
 
@@ -45,7 +45,7 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 [config-npm-url]: https://www.npmjs.com/package/@simple-release/config
 
 [config-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/config
-[config-deps-url]: https://libraries.io/npm/@simple-release%2Fconfig/tree
+[config-deps-url]: https://libraries.io/npm/@simple-release%2Fconfig
 
 <!-- npm -->
 
@@ -53,7 +53,7 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 [npm-npm-url]: https://www.npmjs.com/package/@simple-release/npm
 
 [npm-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/npm
-[npm-deps-url]: https://libraries.io/npm/@simple-release%2Fnpm/tree
+[npm-deps-url]: https://libraries.io/npm/@simple-release%2Fnpm
 
 <!-- pnpm -->
 
@@ -61,7 +61,7 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 [pnpm-npm-url]: https://www.npmjs.com/package/@simple-release/pnpm
 
 [pnpm-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/pnpm
-[pnpm-deps-url]: https://libraries.io/npm/@simple-release%2Fpnpm/tree
+[pnpm-deps-url]: https://libraries.io/npm/@simple-release%2Fpnpm
 
 <!-- github -->
 
@@ -69,7 +69,7 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 [github-npm-url]: https://www.npmjs.com/package/@simple-release/github
 
 [github-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/github
-[github-deps-url]: https://libraries.io/npm/@simple-release%2Fgithub/tree
+[github-deps-url]: https://libraries.io/npm/@simple-release%2Fgithub
 
 <!-- github-action -->
 
@@ -77,7 +77,7 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 [github-action-npm-url]: https://www.npmjs.com/package/@simple-release/github-action
 
 [github-action-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/github-action
-[github-action-deps-url]: https://libraries.io/npm/@simple-release%2Fgithub-action/tree
+[github-action-deps-url]: https://libraries.io/npm/@simple-release%2Fgithub-action
 
 <!-- simple-github-release -->
 
@@ -85,4 +85,4 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 [simple-github-release-npm-url]: https://www.npmjs.com/package/simple-github-release
 
 [simple-github-release-deps]: https://img.shields.io/librariesio/release/npm/simple-github-release
-[simple-github-release-deps-url]: https://libraries.io/npm/simple-github-release/tree
+[simple-github-release-deps-url]: https://libraries.io/npm/simple-github-release
