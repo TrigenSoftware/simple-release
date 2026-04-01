@@ -36,7 +36,7 @@
     "@trigen/eslint-config": "^8.0.3",
     "@trigen/scripts": "^8.0.0",
     "@vitest/coverage-v8": "^4.0.0",
-    "clean-publish": "5.2.2",
+    "clean-publish": "6.0.5",
     "commitizen": "^4.2.4",
     "del-cli": "^6.0.0",
     "eslint": "^9.30.1",
