@@ -30,7 +30,7 @@
     "test": "run -p lint test:types"
   },
   "dependencies": {
-    "@actions/github": "^6.0.1",
+    "@actions/github": "^9.0.0",
     "@simple-release/config": "workspace:^",
     "@simple-release/github-action": "workspace:^"
   }
