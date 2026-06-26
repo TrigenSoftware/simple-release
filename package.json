@@ -37,7 +37,7 @@
     "@trigen/oxlint-config": "^9.3.0",
     "@trigen/scripts": "^9.0.0",
     "@typescript/native-preview": "latest",
-    "@vitest/coverage-v8": "^4.0.0",
+    "@vitest/coverage-v8": "^4.1.9",
     "clean-publish": "5.2.2",
     "commitizen": "^4.2.4",
     "del-cli": "^7.0.0",
@@ -47,7 +47,7 @@
     "simple-git-hooks": "^2.7.0",
     "tsm": "^2.3.0",
     "typescript": "^6.0.3",
-    "vite": "^7.0.0",
-    "vitest": "^4.0.0"
+    "vite": "^8.1.0",
+    "vitest": "^4.1.9"
   }
 }
