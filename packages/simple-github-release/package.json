@@ -24,7 +24,7 @@
     "release"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "bin": "./src/cli/index.ts",
   "exports": "./src/index.ts",

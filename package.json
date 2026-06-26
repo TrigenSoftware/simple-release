@@ -15,7 +15,7 @@
     "url": "https://github.com/TrigenSoftware/simple-release-tools/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "clear": "pnpm -r --parallel clear",
