@@ -30,7 +30,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260624.1
+        specifier: latest
         version: 7.0.0-dev.20260624.1
       '@vitest/coverage-v8':
         specifier: ^4.0.0
@@ -60,7 +60,7 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
       vite:
         specifier: ^7.0.0
