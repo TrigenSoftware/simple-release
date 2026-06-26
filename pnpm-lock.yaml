@@ -100,8 +100,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.1
       '@simple-libs/hosted-git-info':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^2.0.0
+        version: 2.0.0
       '@simple-libs/stream-utils':
         specifier: ^1.0.0
         version: 1.1.0
@@ -209,8 +209,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.1
       '@simple-libs/hosted-git-info':
-        specifier: ^1.0.0
-        version: 1.0.1
+        specifier: ^2.0.0
+        version: 2.0.0
       argue-cli:
         specifier: ^2.1.0
         version: 2.1.0
@@ -993,9 +993,9 @@ packages:
     resolution: {integrity: sha512-3nWd8irxvDI6v856wpPCHZ+08iQR0oHTZfzAZmnbsLzf+Sf1odraP6uKOHDZToXq3RPRV/LbqGVlSCogm9cJjg==}
     engines: {node: '>=18'}
 
-  '@simple-libs/hosted-git-info@1.0.1':
-    resolution: {integrity: sha512-R8/PbLKPw5iLeULJgnvwIKkggeyzwXPFERp+4itc0zSrG4sUTf23w7JlMSImPD2o+ZRpEv7YgG6IXgSk87jTgw==}
-    engines: {node: '>=18'}
+  '@simple-libs/hosted-git-info@2.0.0':
+    resolution: {integrity: sha512-55XwK/GYgV58PuN8lZFhI1qRxdKoMLJocXl/yM1EPqazFDmM4QWY7q6BxPCPDNKTNunj794DSD4h0H7SrqUdMg==}
+    engines: {node: '>=22'}
 
   '@simple-libs/stream-utils@1.1.0':
     resolution: {integrity: sha512-6rsHTjodIn/t90lv5snQjRPVtOosM7Vp0AKdrObymq45ojlgVwnpAqdc+0OBBrpEiy31zZ6/TKeIVqV1HwvnuQ==}
@@ -3166,7 +3166,7 @@ snapshots:
       '@simple-libs/stream-utils': 1.1.0
       '@types/node': 22.15.23
 
-  '@simple-libs/hosted-git-info@1.0.1': {}
+  '@simple-libs/hosted-git-info@2.0.0': {}
 
   '@simple-libs/stream-utils@1.1.0':
     dependencies:
