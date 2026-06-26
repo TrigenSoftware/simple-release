@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+/* oxlint-disable eslint/max-classes-per-file */
 
 export type Printer = (message: LoggerMessage) => void
 
@@ -20,7 +20,7 @@ function defaultPrinter({
   stage,
   message
 }: LoggerMessage) {
-  // eslint-disable-next-line no-console
+  // oxlint-disable-next-line eslint/no-console
   console.log(`${dryRun ? `[dry-run]` : ''}[${stage}]:`, message)
 }
 

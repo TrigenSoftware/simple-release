@@ -3,7 +3,7 @@ import {
   join
 } from 'path'
 import { PackageJsonManifest } from '../manifest/index.js'
-import { type ProjectPublishOptions } from './project.js'
+import type { ProjectPublishOptions } from './project.js'
 import { PackageJsonProject } from './packageJson.js'
 import {
   type MonorepoProjectOptions,

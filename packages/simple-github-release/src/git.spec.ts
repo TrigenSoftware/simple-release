@@ -1,5 +1,12 @@
-import { describe, it, expect } from 'vitest'
-import { getRemoteUrl, parseGitUrl } from './git.js'
+import {
+  describe,
+  it,
+  expect
+} from 'vitest'
+import {
+  getRemoteUrl,
+  parseGitUrl
+} from './git.js'
 
 describe('simple-github-release', () => {
   describe('git', () => {

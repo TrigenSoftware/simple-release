@@ -1,4 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import {
+  describe,
+  it,
+  expect
+} from 'vitest'
 import { octokit } from '../test/mocks/octokit.mock.js'
 import { GitHubClient } from './github.js'
 import { parseGitUrl } from './git.js'

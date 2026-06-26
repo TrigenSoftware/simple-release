@@ -76,13 +76,8 @@ export class GithubHosting extends GitRepositoryHosting {
       const info = await project.getHostedGitInfo()
 
       if (info) {
-        if (!owner) {
-          owner = info.owner
-        }
-
-        if (!repo) {
-          repo = info.project
-        }
+        owner ||= info.owner
+        repo ||= info.project
       }
     }
 
@@ -188,13 +183,8 @@ ${CHEATSHEET}
     let { from, to } = options
     const { gitClient } = project
 
-    if (!from) {
-      from = await gitClient.getCurrentBranch()
-    }
-
-    if (!to) {
-      to = await gitClient.getDefaultBranch()
-    }
+    from ||= await gitClient.getCurrentBranch()
+    to ||= await gitClient.getDefaultBranch()
 
     if (from === to) {
       throw new Error('Cannot create a pull request from the same branch.')

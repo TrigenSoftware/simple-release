@@ -1,11 +1,11 @@
 import fs from 'fs/promises'
+import type { PackageJsonProps } from './packageJson.types.js'
 import {
   type ProjectManifestVersionUpdate,
   ProjectManifest
 } from './manifest.js'
-import type { PackageJsonProps } from './packageJson.types.js'
 
-export * from './packageJson.types.js'
+export type * from './packageJson.types.js'
 
 /**
  * A class that represents a package.json manifest.

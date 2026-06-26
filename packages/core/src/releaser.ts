@@ -1,7 +1,6 @@
 import type { ConventionalGitClient } from '@conventional-changelog/git-client'
 import type { Project } from './project/index.js'
 import type { GitRepositoryHosting } from './hosting/index.js'
-import { Logger } from './logger.js'
 import type {
   PickOverridableOptions,
   ReleaserCheckoutOptions,
@@ -11,8 +10,9 @@ import type {
   ReleaserPushOptions,
   ReleaserStepsOptions
 } from './releaser.types.js'
+import { Logger } from './logger.js'
 
-export * from './releaser.types.js'
+export type * from './releaser.types.js'
 
 /**
  * A releaser class that provides methods to manage the release process of a project.

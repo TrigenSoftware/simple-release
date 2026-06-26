@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+/* oxlint-disable trigen/naming-convention */
 import { Octokit } from '@octokit/rest'
 import newGithubReleaseUrl from 'new-github-release-url'
 import type {

@@ -2,7 +2,7 @@ import { dirname } from 'path'
 import semver from 'semver'
 import type { ProjectManifestVersionUpdate } from './manifest.types.js'
 
-export * from './manifest.types.js'
+export type * from './manifest.types.js'
 
 /**
  * A base class for project manifests.

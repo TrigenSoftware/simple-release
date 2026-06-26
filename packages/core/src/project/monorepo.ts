@@ -2,18 +2,18 @@ import semver from 'semver'
 import { packagePrefix } from '@conventional-changelog/git-client'
 import type { ReleaseData } from '../hosting/hosting.js'
 import type { ProjectManifest } from '../manifest/index.js'
-import {
-  type ProjectOptions,
-  bumpDefaultOptions,
-  Project
-} from './project.js'
 import type {
   MonorepoMode,
   MonorepoProjectOptions,
   MonorepoProjectBumpOptions
 } from './monorepo.types.js'
+import {
+  type ProjectOptions,
+  Project,
+  bumpDefaultOptions
+} from './project.js'
 
-export * from './monorepo.types.js'
+export type * from './monorepo.types.js'
 
 export abstract class MonorepoProject extends Project {
   /**

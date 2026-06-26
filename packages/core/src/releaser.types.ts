@@ -7,7 +7,7 @@ import type { Project } from './project/index.js'
 import type { GitRepositoryHosting } from './hosting/index.js'
 import type { Logger } from './logger.js'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 type AnyFn = (...args: any[]) => any
 
 export type PickOverridableOptions<T extends AnyFn> = Partial<Omit<

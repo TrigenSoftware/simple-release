@@ -1,4 +1,4 @@
-/* eslint-disable no-labels */
+/* oxlint-disable eslint/no-labels */
 import type { Readable } from 'stream'
 import type { Options } from './types.js'
 

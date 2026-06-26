@@ -6,12 +6,12 @@ import { concatStringStream } from '@simple-libs/stream-utils'
 import { parseHostedGitUrl } from '@simple-libs/hosted-git-info'
 import semver, { type ReleaseType } from 'semver'
 import type { ProjectManifest } from '../manifest/index.js'
+import type { ReleaseData } from '../hosting/index.js'
 import {
   addReleaseNotes,
   extractLastRelease,
   extractLastReleaseFromFile
 } from '../change-log.js'
-import type { ReleaseData } from '../hosting/index.js'
 import { getReleaseType } from '../utils.js'
 import type {
   ProjectOptions,
@@ -22,7 +22,7 @@ import type {
   ProjectPublishOptions
 } from './project.types.js'
 
-export * from './project.types.js'
+export type * from './project.types.js'
 
 export const bumpDefaultOptions = {
   preset: {

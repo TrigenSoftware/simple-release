@@ -1,11 +1,11 @@
 import fs from 'fs/promises'
-import { findUp } from 'find-up-simple'
 import type {
   ReleaserStepsOptions,
   Project,
   GitRepositoryHosting,
   ReleaserOptions
 } from '@simple-release/core'
+import { findUp } from 'find-up-simple'
 
 const VARIANTS = [
   '.simple-release.js',
@@ -138,7 +138,7 @@ async function loadAndSetIfQuery(
   const value = config[key]
 
   if (value && isQuery(value)) {
-    // eslint-disable-next-line require-atomic-updates
+    // oxlint-disable-next-line eslint/require-atomic-updates
     config[key] = await loadClass(value, config, loader)
   }
 }

@@ -1,5 +1,8 @@
 import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
+import {
+  dirname,
+  join
+} from 'path'
 import fs from 'fs/promises'
 import { afterAll } from 'vitest'
 import { tmpfile } from '../../core/src/utils.js'

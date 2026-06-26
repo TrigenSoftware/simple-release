@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
+/* oxlint-disable typescript/no-use-before-define */
 import { join } from 'path'
 import fg from 'fast-glob'
 import ryf from 'read-yaml-file'

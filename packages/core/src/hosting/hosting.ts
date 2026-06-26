@@ -3,7 +3,7 @@ import type {
   CreatePullRequestOptions
 } from './hosting.types.js'
 
-export * from './hosting.types.js'
+export type * from './hosting.types.js'
 
 /**
  * A base class that represents a git repository hosting service.

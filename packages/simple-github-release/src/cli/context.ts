@@ -1,9 +1,7 @@
 import fs from 'fs'
-import type {
-  Options,
-  LocalContext
-} from '../index.js'
 import {
+  type Options,
+  type LocalContext,
   getRemoteUrl,
   getLatestTagName,
   parseGitUrl,
@@ -43,9 +41,7 @@ async function getVersionAndNotes(options: Options) {
     } catch {}
   }
 
-  if (!version) {
-    version = await getVersionFromPackageJson()
-  }
+  version ||= await getVersionFromPackageJson()
 
   return [version, notes] as const
 }

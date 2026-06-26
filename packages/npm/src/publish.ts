@@ -1,9 +1,9 @@
 import { spawn } from 'child_process'
-import { throwProcessError } from '@simple-libs/child-process-utils'
-import {
-  type ProjectPublishOptions,
-  type PackageJsonProject
+import type {
+  ProjectPublishOptions,
+  PackageJsonProject
 } from '@simple-release/core'
+import { throwProcessError } from '@simple-libs/child-process-utils'
 
 export interface PublishOptions extends ProjectPublishOptions {
   access?: string

@@ -1,4 +1,4 @@
-/* eslint-disable no-labels */
+/* oxlint-disable eslint/no-labels */
 import {
   createReadStream,
   createWriteStream
