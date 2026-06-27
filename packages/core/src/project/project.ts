@@ -26,8 +26,7 @@ export type * from './project.types.js'
 
 export const bumpDefaultOptions = {
   preset: {
-    name: 'conventionalcommits',
-    bumpStrict: true
+    name: 'conventionalcommits'
   }
 }
 
