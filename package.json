@@ -36,7 +36,7 @@
     "@trigen/oxlint": "^9.1.0",
     "@trigen/oxlint-config": "^9.3.0",
     "@trigen/scripts": "^9.0.0",
-    "@types/node": "^22.16.2",
+    "@types/node": "^24.0.0",
     "@typescript/native-preview": "latest",
     "@vitest/coverage-v8": "^4.1.9",
     "clean-publish": "5.2.2",

@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@commitlint/cli':
         specifier: ^21.0.0
-        version: 21.1.0(@types/node@22.16.2)(conventional-commits-parser@6.4.0)(typescript@6.0.3)
+        version: 21.1.0(@types/node@24.13.2)(conventional-commits-parser@6.4.0)(typescript@6.0.3)
       '@commitlint/config-conventional':
         specifier: ^21.0.0
         version: 21.1.0
@@ -19,7 +19,7 @@ importers:
         version: 21.0.2
       '@commitlint/cz-commitlint':
         specifier: ^21.0.0
-        version: 21.1.0(@types/node@22.16.2)(commitizen@4.3.2(@types/node@22.16.2)(typescript@6.0.3))(inquirer@8.2.7(@types/node@22.16.2))(typescript@6.0.3)
+        version: 21.1.0(@types/node@24.13.2)(commitizen@4.3.2(@types/node@24.13.2)(typescript@6.0.3))(inquirer@8.2.7(@types/node@24.13.2))(typescript@6.0.3)
       '@trigen/oxlint':
         specifier: ^9.1.0
         version: 9.1.0
@@ -30,8 +30,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@types/node':
-        specifier: ^22.16.2
-        version: 22.16.2
+        specifier: ^24.0.0
+        version: 24.13.2
       '@typescript/native-preview':
         specifier: latest
         version: 7.0.0-dev.20260626.1
@@ -43,7 +43,7 @@ importers:
         version: 5.2.2
       commitizen:
         specifier: ^4.2.4
-        version: 4.3.2(@types/node@22.16.2)(typescript@6.0.3)
+        version: 4.3.2(@types/node@24.13.2)(typescript@6.0.3)
       del-cli:
         specifier: ^7.0.0
         version: 7.0.0
@@ -67,10 +67,10 @@ importers:
         version: 6.0.3
       vite:
         specifier: ^8.1.0
-        version: 8.1.0(@types/node@22.16.2)(jiti@2.4.2)
+        version: 8.1.0(@types/node@24.13.2)(jiti@2.4.2)
       vitest:
         specifier: ^4.1.9
-        version: 4.1.9(@types/node@22.16.2)(@vitest/coverage-v8@4.1.9)(vite@8.1.0(@types/node@22.16.2)(jiti@2.4.2))
+        version: 4.1.9(@types/node@24.13.2)(@vitest/coverage-v8@4.1.9)(vite@8.1.0(@types/node@24.13.2)(jiti@2.4.2))
 
   packages/ci:
     dependencies:
@@ -876,6 +876,9 @@ packages:
 
   '@types/node@22.16.2':
     resolution: {integrity: sha512-Cdqa/eJTvt4fC4wmq1Mcc0CPUjp/Qy2FGqLza3z3pKymsI969TcZ54diNJv8UYUgeWxyb8FSbCkhdR6WqmUFhA==}
+
+  '@types/node@24.13.2':
+    resolution: {integrity: sha512-fRa09kZTgu8o71KFcDjUFuc7F+dEbZYZmkI0mg5YBTRs0yMKjYHsq/c0urDKeDb+D5qVgXOdFcuu+DZPKOITwA==}
 
   '@types/semver@7.7.0':
     resolution: {integrity: sha512-k107IF4+Xr7UHjwDc7Cfd6PRQfbdkiRabXGRjo07b4WyPahFBZCZ1sE+BNxYIJPPg73UkfOsVOLwqVc/6ETrIA==}
@@ -2141,6 +2144,9 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
+  undici-types@7.18.2:
+    resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
+
   undici@6.27.0:
     resolution: {integrity: sha512-YmfV3YnEDzXRC5lZ2jWtWWHKGUm1zIt8AhesR1tens+HTNv+YZlN/dp6G727LOvMJ8xjP9Be7Y2Sdr96LDm+pg==}
     engines: {node: '>=18.17'}
@@ -2345,12 +2351,12 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@commitlint/cli@21.1.0(@types/node@22.16.2)(conventional-commits-parser@6.4.0)(typescript@6.0.3)':
+  '@commitlint/cli@21.1.0(@types/node@24.13.2)(conventional-commits-parser@6.4.0)(typescript@6.0.3)':
     dependencies:
       '@commitlint/config-conventional': 21.1.0
       '@commitlint/format': 21.1.0
       '@commitlint/lint': 21.1.0
-      '@commitlint/load': 21.1.0(@types/node@22.16.2)(typescript@6.0.3)
+      '@commitlint/load': 21.1.0(@types/node@24.13.2)(typescript@6.0.3)
       '@commitlint/read': 21.1.0(conventional-commits-parser@6.4.0)
       '@commitlint/types': 21.1.0
       tinyexec: 1.2.4
@@ -2376,13 +2382,13 @@ snapshots:
       '@commitlint/types': 21.1.0
       ajv: 8.17.1
 
-  '@commitlint/cz-commitlint@21.1.0(@types/node@22.16.2)(commitizen@4.3.2(@types/node@22.16.2)(typescript@6.0.3))(inquirer@8.2.7(@types/node@22.16.2))(typescript@6.0.3)':
+  '@commitlint/cz-commitlint@21.1.0(@types/node@24.13.2)(commitizen@4.3.2(@types/node@24.13.2)(typescript@6.0.3))(inquirer@8.2.7(@types/node@24.13.2))(typescript@6.0.3)':
     dependencies:
       '@commitlint/ensure': 21.1.0
-      '@commitlint/load': 21.1.0(@types/node@22.16.2)(typescript@6.0.3)
+      '@commitlint/load': 21.1.0(@types/node@24.13.2)(typescript@6.0.3)
       '@commitlint/types': 21.1.0
-      commitizen: 4.3.2(@types/node@22.16.2)(typescript@6.0.3)
-      inquirer: 8.2.7(@types/node@22.16.2)
+      commitizen: 4.3.2(@types/node@24.13.2)(typescript@6.0.3)
+      inquirer: 8.2.7(@types/node@24.13.2)
       is-plain-obj: 4.1.0
       picocolors: 1.1.1
       word-wrap: 1.2.5
@@ -2414,14 +2420,14 @@ snapshots:
       '@commitlint/rules': 21.1.0
       '@commitlint/types': 21.1.0
 
-  '@commitlint/load@21.1.0(@types/node@22.16.2)(typescript@6.0.3)':
+  '@commitlint/load@21.1.0(@types/node@24.13.2)(typescript@6.0.3)':
     dependencies:
       '@commitlint/config-validator': 21.1.0
       '@commitlint/execute-rule': 21.0.1
       '@commitlint/resolve-extends': 21.1.0
       '@commitlint/types': 21.1.0
       cosmiconfig: 9.0.2(typescript@6.0.3)
-      cosmiconfig-typescript-loader: 6.1.0(@types/node@22.16.2)(cosmiconfig@9.0.2(typescript@6.0.3))(typescript@6.0.3)
+      cosmiconfig-typescript-loader: 6.1.0(@types/node@24.13.2)(cosmiconfig@9.0.2(typescript@6.0.3))(typescript@6.0.3)
       es-toolkit: 1.48.1
       is-plain-obj: 4.1.0
       picocolors: 1.1.1
@@ -2520,12 +2526,12 @@ snapshots:
 
   '@gwhitney/detect-indent@7.0.1': {}
 
-  '@inquirer/external-editor@1.0.3(@types/node@22.16.2)':
+  '@inquirer/external-editor@1.0.3(@types/node@24.13.2)':
     dependencies:
       chardet: 2.2.0
       iconv-lite: 0.7.2
     optionalDependencies:
-      '@types/node': 22.16.2
+      '@types/node': 24.13.2
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -2870,6 +2876,10 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/node@24.13.2':
+    dependencies:
+      undici-types: 7.18.2
+
   '@types/semver@7.7.0': {}
 
   '@typescript-eslint/types@8.62.0': {}
@@ -2917,7 +2927,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.0.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.9(@types/node@22.16.2)(@vitest/coverage-v8@4.1.9)(vite@8.1.0(@types/node@22.16.2)(jiti@2.4.2))
+      vitest: 4.1.9(@types/node@24.13.2)(@vitest/coverage-v8@4.1.9)(vite@8.1.0(@types/node@24.13.2)(jiti@2.4.2))
 
   '@vitest/expect@4.1.9':
     dependencies:
@@ -2928,13 +2938,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.0
 
-  '@vitest/mocker@4.1.9(vite@8.1.0(@types/node@22.16.2)(jiti@2.4.2))':
+  '@vitest/mocker@4.1.9(vite@8.1.0(@types/node@24.13.2)(jiti@2.4.2))':
     dependencies:
       '@vitest/spy': 4.1.9
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.1.0(@types/node@22.16.2)(jiti@2.4.2)
+      vite: 8.1.0(@types/node@24.13.2)(jiti@2.4.2)
 
   '@vitest/pretty-format@4.1.9':
     dependencies:
@@ -3089,17 +3099,17 @@ snapshots:
 
   color-name@1.1.4: {}
 
-  commitizen@4.3.2(@types/node@22.16.2)(typescript@6.0.3):
+  commitizen@4.3.2(@types/node@24.13.2)(typescript@6.0.3):
     dependencies:
       cachedir: 2.4.0
-      cz-conventional-changelog: 3.3.0(@types/node@22.16.2)(typescript@6.0.3)
+      cz-conventional-changelog: 3.3.0(@types/node@24.13.2)(typescript@6.0.3)
       dedent: 0.7.0
       detect-indent: 6.1.0
       find-node-modules: 2.1.3
       find-root: 1.1.0
       fs-extra: 9.1.0
       glob: 7.2.3
-      inquirer: 8.2.7(@types/node@22.16.2)
+      inquirer: 8.2.7(@types/node@24.13.2)
       is-utf8: 0.2.1
       lodash: 4.18.1
       minimist: 1.2.8
@@ -3177,9 +3187,9 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  cosmiconfig-typescript-loader@6.1.0(@types/node@22.16.2)(cosmiconfig@9.0.2(typescript@6.0.3))(typescript@6.0.3):
+  cosmiconfig-typescript-loader@6.1.0(@types/node@24.13.2)(cosmiconfig@9.0.2(typescript@6.0.3))(typescript@6.0.3):
     dependencies:
-      '@types/node': 22.16.2
+      '@types/node': 24.13.2
       cosmiconfig: 9.0.2(typescript@6.0.3)
       jiti: 2.4.2
       typescript: 6.0.3
@@ -3199,16 +3209,16 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  cz-conventional-changelog@3.3.0(@types/node@22.16.2)(typescript@6.0.3):
+  cz-conventional-changelog@3.3.0(@types/node@24.13.2)(typescript@6.0.3):
     dependencies:
       chalk: 2.4.2
-      commitizen: 4.3.2(@types/node@22.16.2)(typescript@6.0.3)
+      commitizen: 4.3.2(@types/node@24.13.2)(typescript@6.0.3)
       conventional-commit-types: 3.0.0
       lodash.map: 4.6.0
       longest: 2.0.1
       word-wrap: 1.2.5
     optionalDependencies:
-      '@commitlint/load': 21.1.0(@types/node@22.16.2)(typescript@6.0.3)
+      '@commitlint/load': 21.1.0(@types/node@24.13.2)(typescript@6.0.3)
     transitivePeerDependencies:
       - '@types/node'
       - typescript
@@ -3529,9 +3539,9 @@ snapshots:
 
   ini@6.0.0: {}
 
-  inquirer@8.2.7(@types/node@22.16.2):
+  inquirer@8.2.7(@types/node@24.13.2):
     dependencies:
-      '@inquirer/external-editor': 1.0.3(@types/node@22.16.2)
+      '@inquirer/external-editor': 1.0.3(@types/node@24.13.2)
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       cli-cursor: 3.1.0
@@ -4021,6 +4031,8 @@ snapshots:
 
   undici-types@6.21.0: {}
 
+  undici-types@7.18.2: {}
+
   undici@6.27.0: {}
 
   unicorn-magic@0.3.0: {}
@@ -4031,7 +4043,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite@8.1.0(@types/node@22.16.2)(jiti@2.4.2):
+  vite@8.1.0(@types/node@24.13.2)(jiti@2.4.2):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -4039,14 +4051,14 @@ snapshots:
       rolldown: 1.1.3
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 22.16.2
+      '@types/node': 24.13.2
       fsevents: 2.3.3
       jiti: 2.4.2
 
-  vitest@4.1.9(@types/node@22.16.2)(@vitest/coverage-v8@4.1.9)(vite@8.1.0(@types/node@22.16.2)(jiti@2.4.2)):
+  vitest@4.1.9(@types/node@24.13.2)(@vitest/coverage-v8@4.1.9)(vite@8.1.0(@types/node@24.13.2)(jiti@2.4.2)):
     dependencies:
       '@vitest/expect': 4.1.9
-      '@vitest/mocker': 4.1.9(vite@8.1.0(@types/node@22.16.2)(jiti@2.4.2))
+      '@vitest/mocker': 4.1.9(vite@8.1.0(@types/node@24.13.2)(jiti@2.4.2))
       '@vitest/pretty-format': 4.1.9
       '@vitest/runner': 4.1.9
       '@vitest/snapshot': 4.1.9
@@ -4063,10 +4075,10 @@ snapshots:
       tinyexec: 1.2.4
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.0
-      vite: 8.1.0(@types/node@22.16.2)(jiti@2.4.2)
+      vite: 8.1.0(@types/node@24.13.2)(jiti@2.4.2)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.16.2
+      '@types/node': 24.13.2
       '@vitest/coverage-v8': 4.1.9(vitest@4.1.9)
     transitivePeerDependencies:
       - msw
