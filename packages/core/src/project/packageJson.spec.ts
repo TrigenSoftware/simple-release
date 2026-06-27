@@ -15,29 +15,29 @@ describe('core', () => {
   describe('manifest', () => {
     describe('PackageJsonProject', () => {
       it('should get no tags', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
 
         expect(await project.getTags()).toEqual([])
       })
 
       it('should get tags', async () => {
-        const path = await packageJsonProject({
+        const { cwd } = await packageJsonProject({
           version: '3.0.0'
         })
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
 
         expect(await project.getTags()).toEqual(['v3.0.0'])
       })
 
       it('should get release data', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const release = await project.getReleaseData()
 
@@ -54,11 +54,11 @@ describe('core', () => {
       })
 
       it('should not get release data', async () => {
-        const path = await packageJsonProject({
+        const { cwd } = await packageJsonProject({
           version: '3.0.0'
         })
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const release = await project.getReleaseData()
 
@@ -66,9 +66,9 @@ describe('core', () => {
       })
 
       it('should get next version', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const version = await project.getNextVersion()
 
@@ -76,11 +76,11 @@ describe('core', () => {
       })
 
       it('should not get next version for private package', async () => {
-        const path = await packageJsonProject({
+        const { cwd } = await packageJsonProject({
           private: true
         })
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const version = await project.getNextVersion()
 
@@ -88,9 +88,9 @@ describe('core', () => {
       })
 
       it('should get next version from options', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const version = await project.getNextVersion({
           version: '3.0.0'
@@ -100,9 +100,9 @@ describe('core', () => {
       })
 
       it('should get next version from manifest because of first release', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const version = await project.getNextVersion({
           firstRelease: true
@@ -112,9 +112,9 @@ describe('core', () => {
       })
 
       it('should get next version with given release type', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const version = await project.getNextVersion({
           as: 'major'
@@ -124,9 +124,9 @@ describe('core', () => {
       })
 
       it('should get next prerelease version', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const version = await project.getNextVersion({
           prerelease: 'alpha'
@@ -136,9 +136,9 @@ describe('core', () => {
       })
 
       it('should dry bump version', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const result = await project.bump({
           dryRun: true
@@ -155,13 +155,13 @@ describe('core', () => {
           }
         ])
 
-        expect(await fs.readFile(join(path, 'package.json'), 'utf8')).toContain('"version":"2.0.0"')
+        expect(await fs.readFile(join(cwd, 'package.json'), 'utf8')).toContain('"version":"2.0.0"')
       })
 
       it('should bump version', async () => {
-        const path = await forkProject('bump', packageJsonProject())
+        const { cwd } = await forkProject('bump', packageJsonProject())
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
         const result = await project.bump()
 
@@ -176,14 +176,14 @@ describe('core', () => {
           }
         ])
 
-        expect(await fs.readFile(join(path, 'package.json'), 'utf8')).toMatch(/"version":"2\.(0\.1|1\.0)"/)
-        expect(await fs.readFile(join(path, 'CHANGELOG.md'), 'utf8')).toMatch(/## \[2\.(0\.1|1\.0)\]/)
+        expect(await fs.readFile(join(cwd, 'package.json'), 'utf8')).toMatch(/"version":"2\.(0\.1|1\.0)"/)
+        expect(await fs.readFile(join(cwd, 'CHANGELOG.md'), 'utf8')).toMatch(/## \[2\.(0\.1|1\.0)\]/)
       })
 
       it('should get commit message after bump', async () => {
-        const path = await packageJsonProject()
+        const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
-          path: join(path, 'package.json')
+          path: join(cwd, 'package.json')
         })
 
         await project.bump({

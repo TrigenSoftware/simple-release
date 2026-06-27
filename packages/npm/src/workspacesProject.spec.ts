@@ -15,8 +15,8 @@ import { NpmWorkspacesProject } from './workspacesProject.js'
 describe('npm', () => {
   describe('NpmWorkspacesProject', () => {
     it('should parse workspaces from package.json', async () => {
-      const path = await forkProject('npm-workspaces', packageJsonIndependentMonorepoProject())
-      const pkgJsonContent = await fs.readFile(join(path, 'package.json'), 'utf-8')
+      const { cwd } = await forkProject('npm-workspaces', packageJsonIndependentMonorepoProject())
+      const pkgJsonContent = await fs.readFile(join(cwd, 'package.json'), 'utf-8')
       const pkgJson = JSON.parse(pkgJsonContent)
 
       pkgJson.workspaces = [
@@ -25,11 +25,11 @@ describe('npm', () => {
         'packages/subproject-3'
       ]
 
-      await fs.writeFile(join(path, 'package.json'), JSON.stringify(pkgJson))
+      await fs.writeFile(join(cwd, 'package.json'), JSON.stringify(pkgJson))
 
       const project = new NpmWorkspacesProject({
         mode: 'independent',
-        root: path
+        root: cwd
       })
       const workspaces = await toArray(project.getProjects())
 

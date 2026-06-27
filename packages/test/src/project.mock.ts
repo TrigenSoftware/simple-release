@@ -9,20 +9,26 @@ import {
   getMockFilePath
 } from './files.mock.js'
 import {
+  type RepositoryRunner,
   dummyCommit,
   createRepository
 } from './git.mock.js'
+
+export interface ProjectContext {
+  cwd: string
+  run: RepositoryRunner
+}
 
 function base64(text: string) {
   return Buffer.from(text).toString('base64')
 }
 
-const cache = new Map<string, string>()
+const cache = new Map<string, ProjectContext>()
 
 async function createCachedProject(
   type: string,
   manifest: string,
-  run: (path: string) => Promise<void>
+  runner: (ctx: ProjectContext) => Promise<void>
 ) {
   const snapshot = base64(manifest)
 
@@ -30,37 +36,47 @@ async function createCachedProject(
     return cache.get(snapshot)!
   }
 
-  const path = await createDirectory(type)
+  const cwd = await createDirectory(type)
+  const run = await createRepository(cwd)
+  const ctx = {
+    cwd,
+    run
+  }
 
-  cache.set(snapshot, path)
+  cache.set(snapshot, ctx)
 
-  await run(path)
+  await runner(ctx)
 
-  return path
+  return ctx
 }
 
-export async function forkProject(id: string, srcPathPromise: string | Promise<string>) {
+export async function forkProject(id: string, srcCtxPromise: ProjectContext | Promise<ProjectContext>) {
   const type = `fork-${id}`
-  const srcPath = await srcPathPromise
+  const { cwd: srcPath } = await srcCtxPromise
   const snapshot = `${type}-${basename(srcPath)}`
 
   if (cache.has(snapshot)) {
     return cache.get(snapshot)!
   }
 
-  const path = await createDirectory(type)
+  const cwd = await createDirectory(type)
+  const run = await createRepository(cwd)
+  const ctx = {
+    cwd,
+    run
+  }
 
-  cache.set(snapshot, path)
+  cache.set(snapshot, ctx)
 
   await fs.cp(
     srcPath,
-    path,
+    cwd,
     {
       recursive: true
     }
   )
 
-  return path
+  return ctx
 }
 
 export async function packageJsonProject(pkg: Record<string, unknown> = {}) {
@@ -74,18 +90,19 @@ export async function packageJsonProject(pkg: Record<string, unknown> = {}) {
   return createCachedProject(
     'package-json-project',
     json,
-    async (path) => {
+    async ({
+      cwd,
+      run
+    }) => {
       await fs.writeFile(
-        join(path, 'package.json'),
+        join(cwd, 'package.json'),
         json
       )
 
       await fs.cp(
         getMockFilePath('CHANGELOG_3.md'),
-        join(path, 'CHANGELOG.md')
+        join(cwd, 'CHANGELOG.md')
       )
-
-      const run = await createRepository(path)
 
       await run([
         ({ git }) => git.add(['package.json', 'CHANGELOG.md']),
@@ -134,24 +151,25 @@ export async function packageJsonIndependentMonorepoProject(pkgs: Record<string 
   return createCachedProject(
     'package-json-independent-monorepo-project',
     json,
-    async (path) => {
+    async ({
+      cwd,
+      run
+    }) => {
       await fs.writeFile(
-        join(path, 'package.json'),
+        join(cwd, 'package.json'),
         JSON.stringify(pkgJsons[0])
       )
 
-      await fs.mkdir(join(path, 'packages'), {
+      await fs.mkdir(join(cwd, 'packages'), {
         recursive: true
       })
-
-      const run = await createRepository(path)
 
       await run([({ git }) => git.add('package.json'), ctx => dummyCommit(ctx, 'chore')])
 
       const projects = Object.values(pkgJsons).slice(1)
 
       for (const pkg of projects) {
-        const projectDir = join(path, 'packages', pkg.name)
+        const projectDir = join(cwd, 'packages', pkg.name)
 
         await fs.mkdir(projectDir, {
           recursive: true
@@ -181,7 +199,15 @@ export async function packageJsonIndependentMonorepoProject(pkgs: Record<string 
   )
 }
 
-export async function packageJsonFixedMonorepoProject(pkgs: Record<string | number, Record<string, unknown>> = {}) {
+export interface PackageJsonFixedMonorepoProjectOptions {
+  postReleaseCommits?: boolean
+}
+
+export async function packageJsonFixedMonorepoProject(
+  pkgs: Record<string | number, Record<string, unknown>> = {},
+  options: PackageJsonFixedMonorepoProjectOptions = {}
+) {
+  const { postReleaseCommits = true } = options
   const pkgJsons = {
     ...pkgs,
     0: {
@@ -210,34 +236,38 @@ export async function packageJsonFixedMonorepoProject(pkgs: Record<string | numb
       ...pkgs[3]
     }
   }
-  const json = JSON.stringify(pkgJsons)
+  const json = JSON.stringify({
+    pkgJsons,
+    postReleaseCommits
+  })
 
   return createCachedProject(
     'package-json-fixed-monorepo-project',
     json,
-    async (path) => {
+    async ({
+      cwd,
+      run
+    }) => {
       await fs.writeFile(
-        join(path, 'package.json'),
+        join(cwd, 'package.json'),
         JSON.stringify(pkgJsons[0])
       )
 
       await fs.cp(
         getMockFilePath('CHANGELOG_3.md'),
-        join(path, 'CHANGELOG.md')
+        join(cwd, 'CHANGELOG.md')
       )
 
-      await fs.mkdir(join(path, 'packages'), {
+      await fs.mkdir(join(cwd, 'packages'), {
         recursive: true
       })
-
-      const run = await createRepository(path)
 
       await run([({ git }) => git.add(['package.json', 'CHANGELOG.md']), ctx => dummyCommit(ctx, 'chore')])
 
       const projects = Object.values(pkgJsons).slice(1)
 
       for (const pkg of projects) {
-        const projectDir = join(path, 'packages', pkg.name)
+        const projectDir = join(cwd, 'packages', pkg.name)
 
         await fs.mkdir(projectDir, {
           recursive: true
@@ -245,7 +275,7 @@ export async function packageJsonFixedMonorepoProject(pkgs: Record<string | numb
       }
 
       for (const pkg of projects) {
-        const projectDir = join(path, 'packages', pkg.name)
+        const projectDir = join(cwd, 'packages', pkg.name)
 
         await fs.writeFile(
           join(projectDir, 'package.json'),
@@ -269,11 +299,13 @@ export async function packageJsonFixedMonorepoProject(pkgs: Record<string | numb
         })
       ])
 
-      const prj2Dir = join(path, 'packages', 'subproject-2')
-      const prj3Dir = join(path, 'packages', 'subproject-3')
+      const prj2Dir = join(cwd, 'packages', 'subproject-2')
+      const prj3Dir = join(cwd, 'packages', 'subproject-3')
 
-      await run([ctx => dummyCommit(ctx, 'fix', 'subproject-2')], prj2Dir)
-      await run([ctx => dummyCommit(ctx, 'feat', 'subproject-3')], prj3Dir)
+      if (postReleaseCommits) {
+        await run([ctx => dummyCommit(ctx, 'fix', 'subproject-2')], prj2Dir)
+        await run([ctx => dummyCommit(ctx, 'feat', 'subproject-3')], prj3Dir)
+      }
     }
   )
 }

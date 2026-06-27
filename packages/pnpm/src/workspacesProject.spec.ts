@@ -15,9 +15,9 @@ import { PnpmWorkspacesProject } from './workspacesProject.js'
 describe('pnpm', () => {
   describe('PnpmWorkspacesProject', () => {
     it('should parse workspaces from pnpm-workspace.yaml', async () => {
-      const path = await forkProject('pnpm-workspaces', packageJsonIndependentMonorepoProject())
+      const { cwd } = await forkProject('pnpm-workspaces', packageJsonIndependentMonorepoProject())
 
-      await fs.writeFile(join(path, 'pnpm-workspace.yaml'), `packages:
+      await fs.writeFile(join(cwd, 'pnpm-workspace.yaml'), `packages:
   - packages/subproject-1
   - packages/subproject-2
   - packages/subproject-3
@@ -25,7 +25,7 @@ describe('pnpm', () => {
 
       const project = new PnpmWorkspacesProject({
         mode: 'independent',
-        root: path
+        root: cwd
       })
       const workspaces = await toArray(project.getProjects())
 

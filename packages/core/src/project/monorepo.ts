@@ -198,7 +198,8 @@ export abstract class MonorepoProject extends Project {
   private async getBumpOptions(
     project: Project,
     options: MonorepoProjectBumpOptions,
-    baseVersion?: string
+    baseVersion?: string,
+    firstRelease?: boolean
   ) {
     const {
       preset = bumpDefaultOptions.preset,
@@ -219,6 +220,7 @@ export abstract class MonorepoProject extends Project {
       scope: [scope, ...extraScopes]
     }
     const projectBumpOptions = {
+      firstRelease,
       ...bumpOptions,
       ...byProject?.[name],
       preset: projectPreset,
@@ -274,6 +276,10 @@ export abstract class MonorepoProject extends Project {
       options: MonorepoProjectBumpOptions
     }[] = []
     const baseVersion = await this.manifest.getVersion()
+    const tagPrefix = await this.getTagPrefix('')
+    const firstRelease = !await this.gitClient.getLastSemverTag({
+      prefix: tagPrefix
+    })
     let hasBump = false
     let fixedVersion: string | undefined
 
@@ -281,7 +287,8 @@ export abstract class MonorepoProject extends Project {
       const projectBumpOptions = await this.getBumpOptions(
         project,
         options,
-        baseVersion
+        baseVersion,
+        firstRelease
       )
       const version = await project.getNextVersion(projectBumpOptions)
 
@@ -302,7 +309,7 @@ export abstract class MonorepoProject extends Project {
         ...options,
         forcePrivate: true,
         version: fixedVersion,
-        tagPrefix: await this.getTagPrefix('')
+        tagPrefix
       })
 
       for (const { project, options } of updatedProjects) {
