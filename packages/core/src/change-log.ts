@@ -31,8 +31,8 @@ export function preamblePartial(
   }: FinalTemplateContext
 ) {
   return segments(
-    !commitGroups?.length && !noteGroups?.length && 'Version bump without any changes.',
-    preamble
+    preamble,
+    !commitGroups?.length && !noteGroups?.length && 'Version bump without any changes.'
   )
 }
 
