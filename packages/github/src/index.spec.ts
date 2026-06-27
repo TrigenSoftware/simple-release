@@ -15,9 +15,9 @@ import { GithubHosting } from './index.js'
 describe('github', () => {
   describe('GithubHosting', () => {
     it('should run smoke test', async () => {
-      const path = await packageJsonProject()
+      const { cwd } = await packageJsonProject()
       const project = new PackageJsonProject({
-        path: join(path, 'package.json')
+        path: join(cwd, 'package.json')
       })
       const log: LoggerMessage[] = []
       const logger = new Logger({

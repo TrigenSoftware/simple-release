@@ -200,8 +200,9 @@ export abstract class Project {
     }
 
     if (typeof firstRelease === 'undefined') {
-      firstRelease = !await gitClient.getLastTag({
-        path: projectPath
+      firstRelease = !await gitClient.getLastSemverTag({
+        path: projectPath,
+        prefix: tagPrefix
       })
     }
 

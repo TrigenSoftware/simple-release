@@ -13,9 +13,9 @@ import { Releaser } from './releaser.js'
 describe('core', () => {
   describe('releaser', () => {
     it('should run smoke test', async () => {
-      const path = await packageJsonProject()
+      const { cwd } = await packageJsonProject()
       const project = new PackageJsonProject({
-        path: join(path, 'package.json')
+        path: join(cwd, 'package.json')
       })
       const releaser = new Releaser({
         project,
@@ -32,7 +32,7 @@ describe('core', () => {
       )
       const tag = await project.gitClient.getLastTag()
       const packageJson = JSON.parse(
-        await fs.readFile(join(path, 'package.json'), 'utf-8')
+        await fs.readFile(join(cwd, 'package.json'), 'utf-8')
       )
 
       expect(commit).toMatchObject({

@@ -14,7 +14,9 @@ export interface ActionContext {
   git: GitClient
 }
 
-export type Action = (ctx: ActionContext) => Promise<void>
+export type Action = (ctx: ActionContext) => Promise<unknown>
+
+export type RepositoryRunner = (actions: Action[], dir?: string) => Promise<void>
 
 export async function updateDummyFile(dir: string) {
   await fs.rm(join(dir, 'dummy'), {

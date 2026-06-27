@@ -1,3 +1,4 @@
+import fs from 'fs/promises'
 import { join } from 'path'
 import {
   describe,
@@ -23,10 +24,10 @@ describe('core', () => {
     describe('PackageJsonMonorepoProject', () => {
       describe('independent mode', () => {
         it('should get no tags', async () => {
-          const path = await packageJsonIndependentMonorepoProject()
+          const { cwd } = await packageJsonIndependentMonorepoProject()
           const project = new PackageJsonMonorepoProject({
             mode: 'independent',
-            root: path,
+            root: cwd,
             getProjects
           })
 
@@ -34,14 +35,14 @@ describe('core', () => {
         })
 
         it('should get one tag', async () => {
-          const path = await packageJsonIndependentMonorepoProject({
+          const { cwd } = await packageJsonIndependentMonorepoProject({
             2: {
               version: '3.0.0'
             }
           })
           const project = new PackageJsonMonorepoProject({
             mode: 'independent',
-            root: path,
+            root: cwd,
             getProjects
           })
 
@@ -49,7 +50,7 @@ describe('core', () => {
         })
 
         it('should get few tags', async () => {
-          const path = await packageJsonIndependentMonorepoProject({
+          const { cwd } = await packageJsonIndependentMonorepoProject({
             2: {
               version: '3.0.0'
             },
@@ -59,7 +60,7 @@ describe('core', () => {
           })
           const project = new PackageJsonMonorepoProject({
             mode: 'independent',
-            root: path,
+            root: cwd,
             getProjects
           })
 
@@ -67,10 +68,10 @@ describe('core', () => {
         })
 
         it('should get release data', async () => {
-          const path = await packageJsonIndependentMonorepoProject()
+          const { cwd } = await packageJsonIndependentMonorepoProject()
           const project = new PackageJsonMonorepoProject({
             mode: 'independent',
-            root: path,
+            root: cwd,
             getProjects
           })
           const release = await project.getReleaseData()
@@ -104,14 +105,14 @@ describe('core', () => {
         })
 
         it('should not get some release data', async () => {
-          const path = await packageJsonIndependentMonorepoProject({
+          const { cwd } = await packageJsonIndependentMonorepoProject({
             2: {
               version: '3.0.0'
             }
           })
           const project = new PackageJsonMonorepoProject({
             mode: 'independent',
-            root: path,
+            root: cwd,
             getProjects
           })
           const release = await project.getReleaseData()
@@ -137,10 +138,10 @@ describe('core', () => {
         })
 
         it('should bump version', async () => {
-          const path = await forkProject('bump', packageJsonIndependentMonorepoProject())
+          const { cwd } = await forkProject('bump', packageJsonIndependentMonorepoProject())
           const project = new PackageJsonMonorepoProject({
             mode: 'independent',
-            root: path,
+            root: cwd,
             getProjects
           })
           const projects: Project[] = []
@@ -186,10 +187,10 @@ describe('core', () => {
         })
 
         it('should get commit message after bump', async () => {
-          const path = await packageJsonIndependentMonorepoProject()
+          const { cwd } = await packageJsonIndependentMonorepoProject()
           const project = new PackageJsonMonorepoProject({
             mode: 'independent',
-            root: path,
+            root: cwd,
             getProjects
           })
 
@@ -209,10 +210,10 @@ describe('core', () => {
 
       describe('fixed mode', () => {
         it('should get no tags', async () => {
-          const path = await packageJsonFixedMonorepoProject()
+          const { cwd } = await packageJsonFixedMonorepoProject()
           const project = new PackageJsonMonorepoProject({
             mode: 'fixed',
-            root: path,
+            root: cwd,
             getProjects
           })
 
@@ -220,14 +221,14 @@ describe('core', () => {
         })
 
         it('should get one tag', async () => {
-          const path = await packageJsonFixedMonorepoProject({
+          const { cwd } = await packageJsonFixedMonorepoProject({
             0: {
               version: '3.0.0'
             }
           })
           const project = new PackageJsonMonorepoProject({
             mode: 'fixed',
-            root: path,
+            root: cwd,
             getProjects
           })
 
@@ -235,10 +236,10 @@ describe('core', () => {
         })
 
         it('should get release data', async () => {
-          const path = await packageJsonFixedMonorepoProject()
+          const { cwd } = await packageJsonFixedMonorepoProject()
           const project = new PackageJsonMonorepoProject({
             mode: 'fixed',
-            root: path,
+            root: cwd,
             getProjects
           })
           const release = await project.getReleaseData()
@@ -256,14 +257,14 @@ describe('core', () => {
         })
 
         it('should not get release data', async () => {
-          const path = await packageJsonFixedMonorepoProject({
+          const { cwd } = await packageJsonFixedMonorepoProject({
             0: {
               version: '3.0.0'
             }
           })
           const project = new PackageJsonMonorepoProject({
             mode: 'fixed',
-            root: path,
+            root: cwd,
             getProjects
           })
           const release = await project.getReleaseData()
@@ -272,10 +273,10 @@ describe('core', () => {
         })
 
         it('should bump version', async () => {
-          const path = await forkProject('bump', packageJsonFixedMonorepoProject())
+          const { cwd } = await forkProject('bump', packageJsonFixedMonorepoProject())
           const project = new PackageJsonMonorepoProject({
             mode: 'fixed',
-            root: path,
+            root: cwd,
             getProjects
           })
           const result = await project.bump()
@@ -315,10 +316,10 @@ describe('core', () => {
         })
 
         it('should get commit message after bump', async () => {
-          const path = await packageJsonFixedMonorepoProject()
+          const { cwd } = await packageJsonFixedMonorepoProject()
           const project = new PackageJsonMonorepoProject({
             mode: 'fixed',
-            root: path,
+            root: cwd,
             getProjects
           })
 
@@ -332,14 +333,14 @@ describe('core', () => {
         })
 
         it('should bump using base version', async () => {
-          const path = await forkProject('bump', packageJsonFixedMonorepoProject({
+          const { cwd } = await forkProject('bump', packageJsonFixedMonorepoProject({
             0: {
               version: '4.0.0'
             }
           }))
           const project = new PackageJsonMonorepoProject({
             mode: 'fixed',
-            root: path,
+            root: cwd,
             getProjects
           })
           const result = await project.bump()
@@ -359,6 +360,64 @@ describe('core', () => {
               to: '4.1.0'
             }
           ])
+        })
+
+        it('should generate release notes for a new project after a fixed release tag', async () => {
+          const {
+            cwd,
+            run
+          } = await forkProject(
+            'fixed-monorepo-new-project',
+            packageJsonFixedMonorepoProject({}, {
+              postReleaseCommits: false
+            })
+          )
+          const projectPath = join(cwd, 'packages', 'subproject-4')
+
+          await run([
+            () => fs.mkdir(projectPath, {
+              recursive: true
+            }),
+            () => fs.writeFile(
+              join(projectPath, 'package.json'),
+              JSON.stringify({
+                name: 'subproject-4',
+                version: '2.0.0',
+                description: 'A new subproject of package json monorepo project'
+              })
+            ),
+            ({ git }) => git.add('package.json'),
+            ({ git }) => git.commit({
+              message: 'feat(subproject-4): add subproject 4'
+            })
+          ], projectPath)
+
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+          const result = await project.bump({
+            dryRun: true
+          })
+
+          expect(result).toBe(true)
+          expect(project.versionUpdates).toEqual(expect.arrayContaining([
+            {
+              name: 'package-json-monorepo-project',
+              from: '2.0.0',
+              to: '2.1.0',
+              files: [expect.stringMatching(/package\.json$/)],
+              notes: expect.stringContaining('**subproject-4:** add subproject 4')
+            },
+            {
+              name: 'subproject-4',
+              from: '2.0.0',
+              to: '2.1.0',
+              files: [expect.stringMatching(/package\.json$/)],
+              notes: expect.stringContaining('add subproject 4')
+            }
+          ]))
         })
       })
     })
