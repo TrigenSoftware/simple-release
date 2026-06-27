@@ -1,7 +1,7 @@
 /* oxlint-disable typescript/no-use-before-define */
 import { join } from 'path'
 import fg from 'fast-glob'
-import ryf from 'read-yaml-file'
+import { readYamlFile } from 'read-yaml-file'
 import {
   type PackageJsonMonorepoProjectOptions,
   type ProjectBumpOptions,
@@ -14,8 +14,6 @@ import {
   publish
 } from './publish.js'
 
-const readYamlFile = ryf as unknown as <T = Record<string, unknown>>(filePath: string) => Promise<T>
-
 export type PnpmWorkspacesProjectOptions = Omit<PackageJsonMonorepoProjectOptions, 'getProjects'>
 
 export type PnpmWorkspacesProjectBumpOptions = ProjectBumpOptions
@@ -25,7 +23,9 @@ export type PnpmWorkspacesProjectPublishOptions = Omit<PublishOptions, 'workspac
 async function* getProjects(options: GetProjectsOptions) {
   const { projectPath } = options.manifest
   const workspaceFile = join(projectPath, PnpmWorkspacesProject.WorkspaceFile)
-  const packagesGlobPatterns = (await readYamlFile(workspaceFile)).packages as string[] | undefined
+  const packagesGlobPatterns = (await readYamlFile<{
+    packages?: string[]
+  }>(workspaceFile)).packages
 
   if (packagesGlobPatterns) {
     for (const globPattern of packagesGlobPatterns) {

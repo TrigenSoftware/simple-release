@@ -26,6 +26,9 @@
     "lib": [
       "esnext"
     ],
+    "types": [
+      "node"
+    ],
     "target": "ESNext",
     /* Completeness */
     "skipLibCheck": true

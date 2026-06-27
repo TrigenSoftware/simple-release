@@ -54,10 +54,10 @@
     "test": "run -p lint test:unit test:types"
   },
   "dependencies": {
-    "@simple-libs/child-process-utils": "^1.0.0",
+    "@simple-libs/child-process-utils": "^2.0.0",
     "@simple-release/core": "workspace:^",
     "fast-glob": "^3.3.3",
-    "read-yaml-file": "^2.1.0"
+    "read-yaml-file": "^3.0.0"
   },
   "devDependencies": {
     "test": "workspace:^"
