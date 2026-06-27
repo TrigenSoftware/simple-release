@@ -180,6 +180,38 @@ describe('core', () => {
         expect(await fs.readFile(join(cwd, 'CHANGELOG.md'), 'utf8')).toMatch(/## \[2\.(0\.1|1\.0)\]/)
       })
 
+      it('should add placeholder when generated release notes are empty', async () => {
+        const { cwd } = await forkProject(
+          'bump-empty-notes',
+          packageJsonProject({}, {
+            postReleaseCommits: false
+          })
+        )
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const result = await project.bump({
+          as: 'patch'
+        })
+
+        expect(result).toBe(true)
+        expect(project.versionUpdates[0].notes).toContain('Version bump without any changes.')
+        expect(await fs.readFile(join(cwd, 'CHANGELOG.md'), 'utf8')).toContain('Version bump without any changes.')
+      })
+
+      it('should not add placeholder when generated release notes are not empty', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const result = await project.bump({
+          dryRun: true
+        })
+
+        expect(result).toBe(true)
+        expect(project.versionUpdates[0].notes).not.toContain('Version bump without any changes.')
+      })
+
       it('should get commit message after bump', async () => {
         const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({

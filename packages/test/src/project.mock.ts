@@ -79,7 +79,15 @@ export async function forkProject(id: string, srcCtxPromise: ProjectContext | Pr
   return ctx
 }
 
-export async function packageJsonProject(pkg: Record<string, unknown> = {}) {
+export interface PackageJsonProjectOptions {
+  postReleaseCommits?: boolean
+}
+
+export async function packageJsonProject(
+  pkg: Record<string, unknown> = {},
+  options: PackageJsonProjectOptions = {}
+) {
+  const { postReleaseCommits = true } = options
   const json = JSON.stringify({
     name: 'package-json-project',
     version: '2.0.0',
@@ -89,7 +97,10 @@ export async function packageJsonProject(pkg: Record<string, unknown> = {}) {
 
   return createCachedProject(
     'package-json-project',
-    json,
+    JSON.stringify({
+      json,
+      postReleaseCommits
+    }),
     async ({
       cwd,
       run
@@ -109,10 +120,15 @@ export async function packageJsonProject(pkg: Record<string, unknown> = {}) {
         ctx => dummyCommit(ctx, 'feat'),
         ({ git }) => git.tag({
           name: 'v2.0.0'
-        }),
-        ctx => dummyCommit(ctx, 'feat'),
-        ctx => dummyCommit(ctx, 'fix')
+        })
       ])
+
+      if (postReleaseCommits) {
+        await run([
+          ctx => dummyCommit(ctx, 'feat'),
+          ctx => dummyCommit(ctx, 'fix')
+        ])
+      }
     }
   )
 }

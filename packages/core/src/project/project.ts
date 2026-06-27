@@ -10,7 +10,8 @@ import type { ReleaseData } from '../hosting/index.js'
 import {
   addReleaseNotes,
   extractLastRelease,
-  extractLastReleaseFromFile
+  extractLastReleaseFromFile,
+  preamblePartial
 } from '../change-log.js'
 import { getReleaseType } from '../utils.js'
 import type {
@@ -297,6 +298,9 @@ export abstract class Project {
       .readRepository()
       .context({
         version: nextVersion
+      })
+      .writer({
+        preamblePartial
       })
       .write()
 
