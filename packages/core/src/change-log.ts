@@ -5,6 +5,10 @@ import {
 } from 'fs'
 import fs from 'fs/promises'
 import {
+  type FinalTemplateContext,
+  segments
+} from '@conventional-changelog/template'
+import {
   tmpfile,
   isFileExists
 } from './utils.js'
@@ -18,6 +22,19 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 `
+
+export function preamblePartial(
+  {
+    preamble,
+    commitGroups,
+    noteGroups
+  }: FinalTemplateContext
+) {
+  return segments(
+    preamble,
+    !commitGroups?.length && !noteGroups?.length && 'Version bump without any changes.'
+  )
+}
 
 /**
  * Add release notes to a changelog file.

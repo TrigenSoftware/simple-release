@@ -5,11 +5,11 @@ allowBuilds:
   esbuild: true
   simple-git-hooks: true
 minimumReleaseAgeExclude:
-  - '@conventional-changelog/git-client@3.0.0 || 3.0.1'
-  - '@conventional-changelog/template@1.0.0'
-  - conventional-changelog-conventionalcommits@10.0.0
+  - '@conventional-changelog/git-client@3.0.1'
+  - '@conventional-changelog/template@1.2.0'
+  - conventional-changelog-conventionalcommits@10.2.0
   - conventional-changelog-preset-loader@6.0.0
-  - conventional-changelog-writer@9.0.0
+  - conventional-changelog-writer@9.1.0
   - conventional-changelog@8.0.0
   - conventional-commits-filter@6.0.0
   - conventional-commits-parser@7.0.0
