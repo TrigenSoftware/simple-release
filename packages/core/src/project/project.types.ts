@@ -53,6 +53,14 @@ export interface ProjectBumpOptions {
    */
   prerelease?: string
   /**
+   * The snapshot pre-release identifier to use with timestamp suffix.
+   */
+  snapshot?: string
+  /**
+   * Skip changelog generation.
+   */
+  skipChangelog?: boolean
+  /**
    * Whether this is the first release.
    * By default will be auto detected based on tag existence.
    */
@@ -108,4 +116,17 @@ export interface ProjectPublishOptions {
    * Skip publishing.
    */
   skip?: boolean
+  /**
+   * The NPM tag to use for publishing.
+   */
+  tag?: string | ((version: string, prerelease: readonly (string | number)[] | null) => string)
+  /**
+   * Whether to perform git checks before publishing.
+   */
+  gitChecks?: boolean
+}
+
+export interface ProjectRevertOptions {
+  dryRun?: boolean
+  logger?: ChildLogger
 }

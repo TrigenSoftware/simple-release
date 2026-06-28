@@ -40,6 +40,7 @@ export function getInputOptions() {
       version: getInput('bump-version'),
       as: getInput('bump-as'),
       prerelease: getInput('bump-prerelease'),
+      snapshot: getInput('bump-snapshot'),
       firstRelease: getOptionalBooleanInput('bump-first-release'),
       skip: getOptionalBooleanInput('bump-skip'),
       byProject: getOptionalJsonInput('bump-by-project')
