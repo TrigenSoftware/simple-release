@@ -9,6 +9,7 @@ import type {
 } from './monorepo.types.js'
 import {
   type ProjectOptions,
+  type ProjectRevertOptions,
   Project,
   bumpDefaultOptions
 } from './project.js'
@@ -340,5 +341,36 @@ export abstract class MonorepoProject extends Project {
     }
 
     return this.independentBump(options)
+  }
+
+  override async revert(options: ProjectRevertOptions = {}) {
+    const {
+      manifest,
+      versionUpdates
+    } = this
+    const {
+      dryRun,
+      logger
+    } = options
+    const files = new Set<string>()
+    const rootUpdate = versionUpdates.find(({ files }) => files.includes(manifest.manifestPath))
+    let hasRevert = false
+
+    if (rootUpdate) {
+      logger?.verbose(`Reverting ${rootUpdate.name}: ${rootUpdate.to} -> ${rootUpdate.from}`)
+      rootUpdate.files.forEach(file => files.add(file))
+
+      await manifest.writeVersion(rootUpdate.from, dryRun)
+      hasRevert = true
+    }
+
+    for await (const project of this.getProjects()) {
+      hasRevert = await project.revert(options, files) || hasRevert
+    }
+
+    this.changedFiles = this.changedFiles.filter(file => !files.has(file))
+    this.versionUpdates.length = 0
+
+    return hasRevert
   }
 }

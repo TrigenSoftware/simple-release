@@ -7,7 +7,6 @@ import { throwProcessError } from '@simple-libs/child-process-utils'
 
 export interface PublishOptions extends ProjectPublishOptions {
   access?: string
-  tag?: string | ((version: string, prerelease: readonly (string | number)[] | null) => string)
   otp?: string
   env?: Record<string, string | undefined>
   workspaces?: boolean

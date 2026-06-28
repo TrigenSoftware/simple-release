@@ -1,5 +1,6 @@
 import type { getOctokit } from '@actions/github'
 import {
+  type PickOverridableOptions,
   type Project,
   type ReleaserOptions,
   Releaser
@@ -141,6 +142,28 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
       .release()
       .publish()
       .run(check ? ifReleaseCommit : undefined)
+  }
+
+  /**
+   * Run all steps to publish a snapshot version.
+   * @param snapshotTag - NPM tag and snapshot pre-release identifier.
+   */
+  async runSnapshotAction(snapshotTag: string) {
+    if (!snapshotTag) {
+      throw new Error('Snapshot tag is required.')
+    }
+
+    await this
+      .bump({
+        snapshot: snapshotTag,
+        skipChangelog: true
+      } as PickOverridableOptions<P['bump']>)
+      .publish({
+        tag: snapshotTag,
+        gitChecks: false
+      } as PickOverridableOptions<P['publish']>)
+      .revert()
+      .run()
   }
 
   /**

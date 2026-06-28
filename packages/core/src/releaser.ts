@@ -271,6 +271,34 @@ export class Releaser<
   }
 
   /**
+   * Enqueue a task to revert version update files.
+   * @returns Project releaser instance for chaining.
+   */
+  revert() {
+    return this.enqueue(async () => {
+      const {
+        project,
+        logger
+      } = this
+      const { dryRun } = this.options
+
+      logger.info('revert', 'Reverting version updates...')
+
+      const done = await project.revert({
+        dryRun,
+        logger: logger.createChild('revert')
+      })
+
+      if (!done) {
+        logger.info('revert', 'No version updates to revert.')
+        return
+      }
+
+      this.state.bump = false
+    })
+  }
+
+  /**
    * Enqueue a task to tag the project with the new version.
    * @param options
    * @returns Project releaser instance for chaining.

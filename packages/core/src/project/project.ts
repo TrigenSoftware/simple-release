@@ -13,14 +13,19 @@ import {
   extractLastReleaseFromFile,
   preamblePartial
 } from '../change-log.js'
-import { getReleaseType } from '../utils.js'
+import {
+  getPrereleaseIdentifier,
+  getPrereleaseIdentifierBase,
+  getReleaseType
+} from '../utils.js'
 import type {
   ProjectOptions,
   ProjectBumpOptions,
   ProjectVersionUpdate,
   ProjectTagsOptions,
   ProjectReleaseOptions,
-  ProjectPublishOptions
+  ProjectPublishOptions,
+  ProjectRevertOptions
 } from './project.types.js'
 
 export type * from './project.types.js'
@@ -190,6 +195,7 @@ export abstract class Project {
       baseVersion,
       as,
       prerelease,
+      snapshot,
       firstRelease: firstReleaseOption,
       tagPrefix,
       preset = bumpDefaultOptions.preset
@@ -237,10 +243,15 @@ export abstract class Project {
       return null
     }
 
+    const prereleaseIdentifier = getPrereleaseIdentifier(
+      prerelease,
+      snapshot
+    )
     const nextVersion = semver.inc(
       version,
-      getReleaseType(releaseType, version, prerelease),
-      prerelease
+      getReleaseType(releaseType, version, prereleaseIdentifier),
+      prereleaseIdentifier,
+      getPrereleaseIdentifierBase(snapshot)
     )
 
     return nextVersion
@@ -267,6 +278,7 @@ export abstract class Project {
       tagPrefix,
       preset = bumpDefaultOptions.preset,
       dryRun,
+      skipChangelog,
       logger
     } = options
     const { projectPath } = manifest
@@ -276,6 +288,7 @@ export abstract class Project {
       notes: ''
     }
 
+    this.versionUpdates.push(versionUpdate)
     this.changedFiles.push(...versionUpdate.files)
 
     const changelogPath = join(projectPath, changelogFile!)
@@ -287,31 +300,67 @@ export abstract class Project {
       logger?.verbose(`${name}: ${version} -> ${nextVersion}`)
     }
 
-    const notes = new ConventionalChangelog(gitClient)
-      .loadPreset(preset, _ => import(_))
-      .commits({
-        path: projectPath
-      })
-      .tags({
-        prefix: tagPrefix
-      })
-      .readRepository()
-      .context({
-        version: nextVersion
-      })
-      .writer({
-        preamblePartial
-      })
-      .write()
+    if (!skipChangelog) {
+      const notes = new ConventionalChangelog(gitClient)
+        .loadPreset(preset, _ => import(_))
+        .commits({
+          path: projectPath
+        })
+        .tags({
+          prefix: tagPrefix
+        })
+        .readRepository()
+        .context({
+          version: nextVersion
+        })
+        .writer({
+          preamblePartial
+        })
+        .write()
 
-    versionUpdate.notes = dryRun
-      ? await concatStringStream(notes)
-      : await addReleaseNotes(changelogPath, notes)
+      versionUpdate.notes = dryRun
+        ? await concatStringStream(notes)
+        : await addReleaseNotes(changelogPath, notes)
 
-    logger?.verbose(`Release notes:\n\n${versionUpdate.notes}`)
+      logger?.verbose(`Release notes:\n\n${versionUpdate.notes}`)
 
-    this.changedFiles.push(changelogPath)
-    this.versionUpdates.push(versionUpdate)
+      this.changedFiles.push(changelogPath)
+    }
+
+    return true
+  }
+
+  /**
+   * Revert version updates.
+   * @param options - The options to use for reverting.
+   * @returns Whether version updates were reverted.
+   */
+  async revert(
+    options: ProjectRevertOptions = {},
+    filesSet: Set<string> = new Set()
+  ) {
+    const {
+      manifest,
+      versionUpdates
+    } = this
+    const {
+      dryRun,
+      logger
+    } = options
+
+    if (!versionUpdates.length) {
+      return false
+    }
+
+    for (const update of versionUpdates) {
+      logger?.verbose(`Reverting ${update.name}: ${update.to} -> ${update.from}`)
+      update.files.forEach(file => filesSet.add(file))
+
+      await manifest.writeVersion(update.from, dryRun)
+    }
+
+    this.changedFiles = this.changedFiles.filter(file => !filesSet.has(file))
+    this.versionUpdates.length = 0
 
     return true
   }

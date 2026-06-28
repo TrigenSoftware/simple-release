@@ -42,6 +42,27 @@ function getCurrentActiveType(version: string) {
   return undefined
 }
 
+function getSnapshotTimestamp(date = new Date()) {
+  return date.toISOString().replace(/\D/g, '').slice(0, 14)
+}
+
+export function getPrereleaseIdentifier(
+  prerelease?: string,
+  snapshot?: string
+) {
+  if (snapshot) {
+    return `${snapshot}.${getSnapshotTimestamp()}`
+  }
+
+  return prerelease
+}
+
+export function getPrereleaseIdentifierBase(snapshot?: string) {
+  return snapshot
+    ? false
+    : undefined
+}
+
 export function getReleaseType(
   releaseType: ReleaseType,
   version: string,

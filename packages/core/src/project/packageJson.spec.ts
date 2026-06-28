@@ -135,6 +135,31 @@ describe('core', () => {
         expect(version).toBe('2.1.0-alpha.0')
       })
 
+      it('should get next snapshot version from commits', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          snapshot: 'snapshot'
+        })
+
+        expect(version).toMatch(/^2\.1\.0-snapshot\.\d{14}$/)
+      })
+
+      it('should get next snapshot version with given release type', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          as: 'patch',
+          snapshot: 'canary'
+        })
+
+        expect(version).toMatch(/^2\.0\.1-canary\.\d{14}$/)
+      })
+
       it('should dry bump version', async () => {
         const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
@@ -197,6 +222,27 @@ describe('core', () => {
         expect(result).toBe(true)
         expect(project.versionUpdates[0].notes).toContain('Version bump without any changes.')
         expect(await fs.readFile(join(cwd, 'CHANGELOG.md'), 'utf8')).toContain('Version bump without any changes.')
+      })
+
+      it('should skip changelog generation', async () => {
+        const { cwd } = await forkProject(
+          'bump-without-changelog',
+          packageJsonProject()
+        )
+        const changelogPath = join(cwd, 'CHANGELOG.md')
+        const changelog = await fs.readFile(changelogPath, 'utf8')
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const result = await project.bump({
+          as: 'patch',
+          skipChangelog: true
+        })
+
+        expect(result).toBe(true)
+        expect(project.changedFiles).toMatchObject([expect.stringMatching(/package\.json$/)])
+        expect(project.versionUpdates[0].notes).toBe('')
+        expect(await fs.readFile(changelogPath, 'utf8')).toBe(changelog)
       })
 
       it('should not add placeholder when generated release notes are not empty', async () => {
