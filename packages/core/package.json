@@ -1,7 +1,7 @@
 {
   "name": "@simple-release/core",
   "type": "module",
-  "version": "3.0.0",
+  "version": "3.0.3",
   "description": "A simple tool to automate version bumps, changelogs, and releases using Conventional Commits.",
   "author": {
     "name": "Dan Onoshko",
