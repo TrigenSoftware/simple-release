@@ -112,7 +112,7 @@ export async function publish(project: PackageJsonProject, options: PublishOptio
     await runBuildCommands(buildCommands, options, projectPath)
 
     if (!dryRun && files.length) {
-      logger?.info('Staging built GitHub Action files...')
+      logger?.info('Staging GitHub Action files...')
 
       await gitClient.exec('add', '--force', '--', ...files)
 
