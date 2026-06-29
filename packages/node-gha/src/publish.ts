@@ -104,6 +104,17 @@ export async function publish(project: PackageJsonProject, options: PublishOptio
 
   try {
     if (!dryRun) {
+      const isShallowRepository = await gitClient.exec(
+        'rev-parse',
+        '--is-shallow-repository'
+      ) === 'true'
+
+      if (isShallowRepository) {
+        logger?.info('Fetching git history...')
+
+        await gitClient.exec('fetch', '--deepen=1', '--', 'origin', originalBranch)
+      }
+
       await gitClient.exec('checkout', '-B', latestBranch, releaseCommit)
 
       shouldRestoreBranch = originalBranch !== latestBranch
