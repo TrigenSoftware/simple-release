@@ -147,6 +147,7 @@ To fetch and parse comments you should use `fetchOptions` step after `checkout` 
 
 ```js
 action
+  .setUser()
   .checkout()
   .fetchOptions()
   .bump()
@@ -160,6 +161,7 @@ action
 
 ```js
 action
+  .setUser()
   .maintenanceBranch()
   .tag()
   .push()

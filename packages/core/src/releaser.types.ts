@@ -42,6 +42,9 @@ export interface ReleaserCheckoutOptions {
    * Force fetch all commits and tags from the remote repository.
    */
   fetch?: boolean
+}
+
+export interface ReleaserSetUserOptions {
   /**
    * Set git user name configuration.
    */
@@ -77,6 +80,7 @@ export interface ReleaserStepsOptions<
   checkout?: {
     branch?: string
   } & ReleaserCheckoutOptions
+  setUser?: ReleaserSetUserOptions
   bump?: PickOverridableOptions<P['bump']>
   commit?: ReleaserCommitOptions
   maintenanceBranch?: ReleaserMaintenanceBranchOptions

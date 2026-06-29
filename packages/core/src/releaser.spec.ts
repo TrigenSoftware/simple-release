@@ -75,6 +75,26 @@ describe('core', () => {
       expect(project.versionUpdates).toEqual([])
     })
 
+    it('should set git user configuration', async () => {
+      const { cwd } = await forkProject('set-user', packageJsonProject())
+      const project = new PackageJsonProject({
+        path: join(cwd, 'package.json')
+      })
+      const releaser = new Releaser({
+        project,
+        silent: true
+      })
+        .setUser({
+          username: 'Release Bot',
+          email: 'release-bot@example.com'
+        })
+
+      await releaser.run()
+
+      expect(await project.gitClient.getConfig('user.name')).toBe('Release Bot')
+      expect(await project.gitClient.getConfig('user.email')).toBe('release-bot@example.com')
+    })
+
     it('should create maintenance branches', async () => {
       const { cwd } = await forkProject('maintenance-branch', packageJsonProject({
         version: '3.0.0'
