@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/TrigenSoftware/simple-release/compare/v3.0.0...v3.0.1) (2026-06-29)
+
+### Bug Fixes
+
+* **github-action:** stop returning token inputs from action options ([5a419d6](https://github.com/TrigenSoftware/simple-release/commit/5a419d6e119b1aae0773fc293f290f7e60106682))
+
 ## [3.0.0](https://github.com/TrigenSoftware/simple-release/compare/v2.4.0...v3.0.0) (2026-06-29)
 
 ### ⚠ BREAKING CHANGES
