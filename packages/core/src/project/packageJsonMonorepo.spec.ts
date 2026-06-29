@@ -137,6 +137,40 @@ describe('core', () => {
           ])
         })
 
+        it('should get maintenance branch refs', async () => {
+          const { cwd } = await packageJsonIndependentMonorepoProject({
+            1: {
+              version: '3.0.0'
+            },
+            2: {
+              version: '3.0.0'
+            },
+            3: {
+              version: '3.0.0'
+            }
+          })
+          const project = new PackageJsonMonorepoProject({
+            mode: 'independent',
+            root: cwd,
+            getProjects
+          })
+
+          expect(await project.getMaintenanceBranches()).toEqual([
+            {
+              from: 'subproject-1@2.0.0',
+              to: 'subproject-1@2'
+            },
+            {
+              from: 'subproject-2@2.0.0',
+              to: 'subproject-2@2'
+            },
+            {
+              from: 'subproject-3@2.0.0',
+              to: 'subproject-3@2'
+            }
+          ])
+        })
+
         it('should bump version', async () => {
           const { cwd } = await forkProject('bump', packageJsonIndependentMonorepoProject())
           const project = new PackageJsonMonorepoProject({
@@ -270,6 +304,26 @@ describe('core', () => {
           const release = await project.getReleaseData()
 
           expect(release).toEqual([])
+        })
+
+        it('should get maintenance branch refs', async () => {
+          const { cwd } = await packageJsonFixedMonorepoProject({
+            0: {
+              version: '3.0.0'
+            }
+          })
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+
+          expect(await project.getMaintenanceBranches()).toEqual([
+            {
+              from: 'v2.0.0',
+              to: 'v2'
+            }
+          ])
         })
 
         it('should bump version', async () => {

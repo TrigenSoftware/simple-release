@@ -45,6 +45,9 @@ export function getInputOptions() {
       skip: getOptionalBooleanInput('bump-skip'),
       byProject: getOptionalJsonInput('bump-by-project')
     }),
+    maintenanceBranch: omitEmpty({
+      enabled: getOptionalBooleanInput('maintenance-branch')
+    }),
     publish: omitEmpty({
       skip: getOptionalBooleanInput('publish-skip'),
       access: getInput('publish-access'),

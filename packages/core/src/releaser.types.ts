@@ -61,6 +61,13 @@ export interface ReleaserTagOptions extends Omit<GitTagParams, 'name' | 'message
   fetch?: boolean
 }
 
+export interface ReleaserMaintenanceBranchOptions extends Pick<GitPushParams, 'force'> {
+  /**
+   * Enable maintenance branch creation.
+   */
+  enabled?: boolean
+}
+
 export type ReleaserPushOptions = Omit<GitPushParams, 'verify' | 'tags' | 'followTags'>
 
 export interface ReleaserStepsOptions<
@@ -72,6 +79,7 @@ export interface ReleaserStepsOptions<
   } & ReleaserCheckoutOptions
   bump?: PickOverridableOptions<P['bump']>
   commit?: ReleaserCommitOptions
+  maintenanceBranch?: ReleaserMaintenanceBranchOptions
   tag?: ReleaserTagOptions
   push?: ReleaserPushOptions
   publish?: PickOverridableOptions<P['publish']>

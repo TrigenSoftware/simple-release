@@ -9,6 +9,8 @@ import type {
 } from './monorepo.types.js'
 import {
   type ProjectOptions,
+  type ProjectMaintenanceBranch,
+  type ProjectReleaseOptions,
   type ProjectRevertOptions,
   Project,
   bumpDefaultOptions
@@ -194,6 +196,33 @@ export abstract class MonorepoProject extends Project {
     }
 
     return this.getIndependentReleaseData()
+  }
+
+  private async getIndependentMaintenanceBranches() {
+    const branches: ProjectMaintenanceBranch[] = []
+
+    for await (const project of this.getProjects()) {
+      const { manifest } = project
+      const name = await manifest.getName()
+      const scope = await this.getScope(name)
+      const tagPrefix = await this.getTagPrefix(scope)
+
+      branches.push(...await project.getMaintenanceBranches({
+        tagPrefix
+      }))
+    }
+
+    return branches
+  }
+
+  override async getMaintenanceBranches(options: ProjectReleaseOptions = {}) {
+    const { mode } = this
+
+    if (mode === 'fixed') {
+      return super.getMaintenanceBranches(options)
+    }
+
+    return this.getIndependentMaintenanceBranches()
   }
 
   private async getBumpOptions(

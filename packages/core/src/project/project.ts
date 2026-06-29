@@ -24,6 +24,7 @@ import type {
   ProjectVersionUpdate,
   ProjectTagsOptions,
   ProjectReleaseOptions,
+  ProjectMaintenanceBranch,
   ProjectPublishOptions,
   ProjectRevertOptions
 } from './project.types.js'
@@ -172,6 +173,51 @@ export abstract class Project {
         isPrerelease
       }
     ]
+  }
+
+  /**
+   * Get maintenance branch refs to create after a major version release.
+   * @param options - The options to use for detecting tags and formatting branches.
+   * @returns Maintenance branch refs.
+   */
+  async getMaintenanceBranches(options: ProjectReleaseOptions = {}): Promise<ProjectMaintenanceBranch[]> {
+    const {
+      gitClient,
+      manifest
+    } = this
+    const { tagPrefix = 'v' } = options
+    const { projectPath } = manifest
+    const version = await manifest.getVersion()
+    const currentVersion = semver.valid(version)
+
+    if (!currentVersion) {
+      return []
+    }
+
+    const [release] = await this.getReleaseData(options)
+    const previousTag = release?.previousTag || await gitClient.getLastSemverTag({
+      path: projectPath,
+      prefix: tagPrefix
+    })
+
+    if (previousTag) {
+      const previousVersion = semver.valid(
+        previousTag.startsWith(tagPrefix)
+          ? previousTag.slice(tagPrefix.length)
+          : previousTag
+      )
+
+      if (previousVersion && semver.major(currentVersion) > semver.major(previousVersion)) {
+        return [
+          {
+            from: previousTag,
+            to: `${tagPrefix}${semver.major(previousVersion)}`
+          }
+        ]
+      }
+    }
+
+    return []
   }
 
   /**

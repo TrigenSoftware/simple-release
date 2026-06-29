@@ -109,6 +109,17 @@ export interface ProjectReleaseOptions {
   tagPrefix?: string
 }
 
+export interface ProjectMaintenanceBranch {
+  /**
+   * Source tag to create the branch from.
+   */
+  from: string
+  /**
+   * Target branch name to create.
+   */
+  to: string
+}
+
 export interface ProjectPublishOptions {
   dryRun?: boolean
   logger?: ChildLogger
