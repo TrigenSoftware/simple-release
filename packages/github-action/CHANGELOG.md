@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.3](https://github.com/TrigenSoftware/simple-release/compare/v3.0.2...v3.0.3) (2026-06-29)
+
+### Bug Fixes
+
+* set git user before release flows ([#155](https://github.com/TrigenSoftware/simple-release/issues/155)) ([1690c9c](https://github.com/TrigenSoftware/simple-release/commit/1690c9c501ff10eb692750803d2aa9897d68b3c4))
+
 ## [3.0.1](https://github.com/TrigenSoftware/simple-release/compare/v3.0.0...v3.0.1) (2026-06-29)
 
 ### Bug Fixes

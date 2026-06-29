@@ -1,7 +1,7 @@
 {
   "name": "@simple-release/github-action",
   "type": "module",
-  "version": "3.0.1",
+  "version": "3.0.3",
   "description": "A simple-release api for github action.",
   "author": {
     "name": "Dan Onoshko",
