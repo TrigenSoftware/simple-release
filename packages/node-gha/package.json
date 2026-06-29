@@ -1,0 +1,65 @@
+{
+  "name": "@simple-release/node-gha",
+  "type": "module",
+  "version": "2.3.0",
+  "description": "A Node.js GitHub Actions addon for simple-release.",
+  "author": {
+    "name": "Dan Onoshko",
+    "email": "danon0404@gmail.com",
+    "url": "https://github.com/dangreen"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/TrigenSoftware/simple-release/tree/main/packages/node-gha#readme",
+  "funding": "https://ko-fi.com/dangreen",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TrigenSoftware/simple-release.git",
+    "directory": "packages/node-gha"
+  },
+  "bugs": {
+    "url": "https://github.com/TrigenSoftware/simple-release/issues"
+  },
+  "keywords": [
+    "simple-release",
+    "github-actions",
+    "release",
+    "publish",
+    "changelog"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": "./src/index.ts",
+  "publishConfig": {
+    "exports": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "directory": "package",
+    "linkDirectory": false
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clear:package": "del ./package",
+    "clear:dist": "del ./dist",
+    "clear": "del ./package ./dist ./coverage",
+    "prepublishOnly": "run build clear:package clean-publish",
+    "postpublish": "pnpm clear:package",
+    "build": "tsgo -p tsconfig.build.json",
+    "lint": "oxlint",
+    "test:unit": "vitest run --coverage",
+    "test:types": "tsgo --noEmit",
+    "test": "run -p lint test:unit test:types"
+  },
+  "dependencies": {
+    "@simple-libs/child-process-utils": "^2.0.0",
+    "@simple-release/core": "workspace:^",
+    "semver": "^7.5.2"
+  },
+  "devDependencies": {
+    "@types/semver": "^7.5.8",
+    "test": "workspace:^"
+  }
+}
