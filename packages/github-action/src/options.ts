@@ -28,11 +28,6 @@ function getOptionalJsonInput(name: string) {
 
 export function getInputOptions() {
   return {
-    GITHUB_TOKEN: getInput('github-token', {
-      required: true
-    }),
-    NODE_AUTH_TOKEN: getInput('npm-token'),
-    PUBLISH_TOKEN: getInput('publish-token'),
     checkout: omitEmpty({
       branch: getInput('branch')
     }),

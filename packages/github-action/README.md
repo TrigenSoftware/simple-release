@@ -188,13 +188,10 @@ action
 
 ### Input options
 
-`getInputOptions` reads GitHub Action inputs and maps them to environment variables and releaser step options.
+`getInputOptions` reads GitHub Action inputs and maps them to releaser step options.
 
 | Input | Target option |
 | --- | --- |
-| `github-token` | `GITHUB_TOKEN` |
-| `npm-token` | `NODE_AUTH_TOKEN` |
-| `publish-token` | `PUBLISH_TOKEN` |
 | `branch` | `checkout.branch` |
 | `bump-version` | `bump.version` |
 | `bump-as` | `bump.as` |
