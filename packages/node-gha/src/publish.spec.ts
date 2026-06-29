@@ -1,4 +1,5 @@
 import { join } from 'path'
+import fs from 'fs/promises'
 import {
   describe,
   expect,
@@ -47,6 +48,30 @@ describe('node-gha', () => {
       expect(refHash(latestRef)).toBe(refHash(tagRef))
       expect(await project.gitClient.exec('show', 'v2.5.0:dist/index.js')).toBe('built')
       expect(await project.gitClient.getCurrentBranch()).toBe('master')
+    })
+
+    it('should stage GitHub Action files without build commands', async () => {
+      const { cwd } = await forkProject('node-gha-publish-existing-files', packageJsonProject({
+        version: '2.5.0',
+        files: [
+          'dist'
+        ]
+      }))
+      const remote = await createDirectory('node-gha-publish-existing-files-remote')
+      const project = new NodeGhaProject({
+        path: join(cwd, 'package.json')
+      })
+
+      await fs.mkdir(join(cwd, 'dist'), {
+        recursive: true
+      })
+      await fs.writeFile(join(cwd, 'dist/index.js'), 'existing\n')
+      await project.gitClient.exec('-C', remote, 'init', '--bare')
+      await project.gitClient.exec('remote', 'set-url', 'origin', remote)
+
+      await project.publish()
+
+      expect(await project.gitClient.exec('show', 'v2.5.0:dist/index.js')).toBe('existing')
     })
 
     it('should use custom ref names and explicit files', async () => {
