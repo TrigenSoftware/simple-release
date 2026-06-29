@@ -74,6 +74,46 @@ describe('node-gha', () => {
       expect(await project.gitClient.exec('show', 'v2.5.0:dist/index.js')).toBe('existing')
     })
 
+    it('should preserve commit parents when publishing from a shallow clone', async () => {
+      const { cwd } = await forkProject('node-gha-publish-shallow-source', packageJsonProject({
+        version: '2.5.0',
+        files: [
+          'dist'
+        ]
+      }))
+      const remote = await createDirectory('node-gha-publish-shallow-remote')
+      const cloneRoot = await createDirectory('node-gha-publish-shallow-clone')
+      const clonePath = join(cloneRoot, 'repo')
+      const sourceProject = new NodeGhaProject({
+        path: join(cwd, 'package.json')
+      })
+
+      await sourceProject.gitClient.exec('-C', remote, 'init', '--bare')
+      await sourceProject.gitClient.exec('remote', 'set-url', 'origin', remote)
+      await sourceProject.gitClient.push('master', {
+        verify: false
+      })
+      await sourceProject.gitClient.exec('clone', '--depth', '1', `file://${remote}`, clonePath)
+
+      const project = new NodeGhaProject({
+        path: join(clonePath, 'package.json')
+      })
+
+      await project.gitClient.setConfig('user.name', 'Tester Testerson')
+      await project.gitClient.setConfig('user.email', 'nobody@unknown.test')
+      await fs.mkdir(join(clonePath, 'dist'), {
+        recursive: true
+      })
+      await fs.writeFile(join(clonePath, 'dist/index.js'), 'shallow\n')
+
+      await project.publish()
+
+      const latestCommit = await project.gitClient.exec('rev-list', '--parents', '-n', '1', 'latest')
+
+      expect(latestCommit.split(/\s+/).length).toBeGreaterThan(1)
+      expect(await project.gitClient.exec('show', 'v2.5.0:dist/index.js')).toBe('shallow')
+    })
+
     it('should use custom ref names and explicit files', async () => {
       const { cwd } = await forkProject('node-gha-publish-custom-refs', packageJsonProject({
         version: '3.0.0'
