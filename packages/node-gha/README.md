@@ -46,11 +46,18 @@ npm i @simple-release/node-gha
 
 ```js
 import { Releaser } from '@simple-release/core'
+import { GithubHosting } from '@simple-release/github'
 import { NodeGhaProject } from '@simple-release/node-gha'
 
 await new Releaser({
-  project: new NodeGhaProject()
+  project: new NodeGhaProject(),
+  hosting: new GithubHosting({
+    token: process.env.GITHUB_TOKEN
+  })
 })
+  .bump()
+  .commit()
+  .push()
   .publish({
     build: 'pnpm install --prod',
     files: [
@@ -58,6 +65,7 @@ await new Releaser({
       'dist'
     ]
   })
+  .release()
   .run()
 ```
 
@@ -68,6 +76,10 @@ await new Releaser({
 - `v{version}` tag from the built `latest` state.
 
 If `build` is provided, the command runs on the `latest` branch. After the command completes, files from the publish option `files` are force-added and the release commit is amended before refs are pushed. If `files` is not provided, package.json `files` is used.
+
+`publish` creates the final action refs itself. If you also create a GitHub release, call `release` after `publish` so the release uses the built `v{version}` tag state.
+
+This package targets Node.js actions that use `package.json` as the release manifest. Composite and Docker actions can use custom project addons if they do not have a package.json manifest.
 
 ## Options
 

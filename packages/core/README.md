@@ -123,16 +123,116 @@ await new Releaser({
 | checkout | Checkout the desired branch. |
 | bump | Bump the version of the project and generate changelog. |
 | commit | Commit the changes with the new version. |
+| maintenanceBranch | Create maintenance branches for previous major versions. Disabled by default. |
 | tag | Tag the commit with the new version. |
 | push | Push the changes to the remote repository. |
 | release | Create a release in the remote repository. |
 | publish | Publish the project to the package registry. |
+| revert | Revert version updates made during the current run. |
 | pullRequest | Create a pull request with the changes. |
+
+### Step options
+
+Most steps accept an optional options object. These options can be passed directly to the step or set through `setOptions`.
+
+#### bump
+
+`bump` accepts options to force or shape the next version:
+
+| Option | Description |
+| --- | --- |
+| `version` | Force a specific version. |
+| `as` | Force a release type such as `major`, `minor`, `patch`, or `prerelease`. |
+| `prerelease` | Pre-release identifier for prerelease bumps. |
+| `snapshot` | Pre-release identifier with timestamp suffix for snapshot builds. |
+| `skipChangelog` | Skip changelog generation while still updating versions. |
+| `firstRelease` | Treat the current version as the first release. Auto-detected by default. |
+| `skip` | Skip version bumping. |
+| `forcePrivate` | Allow bumping private packages. |
+| `preset` | Conventional changelog preset configuration. |
+| `tagPrefix` | Prefix used for release tags. Defaults to `v`. |
+
+Snapshot bumps are useful when a project needs a temporary prerelease without writing changelog entries:
+
+```js
+await new Releaser({
+  project: new PnpmProject()
+})
+  .bump({
+    snapshot: 'canary',
+    skipChangelog: true
+  })
+  .publish({
+    tag: 'canary',
+    gitChecks: false
+  })
+  .revert()
+  .run()
+```
+
+#### maintenanceBranch
+
+`maintenanceBranch` creates branches for the previous major version when the current release crosses a major boundary. For example, when `2.5.0` becomes `3.0.0`, it creates `v2` from the previous release tag.
+
+| Option | Description |
+| --- | --- |
+| `enabled` | Enable maintenance branch creation. Defaults to `false`. |
+| `force` | Recreate an existing maintenance branch. |
+
+```js
+await new Releaser({
+  project: new PnpmProject()
+})
+  .bump()
+  .commit()
+  .maintenanceBranch({
+    enabled: true
+  })
+  .tag()
+  .push()
+  .release()
+  .publish()
+  .run()
+```
+
+For independent monorepos, maintenance branches use each package tag prefix. Use `force: true` to recreate an existing maintenance branch.
+
+#### tag
+
+| Option | Description |
+| --- | --- |
+| `fetch` | Fetch fresh tags from the remote repository before tagging. |
+| `sign` | Sign the created tag. |
+
+#### push
+
+| Option | Description |
+| --- | --- |
+| `force` | Force-push changes. |
+
+#### publish
+
+`publish` options are defined by the selected project addon. Common options include:
+
+| Option | Description |
+| --- | --- |
+| `skip` | Skip publishing. |
+| `tag` | Publish tag or formatter function. |
+| `gitChecks` | Whether to perform git checks before publishing when the addon supports it. |
+
+#### release and pullRequest
+
+`release` and `pullRequest` options are defined by the selected hosting addon.
+
+#### revert
+
+`revert` restores version updates made during the current run and clears pending changed files for those updates.
 
 ## Addons
 
 - [npm](https://github.com/TrigenSoftware/simple-release/tree/main/packages/npm) - for projects using `npm` as a package manager.
 - [pnpm](https://github.com/TrigenSoftware/simple-release/tree/main/packages/pnpm) - for projects using `pnpm` as a package manager.
+- [node-gha](https://github.com/TrigenSoftware/simple-release/tree/main/packages/node-gha) - for Node.js GitHub Action projects published through git refs.
 - [github](https://github.com/TrigenSoftware/simple-release/tree/main/packages/github) - for projects hosted on GitHub.
 
 ## Custom addons

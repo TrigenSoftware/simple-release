@@ -47,7 +47,11 @@ npm i @simple-release/github-action
 ```js
 import { getOctokit } from '@actions/github'
 import { load } from '@simple-release/config'
-import { ReleaserGithubAction, ifReleaseCommit } from '@simple-release/github-action'
+import {
+  ReleaserGithubAction,
+  getInputOptions,
+  ifReleaseCommit
+} from '@simple-release/github-action'
 
 const {
   project,
@@ -79,8 +83,8 @@ action
   .setOptions(options)
   .tag()
   .push()
-  .release()
   .publish()
+  .release()
   .run(ifReleaseCommit)
 
 // Run all steps to create a pull request with version bump
@@ -93,13 +97,33 @@ action
   .setOptions(options)
   .runReleaseAction()
 
+// Run all steps to publish a snapshot version
+action
+  .setOptions(options)
+  .runSnapshotAction('canary')
+
 // Detect action by commit type and run appropriate steps
 action
   .setOptions(options)
   .runAction()
+
+// Read supported GitHub Action inputs
+const inputOptions = getInputOptions()
 ```
 
-### fethchOptions
+## API
+
+### Action helpers
+
+| Helper | Description |
+| --- | --- |
+| `fetchOptions` | Read extra releaser options from pull request comments. |
+| `runPullRequestAction` | Run the default pull request flow. |
+| `runReleaseAction` | Run the default release flow. |
+| `runSnapshotAction` | Publish a temporary snapshot version. |
+| `runAction` | Detect current GitHub event context and run pull request or release flow. |
+
+#### fetchOptions
 
 You can pass additional options to releaser via comment in your pull request. Your comment should start with `!simple-release/set-options` and contain JSON object with options. For example:
 
@@ -116,3 +140,70 @@ You can pass additional options to releaser via comment in your pull request. Yo
 ````
 
 To fetch and parse comments you should use `fetchOptions` step after `checkout` step.
+
+#### Default flows
+
+`runPullRequestAction` runs:
+
+```js
+action
+  .checkout()
+  .fetchOptions()
+  .bump()
+  .commit()
+  .push()
+  .pullRequest()
+  .run()
+```
+
+`runReleaseAction` runs release steps in an order that lets project-specific `publish` implementations prepare final release artifacts before the GitHub release is created:
+
+```js
+action
+  .maintenanceBranch()
+  .tag()
+  .push()
+  .publish()
+  .release()
+  .run(ifReleaseCommit)
+```
+
+`maintenanceBranch` is disabled by default. It can be enabled through `setOptions`, pull request comments, or action inputs.
+
+`runSnapshotAction(snapshotTag)` publishes a temporary snapshot version. It bumps with a timestamped prerelease identifier, skips changelog generation, publishes with `tag: snapshotTag`, then reverts the version updates.
+
+```js
+action
+  .bump({
+    snapshot: snapshotTag,
+    skipChangelog: true
+  })
+  .publish({
+    tag: snapshotTag,
+    gitChecks: false
+  })
+  .revert()
+  .run()
+```
+
+### Input options
+
+`getInputOptions` reads GitHub Action inputs and maps them to environment variables and releaser step options.
+
+| Input | Target option |
+| --- | --- |
+| `github-token` | `GITHUB_TOKEN` |
+| `npm-token` | `NODE_AUTH_TOKEN` |
+| `publish-token` | `PUBLISH_TOKEN` |
+| `branch` | `checkout.branch` |
+| `bump-version` | `bump.version` |
+| `bump-as` | `bump.as` |
+| `bump-prerelease` | `bump.prerelease` |
+| `bump-snapshot` | `bump.snapshot` |
+| `bump-first-release` | `bump.firstRelease` |
+| `bump-skip` | `bump.skip` |
+| `bump-by-project` | `bump.byProject` |
+| `maintenance-branch` | `maintenanceBranch.enabled` |
+| `publish-skip` | `publish.skip` |
+| `publish-access` | `publish.access` |
+| `publish-tag` | `publish.tag` |
