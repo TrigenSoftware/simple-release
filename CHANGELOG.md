@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/TrigenSoftware/simple-release/compare/v2.4.0...v3.0.0) (2026-06-29)
+
+### ⚠ BREAKING CHANGES
+
+* Node.js 18 and 20 are no longer supported.
+
+### Features
+
+* **core,github-action:** support maintenance branches ([#150](https://github.com/TrigenSoftware/simple-release/issues/150)) ([25a1820](https://github.com/TrigenSoftware/simple-release/commit/25a18208842b174975452149cb8f84fb801fe886))
+* **core,github-action:** support snapshot releases ([#149](https://github.com/TrigenSoftware/simple-release/issues/149)) ([11ed7de](https://github.com/TrigenSoftware/simple-release/commit/11ed7de88831c33b955729dcf2f82e386c7e17e1))
+* **github-action:** read release options from action inputs ([ba7f051](https://github.com/TrigenSoftware/simple-release/commit/ba7f051d5db95e3ef445f80d55a05a5acd2421d9))
+* **node-gha,github-action:** support Node.js GitHub Action releases ([#151](https://github.com/TrigenSoftware/simple-release/issues/151)) ([11a644f](https://github.com/TrigenSoftware/simple-release/commit/11a644f28df545ad60bf04f3f3b152c396a9a660))
+* require Node.js 22 and pnpm 11 ([4cd6fdf](https://github.com/TrigenSoftware/simple-release/commit/4cd6fdfcd8bc47ebeca25c3d8760ed839c66f51d))
+
+### Bug Fixes
+
+* **core:** generate release notes for new fixed monorepo packages ([#147](https://github.com/TrigenSoftware/simple-release/issues/147)) ([c3a15ce](https://github.com/TrigenSoftware/simple-release/commit/c3a15ceb8159283442da598b94ad526934cd9a4a))
+* **core:** show fallback notes for forced version bumps ([#148](https://github.com/TrigenSoftware/simple-release/issues/148)) ([41f36fe](https://github.com/TrigenSoftware/simple-release/commit/41f36fe9bce5a8f9f91485bee81301f8becd972d))
+* **deps:** update conventional changelog packages ([0ac3291](https://github.com/TrigenSoftware/simple-release/commit/0ac32910e3c1b429ae221820f7567d90b40c8f5d))
+* **deps:** update dependency @actions/github to v9 ([#137](https://github.com/TrigenSoftware/simple-release/issues/137)) ([1fb67a4](https://github.com/TrigenSoftware/simple-release/commit/1fb67a4efceaf3dd9294d8ba236ff7a162100f7f))
+* **deps:** update dependency open to v11 ([#141](https://github.com/TrigenSoftware/simple-release/issues/141)) ([2f392a2](https://github.com/TrigenSoftware/simple-release/commit/2f392a26791566032b2242941679a62d10df4f79))
+
 ## [2.4.0](https://github.com/TrigenSoftware/simple-release/compare/v2.3.0...v2.4.0) (2025-07-10)
 
 ### Features
