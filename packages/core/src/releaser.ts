@@ -7,6 +7,7 @@ import type {
   ReleaserOptions,
   ReleaserCommitOptions,
   ReleaserMaintenanceBranchOptions,
+  ReleaserSetUserOptions,
   ReleaserTagOptions,
   ReleaserPushOptions,
   ReleaserStepsOptions
@@ -107,6 +108,51 @@ export class Releaser<
   }
 
   /**
+   * Enqueue a task to set git user configuration.
+   * @param options
+   * @returns Project releaser instance for chaining.
+   */
+  setUser(options?: ReleaserSetUserOptions) {
+    return this.enqueue(async () => {
+      const {
+        logger,
+        gitClient
+      } = this
+      const { dryRun } = this.options
+      const {
+        username,
+        email
+      } = {
+        ...this.stepsOptions.setUser,
+        ...options
+      }
+
+      logger.info('set-user', 'Setting git user...')
+
+      if (!username && !email) {
+        logger.info('set-user', 'No git user configuration provided.')
+        return
+      }
+
+      if (username) {
+        logger.verbose('set-user', `Setting git user.name to "${username}".`)
+
+        if (!dryRun) {
+          await gitClient.setConfig('user.name', username)
+        }
+      }
+
+      if (email) {
+        logger.verbose('set-user', `Setting git user.email to "${email}".`)
+
+        if (!dryRun) {
+          await gitClient.setConfig('user.email', email)
+        }
+      }
+    })
+  }
+
+  /**
    * Enqueue a task to checkout a branch.
    * @param branch - The branch to checkout, defaults to `'simple-release'`.
    * @param options
@@ -121,8 +167,6 @@ export class Releaser<
       const { dryRun } = this.options
       const {
         branch: headBranch = 'simple-release',
-        username,
-        email,
         fetch,
         force
       } = {
@@ -139,22 +183,6 @@ export class Releaser<
 
       this.state.headBranch = headBranch
       this.state.baseBranch = await this.getBaseBranch()
-
-      if (username) {
-        logger.verbose('checkout', `Setting git user.name to "${username}".`)
-
-        if (!dryRun) {
-          await gitClient.setConfig('user.name', username)
-        }
-      }
-
-      if (email) {
-        logger.verbose('checkout', `Setting git user.email to "${email}".`)
-
-        if (!dryRun) {
-          await gitClient.setConfig('user.email', email)
-        }
-      }
 
       if (fetch) {
         logger.verbose('checkout', `Fetching all commits and tags from the remote repository...`)

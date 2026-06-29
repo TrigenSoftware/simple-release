@@ -120,6 +120,7 @@ await new Releaser({
 
 | Step | Description |
 | --- | --- |
+| setUser | Set git user configuration. |
 | checkout | Checkout the desired branch. |
 | bump | Bump the version of the project and generate changelog. |
 | commit | Commit the changes with the new version. |

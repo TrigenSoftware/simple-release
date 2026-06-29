@@ -3,6 +3,7 @@ import {
   type PickOverridableOptions,
   type Project,
   type ReleaserOptions,
+  type ReleaserSetUserOptions,
   Releaser
 } from '@simple-release/core'
 import {
@@ -36,10 +37,16 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
     })
   }
 
-  override checkout(branch?: string) {
-    return super.checkout(branch, {
+  override setUser(options?: ReleaserSetUserOptions) {
+    return super.setUser({
       username: 'github-actions[bot]',
       email: 'github-actions[bot]@users.noreply.github.com',
+      ...options
+    })
+  }
+
+  override checkout(branch?: string) {
+    return super.checkout(branch, {
       fetch: true,
       force: true
     })
@@ -122,6 +129,7 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
    */
   async runPullRequestAction() {
     await this
+      .setUser()
       .checkout()
       .fetchOptions()
       .bump()
@@ -137,6 +145,7 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
    */
   async runReleaseAction(check = true) {
     await this
+      .setUser()
       .maintenanceBranch()
       .tag()
       .push()
