@@ -27,6 +27,7 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 | [`@simple-release/config`](packages/config#readme) | A simple-release config loader. | [![NPM version][config-npm]][config-npm-url] | [![Dependencies status][config-deps]][config-deps-url] |
 | [`@simple-release/npm`](packages/npm#readme) | A npm addon for simple-release. | [![NPM version][npm-npm]][npm-npm-url] | [![Dependencies status][npm-deps]][npm-deps-url] |
 | [`@simple-release/pnpm`](packages/pnpm#readme) | A pnpm addon for simple-release. | [![NPM version][pnpm-npm]][pnpm-npm-url] | [![Dependencies status][pnpm-deps]][pnpm-deps-url] |
+| [`@simple-release/node-gha`](packages/node-gha#readme) | A Node.js GitHub Actions addon for simple-release. | [![NPM version][node-gha-npm]][node-gha-npm-url] | [![Dependencies status][node-gha-deps]][node-gha-deps-url] |
 | [`@simple-release/github`](packages/github#readme) | A github release addon for simple-release. | [![NPM version][github-npm]][github-npm-url] | [![Dependencies status][github-deps]][github-deps-url] |
 | [`@simple-release/github-action`](packages/github-action#readme) | A simple-release api for github action. | [![NPM version][github-action-npm]][github-action-npm-url] | [![Dependencies status][github-action-deps]][github-action-deps-url] |
 | [`simple-github-release`](packages/simple-github-release#readme) | A simple tool to create GitHub releases. | [![NPM version][simple-github-release-npm]][simple-github-release-npm-url] | [![Dependencies status][simple-github-release-deps]][simple-github-release-deps-url] |
@@ -62,6 +63,14 @@ A simple tool to automate version bumps, changelogs, and releases using [Convent
 
 [pnpm-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/pnpm
 [pnpm-deps-url]: https://libraries.io/npm/@simple-release%2Fpnpm
+
+<!-- node-gha -->
+
+[node-gha-npm]: https://img.shields.io/npm/v/@simple-release/node-gha.svg
+[node-gha-npm-url]: https://www.npmjs.com/package/@simple-release/node-gha
+
+[node-gha-deps]: https://img.shields.io/librariesio/release/npm/@simple-release/node-gha
+[node-gha-deps-url]: https://libraries.io/npm/@simple-release%2Fnode-gha
 
 <!-- github -->
 

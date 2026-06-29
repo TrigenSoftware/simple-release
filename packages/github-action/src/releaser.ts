@@ -140,8 +140,8 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
       .maintenanceBranch()
       .tag()
       .push()
-      .release()
       .publish()
+      .release()
       .run(check ? ifReleaseCommit : undefined)
   }
 
