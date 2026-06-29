@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/TrigenSoftware/simple-release/compare/v2.4.0...v3.0.0) (2026-06-29)
+
+### ⚠ BREAKING CHANGES
+
+* Node.js 18 and 20 are no longer supported.
+
+### Features
+
+* require Node.js 22 and pnpm 11 ([4cd6fdf](https://github.com/TrigenSoftware/simple-release/commit/4cd6fdfcd8bc47ebeca25c3d8760ed839c66f51d))
+
 ## [2.4.0](https://github.com/TrigenSoftware/simple-release/compare/v2.3.0...v2.4.0) (2025-07-10)
 
 ### Bug Fixes
