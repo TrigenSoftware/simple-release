@@ -137,6 +137,7 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
    */
   async runReleaseAction(check = true) {
     await this
+      .maintenanceBranch()
       .tag()
       .push()
       .release()

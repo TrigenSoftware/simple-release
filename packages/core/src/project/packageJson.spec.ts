@@ -65,6 +65,33 @@ describe('core', () => {
         expect(release).toEqual([])
       })
 
+      it('should get maintenance branch refs', async () => {
+        const { cwd } = await packageJsonProject({
+          version: '3.0.0'
+        })
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+
+        expect(await project.getMaintenanceBranches()).toEqual([
+          {
+            from: 'v2.0.0',
+            to: 'v2'
+          }
+        ])
+      })
+
+      it('should not get maintenance branch refs for non-major releases', async () => {
+        const { cwd } = await packageJsonProject({
+          version: '2.1.0'
+        })
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+
+        expect(await project.getMaintenanceBranches()).toEqual([])
+      })
+
       it('should get next version', async () => {
         const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({

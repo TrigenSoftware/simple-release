@@ -6,6 +6,7 @@ import type {
   ReleaserCheckoutOptions,
   ReleaserOptions,
   ReleaserCommitOptions,
+  ReleaserMaintenanceBranchOptions,
   ReleaserTagOptions,
   ReleaserPushOptions,
   ReleaserStepsOptions
@@ -295,6 +296,78 @@ export class Releaser<
       }
 
       this.state.bump = false
+    })
+  }
+
+  /**
+   * Enqueue a task to create maintenance branches.
+   * @param options
+   * @returns Project releaser instance for chaining.
+   */
+  maintenanceBranch(options?: ReleaserMaintenanceBranchOptions) {
+    return this.enqueue(async () => {
+      const {
+        project,
+        logger,
+        gitClient
+      } = this
+      const { dryRun } = this.options
+      const {
+        enabled,
+        force
+      } = {
+        ...this.stepsOptions.maintenanceBranch,
+        ...options
+      }
+
+      logger.info('maintenance-branch', 'Creating maintenance branches...')
+
+      if (!enabled) {
+        logger.info('maintenance-branch', 'Maintenance branch creation is disabled.')
+        return
+      }
+
+      logger.verbose('maintenance-branch', 'Fetching fresh tags from the remote repository...')
+
+      if (!dryRun) {
+        await gitClient.fetch({
+          tags: true
+        })
+      }
+
+      const branches = await project.getMaintenanceBranches()
+
+      if (!branches.length) {
+        logger.info('maintenance-branch', 'No maintenance branches to create.')
+        return
+      }
+
+      logger.verbose('maintenance-branch', 'Branches to create:')
+
+      for (const {
+        from,
+        to
+      } of branches) {
+        logger.verbose('maintenance-branch', `- ${to} from ${from}`)
+
+        if (dryRun) {
+          continue
+        }
+
+        const branchExists = await gitClient.verify(`refs/heads/${to}`, true)
+          || await gitClient.exec('ls-remote', '--heads', 'origin', to)
+
+        if (branchExists && !force) {
+          logger.info('maintenance-branch', `Branch ${to} already exists, skipping.`)
+          continue
+        }
+
+        await gitClient.exec('branch', force && '-f', '--', to, from)
+        await gitClient.push(to, {
+          verify: false,
+          force
+        })
+      }
     })
   }
 
