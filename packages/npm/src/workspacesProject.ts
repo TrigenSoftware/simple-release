@@ -1,4 +1,5 @@
-import { join } from 'path'
+/* oxlint-disable typescript/no-use-before-define */
+import fg from 'fast-glob'
 import {
   type PackageJsonMonorepoProjectOptions,
   type ProjectBumpOptions,
@@ -17,12 +18,34 @@ export type NpmWorkspacesProjectBumpOptions = ProjectBumpOptions
 
 export type NpmWorkspacesProjectPublishOptions = Omit<PublishOptions, 'workspaces'>
 
-async function* getProjects(options: GetProjectsOptions) {
-  const workspaces = (await options.manifest.readManifest()).workspaces as string[] | undefined
+interface NpmWorkspacesConfig {
+  packages?: string[]
+}
 
-  if (workspaces) {
-    for (const workspacesPath of workspaces) {
-      yield join(workspacesPath, PackageJsonManifest.Filename)
+async function getPackagesGlobPatterns(manifest: Promise<Record<string, unknown>>) {
+  const workspaces = (await manifest).workspaces as string[] | NpmWorkspacesConfig | undefined
+
+  return Array.isArray(workspaces)
+    ? workspaces
+    : workspaces?.packages
+}
+
+async function* getProjects(options: GetProjectsOptions) {
+  const { projectPath } = options.manifest
+  const packagesGlobPatterns = await getPackagesGlobPatterns(
+    options.manifest.readManifest()
+  )
+
+  if (packagesGlobPatterns) {
+    for (const globPattern of packagesGlobPatterns) {
+      const packages = fg.stream(globPattern.replace(/\/?$/, `/${PackageJsonManifest.Filename}`), {
+        cwd: projectPath,
+        ignore: NpmWorkspacesProject.GlobIgnore
+      })
+
+      for await (const packagePath of packages) {
+        yield packagePath.toString()
+      }
     }
   }
 }
@@ -31,6 +54,8 @@ async function* getProjects(options: GetProjectsOptions) {
  * A npm workspaces based monorepo project that uses package.json for configuration.
  */
 export class NpmWorkspacesProject extends PackageJsonMonorepoProject {
+  static GlobIgnore = ['**/node_modules/**']
+
   /**
    * Creates a npm workspaces based monorepo project.
    * @param options

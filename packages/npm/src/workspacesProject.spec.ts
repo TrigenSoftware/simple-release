@@ -51,5 +51,30 @@ describe('npm', () => {
         })
       ])
     })
+
+    it('should parse workspace globs from package.json', async () => {
+      const { cwd } = await forkProject('npm-workspace-globs', packageJsonIndependentMonorepoProject())
+      const pkgJsonContent = await fs.readFile(join(cwd, 'package.json'), 'utf-8')
+      const pkgJson = JSON.parse(pkgJsonContent)
+
+      pkgJson.workspaces = [
+        'packages/*'
+      ]
+
+      await fs.writeFile(join(cwd, 'package.json'), JSON.stringify(pkgJson))
+
+      const project = new NpmWorkspacesProject({
+        mode: 'independent',
+        root: cwd
+      })
+      const workspaces = await toArray(project.getProjects())
+      const manifestPaths = workspaces.map(workspace => workspace.manifest.manifestPath)
+
+      expect(manifestPaths).toEqual(expect.arrayContaining([
+        expect.stringContaining('packages/subproject-1/package.json'),
+        expect.stringContaining('packages/subproject-2/package.json'),
+        expect.stringContaining('packages/subproject-3/package.json')
+      ]))
+    })
   })
 })

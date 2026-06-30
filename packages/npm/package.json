@@ -55,7 +55,8 @@
   },
   "dependencies": {
     "@simple-libs/child-process-utils": "^2.0.0",
-    "@simple-release/core": "workspace:^"
+    "@simple-release/core": "workspace:^",
+    "fast-glob": "^3.3.3"
   },
   "devDependencies": {
     "test": "workspace:^"
