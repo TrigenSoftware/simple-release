@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.5](https://github.com/TrigenSoftware/simple-release/compare/v3.0.4...v3.0.5) (2026-06-30)
+
+### Bug Fixes
+
+* support workspace globs ([#159](https://github.com/TrigenSoftware/simple-release/issues/159)) ([3ab2381](https://github.com/TrigenSoftware/simple-release/commit/3ab2381a396f15df0fde1f76e74b68566c8d155b)), closes [TrigenSoftware/simple-release-action#18](https://github.com/TrigenSoftware/simple-release-action/issues/18)
+
 ## [3.0.0](https://github.com/TrigenSoftware/simple-release/compare/v2.4.0...v3.0.0) (2026-06-29)
 
 ### ⚠ BREAKING CHANGES
