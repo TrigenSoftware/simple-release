@@ -181,8 +181,7 @@ action
     skipChangelog: true
   })
   .publish({
-    tag: snapshotTag,
-    gitChecks: false
+    tag: snapshotTag
   })
   .revert()
   .run()

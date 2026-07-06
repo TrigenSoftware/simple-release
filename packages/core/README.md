@@ -164,8 +164,7 @@ await new Releaser({
     skipChangelog: true
   })
   .publish({
-    tag: 'canary',
-    gitChecks: false
+    tag: 'canary'
   })
   .revert()
   .run()

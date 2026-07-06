@@ -173,7 +173,7 @@ One-time password for publishing. Optional.
 
 #### `gitChecks`
 
-Whether to run git checks before publishing. Defaults to `true`.
+Whether to run git checks before publishing. Disabled by default: the release flow publishes from the released commit, and pnpm branch checks fail releases from non-default branches, like maintenance ones.
 
 #### `env`
 
