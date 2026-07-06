@@ -307,8 +307,8 @@ export abstract class MonorepoProject extends Project {
     }[] = []
     const baseVersion = await this.manifest.getVersion()
     const tagPrefix = await this.getTagPrefix('')
-    const firstRelease = !await this.gitClient.getLastSemverTag({
-      prefix: tagPrefix
+    const firstRelease = !await this.getLastReleaseTag({
+      tagPrefix
     })
     let hasBump = false
     let fixedVersion: string | undefined

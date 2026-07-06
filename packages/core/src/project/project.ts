@@ -176,17 +176,31 @@ export abstract class Project {
   }
 
   /**
+   * Get the last release tag for the project.
+   * @param options - The options to use for getting the tag.
+   * @returns The last release tag, `null` if not found.
+   */
+  async getLastReleaseTag(options: ProjectReleaseOptions = {}): Promise<string | null> {
+    const { tagPrefix } = options
+    const {
+      gitClient,
+      manifest
+    } = this
+
+    return await gitClient.getLastSemverTag({
+      path: manifest.projectPath,
+      prefix: tagPrefix
+    })
+  }
+
+  /**
    * Get maintenance branch refs to create after a major version release.
    * @param options - The options to use for detecting tags and formatting branches.
    * @returns Maintenance branch refs.
    */
   async getMaintenanceBranches(options: ProjectReleaseOptions = {}): Promise<ProjectMaintenanceBranch[]> {
-    const {
-      gitClient,
-      manifest
-    } = this
+    const { manifest } = this
     const { tagPrefix = 'v' } = options
-    const { projectPath } = manifest
     const version = await manifest.getVersion()
     const currentVersion = semver.valid(version)
 
@@ -195,9 +209,8 @@ export abstract class Project {
     }
 
     const [release] = await this.getReleaseData(options)
-    const previousTag = release?.previousTag || await gitClient.getLastSemverTag({
-      path: projectPath,
-      prefix: tagPrefix
+    const previousTag = release?.previousTag || await this.getLastReleaseTag({
+      tagPrefix
     })
 
     if (previousTag) {
@@ -252,11 +265,12 @@ export abstract class Project {
       return forcedVersion
     }
 
+    const lastReleaseTag = await this.getLastReleaseTag({
+      tagPrefix
+    })
+
     if (typeof firstRelease === 'undefined') {
-      firstRelease = !await gitClient.getLastSemverTag({
-        path: projectPath,
-        prefix: tagPrefix
-      })
+      firstRelease = !lastReleaseTag
     }
 
     const version = baseVersion || await manifest.getVersion()
@@ -275,7 +289,7 @@ export abstract class Project {
         .commits({
           path: projectPath
         })
-        .tag({
+        .tag(lastReleaseTag || {
           prefix: tagPrefix
         })
         .bump()
@@ -347,17 +361,22 @@ export abstract class Project {
     }
 
     if (!skipChangelog) {
+      const lastReleaseTag = await this.getLastReleaseTag({
+        tagPrefix
+      }) || undefined
       const notes = new ConventionalChangelog(gitClient)
         .loadPreset(preset, _ => import(_))
         .commits({
-          path: projectPath
+          path: projectPath,
+          from: lastReleaseTag
         })
         .tags({
           prefix: tagPrefix
         })
         .readRepository()
         .context({
-          version: nextVersion
+          version: nextVersion,
+          previousTag: lastReleaseTag
         })
         .writer({
           preamblePartial
