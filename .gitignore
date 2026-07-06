@@ -37,5 +37,6 @@ tmp
 # Staff
 .vite*
 .codex
+.claude
 .agents
 skills-lock.json

@@ -8,9 +8,20 @@ export async function ifReleaseCommit(releaser: ReleaserGithubAction) {
     project
   } = releaser
   const message = await gitClient.exec('log', '-1', '--pretty=%B')
+
+  if (!message.startsWith('chore(release):')) {
+    return false
+  }
+
+  if (!releaser.options.dryRun) {
+    await gitClient.fetch({
+      tags: true
+    })
+  }
+
   const tags = await project.getTags()
 
-  return tags.length > 0 && message.startsWith('chore(release):')
+  return tags.length > 0
 }
 
 export function ifSetOptionsComment() {
