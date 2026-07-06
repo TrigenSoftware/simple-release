@@ -1,7 +1,8 @@
 import { spawn } from 'child_process'
-import type {
-  PackageJsonProject,
-  ProjectPublishOptions
+import {
+  type PackageJsonProject,
+  type ProjectPublishOptions,
+  DEFAULT_TAG_PREFIX
 } from '@simple-release/core'
 import { throwProcessError } from '@simple-libs/child-process-utils'
 import semverMajor from 'semver/functions/major.js'
@@ -71,8 +72,8 @@ export async function publish(project: PackageJsonProject, options: PublishOptio
   } = project
   const {
     latestBranch = 'latest',
-    majorBranchPrefix = 'v',
-    tagPrefix = 'v',
+    majorBranchPrefix = DEFAULT_TAG_PREFIX,
+    tagPrefix = DEFAULT_TAG_PREFIX,
     dryRun,
     logger
   } = options

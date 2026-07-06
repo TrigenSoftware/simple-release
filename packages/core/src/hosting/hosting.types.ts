@@ -8,6 +8,7 @@ export interface ReleaseData {
   previousTag: string
   nextTag: string
   isPrerelease: boolean
+  isLatest: boolean
 }
 
 export interface CreateReleaseOptions {

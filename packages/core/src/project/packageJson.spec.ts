@@ -7,7 +7,8 @@ import {
 } from 'vitest'
 import {
   packageJsonProject,
-  forkProject
+  forkProject,
+  dummyCommit
 } from 'test'
 import { PackageJsonProject } from './packageJson.js'
 
@@ -48,7 +49,8 @@ describe('core', () => {
             previousTag: 'v1.0.0',
             nextTag: 'v2.0.0',
             notes: 'RELEASE NOTES',
-            isPrerelease: false
+            isPrerelease: false,
+            isLatest: true
           }
         ])
       })
@@ -90,6 +92,24 @@ describe('core', () => {
         })
 
         expect(await project.getMaintenanceBranches()).toEqual([])
+      })
+
+      it('should get maintenance branch refs with custom branch prefix', async () => {
+        const { cwd } = await packageJsonProject({
+          version: '3.0.0'
+        })
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+
+        expect(await project.getMaintenanceBranches({
+          branchPrefix: 'maintenance-v'
+        })).toEqual([
+          {
+            from: 'v2.0.0',
+            to: 'maintenance-v2'
+          }
+        ])
       })
 
       it('should get next version', async () => {
@@ -225,6 +245,45 @@ describe('core', () => {
         })
 
         expect(version).toMatch(/^2\.0\.1-canary\.\d{14}$/)
+      })
+
+      it('should detect latest release', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+
+        expect(await project.isLatestRelease()).toBe(true)
+      })
+
+      it('should not detect maintenance release as latest', async () => {
+        const { cwd, run } = await forkProject('maintenance-latest', packageJsonProject())
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+
+        await run([
+          ({ git }) => git.exec('checkout', '-b', 'next-major'),
+          ctx => dummyCommit(ctx, 'feat'),
+          ({ git }) => git.exec('tag', 'v3.0.0'),
+          ({ git }) => git.exec('checkout', 'master'),
+          ({ git }) => git.exec('branch', '-D', 'next-major')
+        ])
+
+        expect(await project.isLatestRelease()).toBe(false)
+      })
+
+      it('should ignore prerelease tags while detecting latest release', async () => {
+        const { cwd, run } = await forkProject('prerelease-latest', packageJsonProject())
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+
+        await run([
+          ({ git }) => git.exec('tag', 'v3.0.0-alpha.0')
+        ])
+
+        expect(await project.isLatestRelease()).toBe(true)
       })
 
       it('should dry bump version', async () => {

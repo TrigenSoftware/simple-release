@@ -83,7 +83,8 @@ describe('core', () => {
               previousTag: 'v1.0.0',
               nextTag: 'v2.0.0',
               title: 'subproject-1: v2.0.0',
-              isPrerelease: false
+              isPrerelease: false,
+              isLatest: true
             },
             {
               version: '2.0.0',
@@ -91,7 +92,8 @@ describe('core', () => {
               previousTag: 'v1.0.0',
               nextTag: 'v2.0.0',
               title: 'subproject-2: v2.0.0',
-              isPrerelease: false
+              isPrerelease: false,
+              isLatest: true
             },
             {
               version: '2.0.0',
@@ -99,7 +101,8 @@ describe('core', () => {
               previousTag: 'v1.0.0',
               nextTag: 'v2.0.0',
               title: 'subproject-3: v2.0.0',
-              isPrerelease: false
+              isPrerelease: false,
+              isLatest: true
             }
           ])
         })
@@ -124,7 +127,8 @@ describe('core', () => {
               previousTag: 'v1.0.0',
               nextTag: 'v2.0.0',
               title: 'subproject-1: v2.0.0',
-              isPrerelease: false
+              isPrerelease: false,
+              isLatest: true
             },
             {
               version: '2.0.0',
@@ -132,7 +136,8 @@ describe('core', () => {
               previousTag: 'v1.0.0',
               nextTag: 'v2.0.0',
               title: 'subproject-3: v2.0.0',
-              isPrerelease: false
+              isPrerelease: false,
+              isLatest: true
             }
           ])
         })
@@ -285,7 +290,8 @@ describe('core', () => {
               previousTag: 'v1.0.0',
               nextTag: 'v2.0.0',
               title: 'v2.0.0',
-              isPrerelease: false
+              isPrerelease: false,
+              isLatest: true
             }
           ])
         })

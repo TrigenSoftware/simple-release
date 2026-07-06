@@ -179,6 +179,8 @@ await new Releaser({
 | --- | --- |
 | `enabled` | Enable maintenance branch creation. Defaults to `false`. |
 | `force` | Recreate an existing maintenance branch. |
+| `tagPrefix` | Prefix used for release tags. Defaults to `v`. |
+| `branchPrefix` | Prefix used for the maintenance branch name. Defaults to the tag prefix. |
 
 ```js
 await new Releaser({
@@ -220,6 +222,8 @@ For independent monorepos, maintenance branches use each package tag prefix. Use
 | `skip` | Skip publishing. |
 | `tag` | Publish tag or formatter function. |
 | `gitChecks` | Whether to perform git checks before publishing when the addon supports it. |
+
+When `tag` is not set, it defaults to the prerelease identifier for prerelease versions (e.g. `alpha`), or to `release-N.x` for maintenance releases of previous majors, so they never overwrite the `latest` tag.
 
 #### release and pullRequest
 
