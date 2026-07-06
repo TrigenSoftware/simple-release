@@ -187,6 +187,46 @@ describe('core', () => {
         expect(version).toMatch(/^2\.0\.1-canary\.\d{14}$/)
       })
 
+      it('should get next snapshot version for first release', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          firstRelease: true,
+          snapshot: 'canary'
+        })
+
+        expect(version).toMatch(/^2\.0\.0-canary\.\d{14}$/)
+      })
+
+      it('should get next snapshot version from forced version', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          version: '3.0.0',
+          snapshot: 'canary'
+        })
+
+        expect(version).toMatch(/^3\.0\.0-canary\.\d{14}$/)
+      })
+
+      it('should get next snapshot version without new commits', async () => {
+        const { cwd } = await packageJsonProject({}, {
+          postReleaseCommits: false
+        })
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          snapshot: 'canary'
+        })
+
+        expect(version).toMatch(/^2\.0\.1-canary\.\d{14}$/)
+      })
+
       it('should dry bump version', async () => {
         const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({

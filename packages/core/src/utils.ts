@@ -63,6 +63,18 @@ export function getPrereleaseIdentifierBase(snapshot?: string) {
     : undefined
 }
 
+export function setSnapshotIdentifier(version: string, snapshot?: string) {
+  if (!snapshot) {
+    return version
+  }
+
+  const semverVersion = new semver.SemVer(version)
+
+  semverVersion.prerelease = [snapshot, getSnapshotTimestamp()]
+
+  return semverVersion.format()
+}
+
 export function getReleaseType(
   releaseType: ReleaseType,
   version: string,

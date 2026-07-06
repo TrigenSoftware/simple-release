@@ -112,6 +112,32 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
     })
   }
 
+  /**
+   * Fetch all commits and tags from the remote repository.
+   * @returns Project releaser instance for chaining.
+   */
+  fetch() {
+    return this.enqueue(async () => {
+      const {
+        logger,
+        gitClient
+      } = this
+      const { dryRun } = this.options
+
+      logger.info('fetch', 'Fetching all commits and tags from the remote repository...')
+
+      if (!dryRun) {
+        await gitClient.fetch({
+          prune: true,
+          unshallow: await gitClient.exec('rev-parse', '--is-shallow-repository') === 'true',
+          tags: true,
+          remote: 'origin',
+          branch: 'HEAD'
+        })
+      }
+    })
+  }
+
   override tag() {
     return super.tag({
       fetch: true
@@ -164,6 +190,7 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
     }
 
     await this
+      .fetch()
       .bump({
         snapshot: snapshotTag,
         skipChangelog: true
