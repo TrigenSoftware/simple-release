@@ -12,6 +12,7 @@ import {
 import {
   changelogHeader,
   addReleaseNotes,
+  extractLastRelease,
   extractLastReleaseFromFile
 } from './change-log.js'
 
@@ -108,6 +109,20 @@ describe('core', () => {
             "version": "1.0.0",
           }
         `)
+      })
+    })
+
+    describe('extractLastRelease', () => {
+      it('should decode tags extracted from the compare link', async () => {
+        const result = await extractLastRelease(
+          '## [1.1.0](https://github.com/TrigenSoftware/dummy-independent-monorepo/compare/dummy-independent-monorepo-foo%401.0.0...dummy-independent-monorepo-foo%401.1.0) (2026-07-06)\n\nRELEASE NOTES\n'
+        )
+
+        expect(result).toMatchObject({
+          version: '1.1.0',
+          previousTag: 'dummy-independent-monorepo-foo@1.0.0',
+          nextTag: 'dummy-independent-monorepo-foo@1.1.0'
+        })
       })
     })
   })

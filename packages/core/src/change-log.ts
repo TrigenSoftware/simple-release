@@ -97,6 +97,14 @@ export async function addReleaseNotes(
   return changes
 }
 
+function decodeTag(tag: string) {
+  try {
+    return decodeURIComponent(tag)
+  } catch {
+    return tag
+  }
+}
+
 /**
  * Extract the last release notes from a stream.
  * @param input
@@ -134,10 +142,9 @@ export async function extractLastRelease(input: string | string[] | Iterable<str
         const tagsMatch = line.match(tagsRegex)
 
         if (tagsMatch) {
-          [
-            , previousTag,
-            nextTag
-          ] = tagsMatch
+          // Tags are extracted from the compare link and can be URL-encoded.
+          previousTag = decodeTag(tagsMatch[1])
+          nextTag = decodeTag(tagsMatch[2])
         }
 
         continue
