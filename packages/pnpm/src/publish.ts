@@ -18,7 +18,7 @@ export async function publish(project: PackageJsonProject, options: PublishOptio
     access,
     tag,
     otp,
-    gitChecks = true,
+    gitChecks = false,
     env = process.env,
     workspaces,
     dryRun,

@@ -196,8 +196,7 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
         skipChangelog: true
       } as PickOverridableOptions<P['bump']>)
       .publish({
-        tag: snapshotTag,
-        gitChecks: false
+        tag: snapshotTag
       } as PickOverridableOptions<P['publish']>)
       .revert()
       .run()
