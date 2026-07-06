@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1](https://github.com/TrigenSoftware/simple-release/compare/v3.1.0...v3.1.1) (2026-07-06)
+
+### Bug Fixes
+
+* fetch refs before snapshot bump and always apply snapshot identifier ([#167](https://github.com/TrigenSoftware/simple-release/issues/167)) ([af28eb4](https://github.com/TrigenSoftware/simple-release/commit/af28eb430472af600c992794b69fdb0b4a706c75))
+
 ## [3.1.0](https://github.com/TrigenSoftware/simple-release/compare/v3.0.3...v3.1.0) (2026-07-06)
 
 ### Features
