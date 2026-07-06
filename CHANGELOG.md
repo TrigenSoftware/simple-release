@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.com/TrigenSoftware/simple-release/compare/v3.2.0...v3.2.1) (2026-07-06)
+
+### Bug Fixes
+
+* **pnpm:** disable git checks on publish by default ([#171](https://github.com/TrigenSoftware/simple-release/issues/171)) ([8a41f46](https://github.com/TrigenSoftware/simple-release/commit/8a41f4686d1e660f117c3d782ae407465831a9ac))
+
 ## [3.2.0](https://github.com/TrigenSoftware/simple-release/compare/v3.1.1...v3.2.0) (2026-07-06)
 
 ### Features
