@@ -312,6 +312,34 @@ describe('core', () => {
           expect(release).toEqual([])
         })
 
+        it('should get release data with existing tag from changelog without compare links', async () => {
+          const { cwd } = await forkProject('fixed-release-data-no-links', packageJsonFixedMonorepoProject())
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+
+          await fs.writeFile(
+            join(cwd, 'CHANGELOG.md'),
+            '# Changelog\n\n## 2.0.0 (2017-06-20)\n\nRELEASE NOTES\n'
+          )
+
+          const release = await project.getReleaseData()
+
+          expect(release).toEqual([
+            {
+              version: '2.0.0',
+              notes: 'RELEASE NOTES',
+              previousTag: '',
+              nextTag: 'v2.0.0',
+              title: 'v2.0.0',
+              isPrerelease: false,
+              isLatest: true
+            }
+          ])
+        })
+
         it('should get maintenance branch refs', async () => {
           const { cwd } = await packageJsonFixedMonorepoProject({
             0: {

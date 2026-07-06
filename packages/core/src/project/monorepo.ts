@@ -9,6 +9,8 @@ import type {
 } from './monorepo.types.js'
 import {
   type ProjectOptions,
+  type ProjectTagsOptions,
+  type ProjectReleaseOptions,
   type ProjectMaintenanceBranch,
   type ProjectMaintenanceBranchesOptions,
   type ProjectRevertOptions,
@@ -140,7 +142,7 @@ export abstract class MonorepoProject extends Project {
     return this.getIndependentCommitMessage()
   }
 
-  private async getIndependentTags() {
+  private async getIndependentTags(options: ProjectTagsOptions) {
     const tags: string[] = []
 
     for await (const project of this.getProjects()) {
@@ -150,6 +152,7 @@ export abstract class MonorepoProject extends Project {
       const tagPrefix = await this.getTagPrefix(scope)
 
       tags.push(...await project.getTags({
+        ...options,
         tagPrefix
       }))
     }
@@ -157,17 +160,17 @@ export abstract class MonorepoProject extends Project {
     return tags
   }
 
-  override async getTags() {
+  override async getTags(options: ProjectTagsOptions = {}) {
     const { mode } = this
 
     if (mode === 'fixed') {
-      return super.getTags()
+      return super.getTags(options)
     }
 
-    return this.getIndependentTags()
+    return this.getIndependentTags(options)
   }
 
-  private async getIndependentReleaseData() {
+  private async getIndependentReleaseData(options: ProjectReleaseOptions) {
     const data: ReleaseData[] = []
 
     for await (const project of this.getProjects()) {
@@ -176,6 +179,7 @@ export abstract class MonorepoProject extends Project {
       const scope = await this.getScope(name)
       const tagPrefix = await this.getTagPrefix(scope)
       const releaseData = await project.getReleaseData({
+        ...options,
         tagPrefix
       })
 
@@ -188,14 +192,14 @@ export abstract class MonorepoProject extends Project {
     return data
   }
 
-  override async getReleaseData() {
+  override async getReleaseData(options: ProjectReleaseOptions = {}) {
     const { mode } = this
 
     if (mode === 'fixed') {
-      return super.getReleaseData()
+      return super.getReleaseData(options)
     }
 
-    return this.getIndependentReleaseData()
+    return this.getIndependentReleaseData(options)
   }
 
   private async getIndependentMaintenanceBranches(options: ProjectMaintenanceBranchesOptions) {
