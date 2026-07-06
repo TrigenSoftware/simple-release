@@ -16,7 +16,8 @@ import {
 import {
   getPrereleaseIdentifier,
   getPrereleaseIdentifierBase,
-  getReleaseType
+  getReleaseType,
+  setSnapshotIdentifier
 } from '../utils.js'
 import type {
   ProjectOptions,
@@ -262,7 +263,7 @@ export abstract class Project {
     let firstRelease = firstReleaseOption
 
     if (forcedVersion && semver.valid(forcedVersion)) {
-      return forcedVersion
+      return setSnapshotIdentifier(forcedVersion, snapshot)
     }
 
     const lastReleaseTag = await this.getLastReleaseTag({
@@ -276,7 +277,7 @@ export abstract class Project {
     const version = baseVersion || await manifest.getVersion()
 
     if (firstRelease) {
-      return version
+      return setSnapshotIdentifier(version, snapshot)
     }
 
     let releaseType: ReleaseType | null = null
@@ -300,7 +301,12 @@ export abstract class Project {
     }
 
     if (!releaseType) {
-      return null
+      if (!snapshot) {
+        return null
+      }
+
+      // Snapshot versions always should be released, even without new commits.
+      releaseType = 'patch'
     }
 
     const prereleaseIdentifier = getPrereleaseIdentifier(
