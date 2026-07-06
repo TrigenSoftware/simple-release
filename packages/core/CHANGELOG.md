@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.2](https://github.com/TrigenSoftware/simple-release/compare/v3.2.0...v3.2.2) (2026-07-06)
+
+### Bug Fixes
+
+* pass options to monorepo tags and release data overrides ([#173](https://github.com/TrigenSoftware/simple-release/issues/173)) ([e6f614d](https://github.com/TrigenSoftware/simple-release/commit/e6f614d7afd4080f5f840d3035c10f4326018e1c))
+
 ## [3.2.0](https://github.com/TrigenSoftware/simple-release/compare/v3.1.1...v3.2.0) (2026-07-06)
 
 ### Features
