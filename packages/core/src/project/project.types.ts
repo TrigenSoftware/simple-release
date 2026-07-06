@@ -109,6 +109,14 @@ export interface ProjectReleaseOptions {
   tagPrefix?: string
 }
 
+export interface ProjectMaintenanceBranchesOptions extends ProjectReleaseOptions {
+  /**
+   * The prefix to use for the maintenance branch name.
+   * Defaults to the tag prefix.
+   */
+  branchPrefix?: string
+}
+
 export interface ProjectMaintenanceBranch {
   /**
    * Source tag to create the branch from.

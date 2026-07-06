@@ -10,7 +10,7 @@ import type {
 import {
   type ProjectOptions,
   type ProjectMaintenanceBranch,
-  type ProjectReleaseOptions,
+  type ProjectMaintenanceBranchesOptions,
   type ProjectRevertOptions,
   Project,
   bumpDefaultOptions
@@ -198,7 +198,7 @@ export abstract class MonorepoProject extends Project {
     return this.getIndependentReleaseData()
   }
 
-  private async getIndependentMaintenanceBranches() {
+  private async getIndependentMaintenanceBranches(options: ProjectMaintenanceBranchesOptions) {
     const branches: ProjectMaintenanceBranch[] = []
 
     for await (const project of this.getProjects()) {
@@ -208,6 +208,7 @@ export abstract class MonorepoProject extends Project {
       const tagPrefix = await this.getTagPrefix(scope)
 
       branches.push(...await project.getMaintenanceBranches({
+        ...options,
         tagPrefix
       }))
     }
@@ -215,14 +216,14 @@ export abstract class MonorepoProject extends Project {
     return branches
   }
 
-  override async getMaintenanceBranches(options: ProjectReleaseOptions = {}) {
+  override async getMaintenanceBranches(options: ProjectMaintenanceBranchesOptions = {}) {
     const { mode } = this
 
     if (mode === 'fixed') {
       return super.getMaintenanceBranches(options)
     }
 
-    return this.getIndependentMaintenanceBranches()
+    return this.getIndependentMaintenanceBranches(options)
   }
 
   private async getBumpOptions(

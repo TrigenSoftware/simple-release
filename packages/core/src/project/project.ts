@@ -25,12 +25,15 @@ import type {
   ProjectVersionUpdate,
   ProjectTagsOptions,
   ProjectReleaseOptions,
+  ProjectMaintenanceBranchesOptions,
   ProjectMaintenanceBranch,
   ProjectPublishOptions,
   ProjectRevertOptions
 } from './project.types.js'
 
 export type * from './project.types.js'
+
+export const DEFAULT_TAG_PREFIX = 'v'
 
 export const bumpDefaultOptions = {
   preset: {
@@ -115,7 +118,7 @@ export abstract class Project {
       gitClient
     } = this
     const {
-      tagPrefix = 'v',
+      tagPrefix = DEFAULT_TAG_PREFIX,
       verify = true
     } = options
     const version = await manifest.getVersion()
@@ -171,7 +174,8 @@ export abstract class Project {
         ...lastRelease,
         title: `v${version}`,
         version,
-        isPrerelease
+        isPrerelease,
+        isLatest: await this.isLatestRelease(options)
       }
     ]
   }
@@ -195,13 +199,40 @@ export abstract class Project {
   }
 
   /**
+   * Check whether the current version is the latest release of the project.
+   * Maintenance branch releases of previous majors are not the latest ones.
+   * @param options - The options to use for detecting tags.
+   * @returns Whether the current version is the latest release.
+   */
+  async isLatestRelease(options: ProjectReleaseOptions = {}): Promise<boolean> {
+    const { tagPrefix = DEFAULT_TAG_PREFIX } = options
+    const version = await this.manifest.getVersion()
+    const currentVersion = semver.valid(version)
+
+    if (!currentVersion) {
+      return true
+    }
+
+    const latestVersion = await this.gitClient.getVersionFromTags({
+      prefix: tagPrefix,
+      skipUnstable: true,
+      all: true
+    })
+
+    return !latestVersion || semver.gte(currentVersion, latestVersion)
+  }
+
+  /**
    * Get maintenance branch refs to create after a major version release.
    * @param options - The options to use for detecting tags and formatting branches.
    * @returns Maintenance branch refs.
    */
-  async getMaintenanceBranches(options: ProjectReleaseOptions = {}): Promise<ProjectMaintenanceBranch[]> {
+  async getMaintenanceBranches(options: ProjectMaintenanceBranchesOptions = {}): Promise<ProjectMaintenanceBranch[]> {
     const { manifest } = this
-    const { tagPrefix = 'v' } = options
+    const {
+      tagPrefix = DEFAULT_TAG_PREFIX,
+      branchPrefix = tagPrefix
+    } = options
     const version = await manifest.getVersion()
     const currentVersion = semver.valid(version)
 
@@ -225,7 +256,7 @@ export abstract class Project {
         return [
           {
             from: previousTag,
-            to: `${tagPrefix}${semver.major(previousVersion)}`
+            to: `${branchPrefix}${semver.major(previousVersion)}`
           }
         ]
       }

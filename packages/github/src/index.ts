@@ -132,7 +132,10 @@ export class GithubHosting extends GitRepositoryHosting {
         tag_name: releaseData.nextTag,
         name: releaseData.title,
         body: releaseData.notes,
-        prerelease: releaseData.isPrerelease
+        prerelease: releaseData.isPrerelease,
+        make_latest: releaseData.isLatest
+          ? undefined
+          : 'false' as const
       }
 
       logger?.verbose('Creating release with params:')

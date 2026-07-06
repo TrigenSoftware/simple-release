@@ -2,6 +2,7 @@ import {
   type PackageJsonProjectOptions,
   type ProjectBumpOptions,
   type ProjectReleaseOptions,
+  DEFAULT_TAG_PREFIX,
   PackageJsonProject
 } from '@simple-release/core'
 import {
@@ -37,7 +38,7 @@ export class NodeGhaProject extends PackageJsonProject {
    * @returns The last release tag, `null` if not found.
    */
   override async getLastReleaseTag(options: ProjectReleaseOptions = {}) {
-    const { tagPrefix = 'v' } = options
+    const { tagPrefix = DEFAULT_TAG_PREFIX } = options
     const tags = this.gitClient.getSemverTags({
       prefix: tagPrefix,
       all: true

@@ -3,7 +3,10 @@ import type {
   GitTagParams,
   GitPushParams
 } from '@conventional-changelog/git-client'
-import type { Project } from './project/index.js'
+import type {
+  Project,
+  ProjectMaintenanceBranchesOptions
+} from './project/index.js'
 import type { GitRepositoryHosting } from './hosting/index.js'
 import type { Logger } from './logger.js'
 
@@ -64,7 +67,7 @@ export interface ReleaserTagOptions extends Omit<GitTagParams, 'name' | 'message
   fetch?: boolean
 }
 
-export interface ReleaserMaintenanceBranchOptions extends Pick<GitPushParams, 'force'> {
+export interface ReleaserMaintenanceBranchOptions extends Pick<GitPushParams, 'force'>, ProjectMaintenanceBranchesOptions {
   /**
    * Enable maintenance branch creation.
    */
