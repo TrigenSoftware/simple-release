@@ -59,7 +59,7 @@
     "test": "run -p lint test:unit test:types"
   },
   "dependencies": {
-    "@conventional-changelog/git-client": "^3.0.1",
+    "@conventional-changelog/git-client": "^3.1.0",
     "@conventional-changelog/template": "^1.2.0",
     "@simple-libs/child-process-utils": "^2.0.0",
     "@simple-libs/hosted-git-info": "^2.0.0",
@@ -67,6 +67,8 @@
     "conventional-changelog": "^8.0.0",
     "conventional-changelog-conventionalcommits": "^10.2.0",
     "conventional-changelog-preset-loader": "^6.0.0",
+    "conventional-commits-filter": "^6.0.1",
+    "conventional-commits-parser": "^7.0.1",
     "conventional-recommended-bump": "^12.0.0",
     "semver": "^7.5.2"
   },
