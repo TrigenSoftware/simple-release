@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.4](https://github.com/TrigenSoftware/simple-release/compare/v3.2.3...v3.2.4) (2026-07-07)
+
+### Bug Fixes
+
+* **core,pnpm,npm:** resolve default publish tag from packages of independent monorepo ([#177](https://github.com/TrigenSoftware/simple-release/issues/177)) ([ebfd7ae](https://github.com/TrigenSoftware/simple-release/commit/ebfd7aee5a0ab62607849fbd9a3dd7ecd9a8c809))
+
 ## [3.2.3](https://github.com/TrigenSoftware/simple-release/compare/v3.2.2...v3.2.3) (2026-07-06)
 
 ### Bug Fixes
