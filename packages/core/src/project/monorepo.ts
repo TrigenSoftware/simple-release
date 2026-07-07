@@ -202,6 +202,47 @@ export abstract class MonorepoProject extends Project {
     return this.getIndependentReleaseData(options)
   }
 
+  private async getIndependentDefaultPublishTag(options: ProjectReleaseOptions) {
+    for await (const project of this.getProjects()) {
+      const { manifest } = project
+
+      if (await manifest.isPrivate()) {
+        continue
+      }
+
+      const name = await manifest.getName()
+      const scope = await this.getScope(name)
+      const tagPrefix = await this.getTagPrefix(scope)
+      const tag = await project.getDefaultPublishTag({
+        ...options,
+        tagPrefix
+      })
+
+      if (tag) {
+        return tag
+      }
+    }
+
+    return undefined
+  }
+
+  /**
+   * Get the default publish tag for the monorepo.
+   * In independent mode it is resolved from the packages with their own tag prefixes —
+   * the first non-latest package defines the tag.
+   * @param options - The options to use for detecting tags.
+   * @returns The default publish tag, `undefined` for the latest release.
+   */
+  override async getDefaultPublishTag(options: ProjectReleaseOptions = {}): Promise<string | undefined> {
+    const { mode } = this
+
+    if (mode === 'fixed') {
+      return super.getDefaultPublishTag(options)
+    }
+
+    return this.getIndependentDefaultPublishTag(options)
+  }
+
   private async getIndependentMaintenanceBranches(options: ProjectMaintenanceBranchesOptions) {
     const branches: ProjectMaintenanceBranch[] = []
 

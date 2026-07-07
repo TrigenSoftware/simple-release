@@ -31,18 +31,21 @@ export async function publish(project: PackageJsonProject, options: PublishOptio
       await manifest.getPrereleaseVersion()
     )
     : tag
+  const args = [
+    'publish',
+    ...access ? ['--access', access] : [],
+    ...publishTag ? ['--tag', publishTag] : [],
+    ...workspaces ? ['--recursive'] : [],
+    ...dryRun ? ['--dry-run'] : [],
+    ...otp ? ['--otp', otp] : [],
+    ...gitChecks ? [] : ['--no-git-checks']
+  ]
+
+  logger?.verbose(`Publishing with command: pnpm ${args.join(' ')}`)
 
   await throwProcessError(spawn(
     'pnpm',
-    [
-      'publish',
-      ...access ? ['--access', access] : [],
-      ...publishTag ? ['--tag', publishTag] : [],
-      ...workspaces ? ['--recursive'] : [],
-      ...dryRun ? ['--dry-run'] : [],
-      ...otp ? ['--otp', otp] : [],
-      ...gitChecks ? [] : ['--no-git-checks']
-    ],
+    args,
     {
       cwd: manifest.projectPath,
       env,

@@ -9,7 +9,8 @@ import fg from 'fast-glob'
 import {
   packageJsonIndependentMonorepoProject,
   packageJsonFixedMonorepoProject,
-  forkProject
+  forkProject,
+  dummyCommit
 } from 'test'
 import type { GetProjectsOptions } from './monorepo.js'
 import type { Project } from './project.js'
@@ -245,6 +246,36 @@ describe('core', () => {
 - subproject-2@2.1.0
 - subproject-3@2.1.0`)
         })
+
+        it('should get no default publish tag for latest releases', async () => {
+          const { cwd } = await packageJsonIndependentMonorepoProject()
+          const project = new PackageJsonMonorepoProject({
+            mode: 'independent',
+            root: cwd,
+            getProjects
+          })
+
+          expect(await project.getDefaultPublishTag()).toBe(undefined)
+        })
+
+        it('should get default publish tag for maintenance release', async () => {
+          const { cwd, run } = await forkProject('independent-maintenance-publish-tag', packageJsonIndependentMonorepoProject())
+          const project = new PackageJsonMonorepoProject({
+            mode: 'independent',
+            root: cwd,
+            getProjects
+          })
+
+          await run([
+            ({ git }) => git.exec('checkout', '-b', 'next-major'),
+            ctx => dummyCommit(ctx, 'feat'),
+            ({ git }) => git.exec('tag', 'subproject-1@3.0.0'),
+            ({ git }) => git.exec('checkout', 'master'),
+            ({ git }) => git.exec('branch', '-D', 'next-major')
+          ])
+
+          expect(await project.getDefaultPublishTag()).toBe('release-2.x')
+        })
       })
 
       describe('fixed mode', () => {
@@ -338,6 +369,25 @@ describe('core', () => {
               isLatest: true
             }
           ])
+        })
+
+        it('should get default publish tag for maintenance release', async () => {
+          const { cwd, run } = await forkProject('fixed-maintenance-publish-tag', packageJsonFixedMonorepoProject())
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+
+          await run([
+            ({ git }) => git.exec('checkout', '-b', 'next-major'),
+            ctx => dummyCommit(ctx, 'feat'),
+            ({ git }) => git.exec('tag', 'v3.0.0'),
+            ({ git }) => git.exec('checkout', 'master'),
+            ({ git }) => git.exec('branch', '-D', 'next-major')
+          ])
+
+          expect(await project.getDefaultPublishTag()).toBe('release-2.x')
         })
 
         it('should get maintenance branch refs', async () => {

@@ -223,6 +223,34 @@ export abstract class Project {
   }
 
   /**
+   * Get the default publish tag for the project.
+   * Prerelease versions get their prerelease identifier,
+   * maintenance versions of previous majors get the `release-N.x` tag.
+   * @param options - The options to use for detecting tags.
+   * @returns The default publish tag, `undefined` for the latest release.
+   */
+  async getDefaultPublishTag(options: ProjectReleaseOptions = {}): Promise<string | undefined> {
+    const { manifest } = this
+    const prerelease = await manifest.getPrereleaseVersion()
+
+    if (prerelease) {
+      const [identifier] = prerelease
+
+      return typeof identifier === 'string'
+        ? identifier
+        : 'next'
+    }
+
+    if (!await this.isLatestRelease(options)) {
+      const version = await manifest.getVersion()
+
+      return `release-${semver.major(version)}.x`
+    }
+
+    return undefined
+  }
+
+  /**
    * Get maintenance branch refs to create after a major version release.
    * @param options - The options to use for detecting tags and formatting branches.
    * @returns Maintenance branch refs.

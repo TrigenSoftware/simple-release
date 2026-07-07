@@ -30,17 +30,20 @@ export async function publish(project: PackageJsonProject, options: PublishOptio
       await manifest.getPrereleaseVersion()
     )
     : tag
+  const args = [
+    'publish',
+    ...access ? ['--access', access] : [],
+    ...publishTag ? ['--tag', publishTag] : [],
+    ...workspaces ? ['--workspaces'] : [],
+    ...dryRun ? ['--dry-run'] : [],
+    ...otp ? ['--otp', otp] : []
+  ]
+
+  logger?.verbose(`Publishing with command: npm ${args.join(' ')}`)
 
   await throwProcessError(spawn(
     'npm',
-    [
-      'publish',
-      ...access ? ['--access', access] : [],
-      ...publishTag ? ['--tag', publishTag] : [],
-      ...workspaces ? ['--workspaces'] : [],
-      ...dryRun ? ['--dry-run'] : [],
-      ...otp ? ['--otp', otp] : []
-    ],
+    args,
     {
       cwd: manifest.projectPath,
       env,
