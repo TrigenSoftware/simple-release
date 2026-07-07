@@ -1,5 +1,4 @@
 import type { ConventionalGitClient } from '@conventional-changelog/git-client'
-import semver from 'semver'
 import type { Project } from './project/index.js'
 import type { GitRepositoryHosting } from './hosting/index.js'
 import type {
@@ -522,38 +521,14 @@ export class Releaser<
       }
 
       // Maintenance and prerelease versions should not get the default `latest` npm tag.
-      publishOptions.tag ||= await this.getDefaultPublishTag()
+      publishOptions.tag ||= await project.getDefaultPublishTag({
+        tagPrefix: this.stepsOptions.bump?.tagPrefix
+      })
 
       logger.info('Publishing...')
 
       await project.publish(publishOptions)
     })
-  }
-
-  private async getDefaultPublishTag() {
-    const { project } = this
-    const { manifest } = project
-    const prerelease = await manifest.getPrereleaseVersion()
-
-    if (prerelease) {
-      const [identifier] = prerelease
-
-      return typeof identifier === 'string'
-        ? identifier
-        : 'next'
-    }
-
-    const isLatestRelease = await project.isLatestRelease({
-      tagPrefix: this.stepsOptions.bump?.tagPrefix
-    })
-
-    if (!isLatestRelease) {
-      const version = await manifest.getVersion()
-
-      return `release-${semver.major(version)}.x`
-    }
-
-    return undefined
   }
 
   /**
