@@ -1,0 +1,86 @@
+---
+title: Hosting
+description: The hosting adapter creates releases and pull requests on the git hosting — GitHub out of the box, anything else with a custom adapter.
+sidebar:
+  order: 4
+---
+
+A **hosting** represents the git hosting service: the `release` step asks it to create releases, the `pullRequest` step — release pull requests. [GitHub](/hostings/github/) is bundled; a custom adapter brings the same flow to GitLab, Gitea, or an internal service.
+
+## GitRepositoryHosting
+
+The abstract base class has exactly two methods:
+
+```ts frame="none"
+abstract class GitRepositoryHosting {
+  abstract createRelease(options: CreateReleaseOptions): Promise<void>
+  abstract createPullRequest(options: CreatePullRequestOptions): Promise<void>
+}
+```
+
+Both receive the [project](/js-api/project/) along with `dryRun` and `logger`:
+
+| Option | Description |
+| --- | --- |
+| `project` | The project being released — the source of release data and repository info. |
+| `to` | Base branch for the pull request. `createPullRequest` only. |
+| `from` | Head branch for the pull request. `createPullRequest` only. |
+| `dryRun` | Do not perform the actual API calls. |
+| `logger` | Logger of the current step. |
+
+The project provides everything a hosting needs:
+
+- `getHostedGitInfo()` — the repository owner and name parsed from the git remote;
+- `getReleaseData()` — one entry per released package: the release `title`, changelog `notes`, `nextTag` to attach the release to, and the `isPrerelease` and `isLatest` flags;
+- `getCommitMessage()` and `versionUpdates` — the material for the pull request title and body.
+
+## Custom hosting sketch
+
+A minimal `createRelease` for a hosting with an HTTP API:
+
+```js title="gitea-hosting.js"
+import { GitRepositoryHosting } from '@simple-release/core'
+
+export class GiteaHosting extends GitRepositoryHosting {
+  constructor({ url, token }) {
+    super()
+    this.url = url
+    this.token = token
+  }
+
+  async createRelease({ project, dryRun, logger }) {
+    const { owner, project: repo } = await project.getHostedGitInfo()
+    const data = await project.getReleaseData()
+
+    for (const release of data) {
+      logger?.verbose(`Creating release ${release.nextTag}...`)
+
+      if (dryRun) {
+        continue
+      }
+
+      await fetch(`${this.url}/api/v1/repos/${owner}/${repo}/releases`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${this.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          tag_name: release.nextTag,
+          name: release.title,
+          body: release.notes,
+          prerelease: release.isPrerelease
+        })
+      })
+    }
+  }
+
+  async createPullRequest() {
+    throw new Error('Not implemented')
+  }
+}
+```
+
+Note the loop: `getReleaseData()` returns multiple entries for independent monorepos — one release per package tag. Respect the `isLatest` flag if the hosting has a "latest release" concept, so [maintenance releases](/github-action/maintenance-branches/) don't hijack it.
+
+For a production-grade reference implementation — pull request bodies with changelogs, options comments, existing-release checks — read the source of [`@simple-release/github`](https://github.com/TrigenSoftware/simple-release/tree/main/packages/github).

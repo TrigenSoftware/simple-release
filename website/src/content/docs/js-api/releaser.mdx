@@ -1,0 +1,139 @@
+---
+title: Releaser
+description: The releaser chains release steps into a pipeline — bump, commit, tag, push, publish, release — with options for every step.
+sidebar:
+  order: 5
+---
+
+The **Releaser** runs the release as a chain of steps. Calling a step method queues it; `run()` executes the queue in order. This makes the pipeline explicit — every flow, including the [GitHub Action](/js-api/github-action/) ones, is just a different chain.
+
+Continuing the [Python project](/js-api/project/#custom-project-a-python-package) example:
+
+```js title="release.js"
+import { Releaser } from '@simple-release/core'
+import { GithubHosting } from '@simple-release/github'
+import { PythonProject } from './python-project.js'
+
+await new Releaser({
+  project: new PythonProject(),
+  hosting: new GithubHosting({
+    token: process.env.GITHUB_TOKEN
+  })
+})
+  .bump()
+  .commit()
+  .tag()
+  .push()
+  .publish()
+  .release()
+  .run()
+```
+
+On a repository released as `1.1.0` with a `feat` commit, this writes `1.2.0` to `pyproject.toml`, prepends the section to `CHANGELOG.md`, commits `chore(release): 1.2.0`, tags `v1.2.0`, pushes, uploads the package with `twine`, and creates the GitHub release.
+
+## Options
+
+| Option | Description |
+| --- | --- |
+| `project` | The [project](/js-api/project/) to release. Required. |
+| `hosting` | The [hosting](/js-api/hosting/) for releases and pull requests. Optional. |
+| `dryRun` | Do not write files or perform git and API calls — log what would happen. |
+| `verbose` | Log more information. |
+| `silent` | Do not log anything. |
+
+Set `dryRun: true` to preview a release safely — the version is bumped in memory and every step reports what it would do.
+
+## Steps
+
+| Step | Description |
+| --- | --- |
+| `setUser(options)` | Set the git user for the following commits. |
+| `checkout(branch, options)` | Check out the branch for release changes. |
+| `bump(options)` | Bump the version and generate the changelog. |
+| `commit(options)` | Commit the changes with the release message. |
+| `maintenanceBranch(options)` | Create [maintenance branches](/github-action/maintenance-branches/) for previous majors. Disabled by default. |
+| `tag(options)` | Create the release tags. |
+| `push(options)` | Push changes to the remote. |
+| `publish(options)` | Publish the project — delegated to the project addon. |
+| `release(options)` | Create the hosting release. |
+| `pullRequest(options)` | Create the release pull request on the hosting. |
+| `revert(options)` | Revert version updates made during the run. |
+| `run(condition)` | Execute the queued steps. The optional async `condition` receives the releaser and can cancel the whole run by returning `false`. |
+
+Step options can be passed directly to the step call, or set as defaults for the whole run with `setOptions` — that is what the [config file](/js-api/config/) feeds:
+
+```js frame="none"
+releaser
+  .setOptions({
+    bump: {
+      extraScopes: ['deps']
+    }
+  })
+```
+
+### bump
+
+| Option | Description |
+| --- | --- |
+| `version` | Force a specific version. |
+| `as` | Force a release type: `major`, `minor`, `patch`, or `prerelease`. |
+| `prerelease` | Pre-release identifier for prerelease bumps. |
+| `snapshot` | Pre-release identifier with a timestamp suffix for [snapshot builds](/github-action/snapshot-release/). Always applied when set. |
+| `skipChangelog` | Update versions without generating the changelog. |
+| `firstRelease` | Treat the current version as the first release. Auto-detected by default. |
+| `skip` | Skip the version bump. |
+| `forcePrivate` | Allow bumping private packages. |
+| `preset` | Conventional changelog preset configuration. Defaults to `conventionalcommits`. |
+| `tagPrefix` | Prefix for release tags. Defaults to `v`. |
+| `extraScopes` | Extra commit scopes counted towards every package in a monorepo. |
+| `byProject` | Per-package bump options for monorepos, keyed by package name. |
+
+### maintenanceBranch
+
+| Option | Description |
+| --- | --- |
+| `enabled` | Enable maintenance branch creation. Defaults to `false`. |
+| `force` | Recreate an existing maintenance branch. |
+| `branchPrefix` | Prefix for the branch name. Defaults to the tag prefix. |
+
+### tag
+
+| Option | Description |
+| --- | --- |
+| `fetch` | Fetch fresh tags from the remote before tagging. |
+| `sign` | Sign the created tags. |
+
+### push
+
+| Option | Description |
+| --- | --- |
+| `force` | Force-push the changes. |
+
+### publish
+
+Publish options are defined by the project addon — see [npm](/project-types/npm/#publish), [pnpm](/project-types/pnpm/#publish), and [GitHub Action](/project-types/github-action/#publish). Common ones:
+
+| Option | Description |
+| --- | --- |
+| `skip` | Skip publishing. |
+| `tag` | npm dist-tag or a formatter function. When not set, prereleases get their prerelease identifier and maintenance releases get `release-N.x`. |
+| `gitChecks` | Whether to run the package manager git checks before publishing, when the addon supports it. |
+
+### release and pullRequest
+
+Defined by the [hosting](/js-api/hosting/) addon.
+
+## Conditional runs
+
+`run` accepts a condition — the [GitHub Action](/js-api/github-action/) uses this to run the release chain only on release commits:
+
+```js frame="none"
+import { ifReleaseCommit } from '@simple-release/github-action'
+
+await releaser
+  .tag()
+  .push()
+  .publish()
+  .release()
+  .run(ifReleaseCommit)
+```

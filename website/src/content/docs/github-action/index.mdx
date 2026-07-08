@@ -1,0 +1,49 @@
+---
+title: Introduction
+description: simple-release-action automates version bumps, changelogs, and releases on GitHub — a release pull request on every push, released on merge.
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+[simple-release-action](https://github.com/marketplace/actions/simple-release-action) runs the whole release flow in your CI: on every push to the main branch it creates or updates a **release pull request** with the version bump and changelog, and when that pull request is merged, it tags, publishes, and creates the GitHub release.
+
+Setting it up takes two files — a [config](/getting-started/configuration/) describing the project and a release workflow. The action reads the addon [query](/getting-started/configuration/#project-query) from the config and installs the addons itself, so your repository needs no extra dependencies. See [Release Automation](/github-action/release-automation/) for the full setup.
+
+<Aside type="caution" title="Merge release pull requests with squash">
+  The release job recognizes the release commit by its `chore(release): ...` message. Use **squash merge** for release pull requests (and ideally for all pull requests) — a regular merge commit hides the release message and the release job will not run.
+</Aside>
+
+## Workflows
+
+The `workflow` input selects what the action does in the current job:
+
+| Workflow | Description |
+| --- | --- |
+| `full` | Detect the context and run the pull request or release flow. The default. |
+| `check` | Determine which workflow should run and skip unnecessary runs — used as the first job. |
+| `pull-request` | Create or update the release pull request. |
+| `release` | Tag, publish, and create the release — runs on the release commit. |
+| `snapshot` | Publish a temporary [snapshot version](/github-action/snapshot-release/). |
+
+## Inputs
+
+| Input | Description |
+| --- | --- |
+| `workflow` | Workflow to run. Defaults to `full`. |
+| `github-token` | GitHub token to authenticate with the GitHub API. Required. |
+| `npm-token` | npm token for publishing. Passed to the `NODE_AUTH_TOKEN` environment variable. |
+| `publish-token` | Generic token for the config file. Passed to the `PUBLISH_TOKEN` environment variable. |
+| `branch` | Branch to store release changes and create the pull request from. Defaults to `simple-release`. |
+| `bump-version` | Force a specific version. |
+| `bump-as` | Force a release type: `major`, `minor`, `patch`, or `prerelease`. |
+| `bump-prerelease` | Pre-release identifier, e.g. `alpha` or `beta`. |
+| `bump-snapshot` | Snapshot pre-release identifier. |
+| `bump-first-release` | Treat the current version as the first release. Auto-detected by default. |
+| `bump-skip` | Skip the version bump. |
+| `bump-by-project` | JSON object with per-project bump options for monorepos. |
+| `maintenance-branch` | Create [maintenance branches](/github-action/maintenance-branches/) for previous major versions. |
+| `publish-skip` | Skip publishing. |
+| `publish-access` | Package access level: `public` or `restricted`. |
+| `publish-tag` | npm tag for the publication. |

@@ -1,0 +1,78 @@
+---
+title: Snapshot Release
+description: Publish a temporary snapshot version from any branch — a timestamped prerelease under its own npm tag, with nothing committed to the repository.
+sidebar:
+  order: 4
+---
+
+A **snapshot** publishes the current state of any branch as a temporary version — try a feature branch in a real consumer before it is merged, without touching the repository: no commits, no tags, no changelog.
+
+The snapshot flow bumps the version to a timestamped prerelease and publishes it under the given npm dist-tag. A repository released as `1.1.0` with a `feat` commit on the branch produces something like:
+
+```text frame="none"
+1.1.0 -> 1.2.0-canary.20260707111020
+```
+
+The version is derived from the commits as usual, and the snapshot identifier is always applied — even with no new commits the version falls back to a patch bump, so a snapshot can never collide with a real released version. The `latest` dist-tag is never touched.
+
+## Setup
+
+Snapshots run on demand from any branch, so they get their own workflow with a `workflow_dispatch` trigger:
+
+```yaml title=".github/workflows/snapshot.yml"
+name: Snapshot
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Snapshot tag
+        type: string
+        required: true
+        default: snapshot
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    name: Snapshot
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v7
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Publish snapshot
+        uses: TrigenSoftware/simple-release-action@v2
+        with:
+          workflow: snapshot
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          bump-snapshot: ${{ inputs.tag }}
+```
+
+The `tag` input doubles as the prerelease identifier and the npm dist-tag the snapshot is published under.
+
+## Running it
+
+Go to **Actions → Snapshot → Run workflow**, pick the branch and the tag, and run — or from the CLI:
+
+```sh frame="none"
+gh workflow run snapshot.yml --ref my-feature-branch -f tag=canary
+```
+
+The published snapshot is then a one-liner away in any consumer project:
+
+```sh frame="none"
+npm i your-package@canary
+```
+
+In a monorepo all packages are snapshotted in one run, each from its own version — for example `1.1.0` and `1.0.0` packages become `1.1.1-canary.20260707111020` and `1.0.1-canary.20260707111020` under the same `canary` tag.

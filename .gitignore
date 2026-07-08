@@ -24,6 +24,9 @@ dist
 packages/*/package
 build
 
+# Astro
+.astro
+
 # Env files
 .env
 

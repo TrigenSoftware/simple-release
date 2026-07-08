@@ -1,0 +1,140 @@
+---
+title: Manifest
+description: The manifest adapter reads and writes the project version — package.json out of the box, any file format with a custom adapter.
+sidebar:
+  order: 2
+---
+
+A **manifest** is the file that owns the project version — `package.json` for JavaScript projects, `pyproject.toml` for Python, `Cargo.toml` for Rust. The manifest adapter is the only place that knows how to read and write it, so supporting a new platform starts here.
+
+## ProjectManifest
+
+Custom manifests extend the abstract `ProjectManifest` class:
+
+| Member | Description |
+| --- | --- |
+| `manifestPath` | Path to the manifest file, passed to the constructor. |
+| `projectPath` | Directory of the manifest file — derived automatically. |
+| `contents` | Raw string contents of the file after `readManifest`. |
+| `manifest` | Parsed contents after `readManifest`. |
+| `readManifest()` | Read and parse the manifest file. |
+| `getName()` | Read the project name. |
+| `getVersion()` | Read the project version. |
+| `getPrereleaseVersion()` | Prerelease components of the version, `null` for stable versions. Implemented by the base class. |
+| `isPrivate()` | Whether the project should be skipped from releasing. |
+| `writeVersion(version, dryRun)` | Write the new version. With `dryRun` the update happens only in memory. Returns a version update record. |
+
+`writeVersion` returns what changed — the releaser uses it for commits and reverts:
+
+```ts frame="none"
+interface ProjectManifestVersionUpdate {
+  name: string
+  from: string
+  to: string
+  files: string[]
+}
+```
+
+## PackageJsonManifest
+
+The bundled implementation for `package.json`, used by the [npm](/project-types/npm/), [pnpm](/project-types/pnpm/), and [GitHub Action](/project-types/github-action/) project types:
+
+```js frame="none"
+import { PackageJsonManifest } from '@simple-release/core'
+
+const manifest = new PackageJsonManifest('package.json')
+
+await manifest.getName()    // '@your-org/your-package'
+await manifest.getVersion() // '1.1.0'
+```
+
+## ComposedProjectManifest
+
+Composes several manifests into one: information is read from the main manifest, while version updates are written to all of them. Useful when the version is duplicated in other files:
+
+```js frame="none"
+import { ComposedProjectManifest } from '@simple-release/core'
+import { PnpmProject } from '@simple-release/pnpm'
+
+const project = new PnpmProject({
+  compose: main => new ComposedProjectManifest(main, [
+    new VersionTxtManifest('version.txt')
+  ])
+})
+```
+
+## Custom manifest: pyproject.toml
+
+Nothing in the interface is JavaScript-specific. Here is a complete manifest adapter for a Python package with its version in `pyproject.toml`:
+
+```toml title="pyproject.toml"
+[project]
+name = "your-package"
+version = "1.1.0"
+```
+
+```js title="pyproject-manifest.js"
+import fs from 'fs/promises'
+import { ProjectManifest } from '@simple-release/core'
+
+const NAME_REGEX = /^name\s*=\s*"([^"]+)"/m
+const VERSION_REGEX = /^(version\s*=\s*")([^"]+)(")/m
+
+export class PyprojectManifest extends ProjectManifest {
+  static Filename = 'pyproject.toml'
+
+  contents = undefined
+  manifest = undefined
+
+  async readManifest() {
+    this.contents = await fs.readFile(this.manifestPath, 'utf-8')
+    this.manifest = {
+      name: this.contents.match(NAME_REGEX)?.[1],
+      version: this.contents.match(VERSION_REGEX)?.[2]
+    }
+
+    return this.manifest
+  }
+
+  async getName() {
+    return (await this.readManifest()).name
+  }
+
+  async getVersion() {
+    return (await this.readManifest()).version
+  }
+
+  async isPrivate() {
+    return false
+  }
+
+  async writeVersion(version, dryRun) {
+    const manifest = await this.readManifest()
+    const from = manifest.version
+
+    manifest.version = version
+    this.contents = this.contents.replace(VERSION_REGEX, `$1${version}$3`)
+
+    if (!dryRun) {
+      await fs.writeFile(this.manifestPath, this.contents)
+    }
+
+    return {
+      name: manifest.name,
+      from,
+      to: version,
+      files: [this.manifestPath]
+    }
+  }
+}
+```
+
+Calling `writeVersion('1.2.0')` turns the file above into:
+
+```toml title="pyproject.toml"
+[project]
+name = "your-package"
+version = "1.2.0"
+```
+
+The [Project](/js-api/project/) page plugs this manifest into a full release adapter.

@@ -1,0 +1,74 @@
+---
+title: GitHub Action
+description: The Node.js GitHub Actions project addon — releases an action by publishing built refs to git branches and tags.
+sidebar:
+  order: 3
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components'
+
+`@simple-release/node-gha` releases a **Node.js GitHub Action** itself. Unlike npm packages, actions are consumed straight from git refs — so instead of a registry, `NodeGhaProject` publishes the built action state to branches and tags:
+
+- the `latest` branch is created from the current release commit;
+- the `v{major}` branch points to the built `latest` state;
+- the `v{version}` tag points to the built `latest` state.
+
+Consumers can then use `your/action@latest`, `@v2`, or `@v2.0.1`.
+
+<Tabs syncKey="pkg">
+  <TabItem label="pnpm">
+    ```sh frame="none"
+    pnpm add @simple-release/node-gha
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```sh frame="none"
+    npm i @simple-release/node-gha
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh frame="none"
+    yarn add @simple-release/node-gha
+    ```
+  </TabItem>
+</Tabs>
+
+```json title=".simple-release.json"
+{
+  "project": "@simple-release/node-gha#NodeGhaProject",
+  "publish": {
+    "build": "pnpm install --prod --config.node-linker=hoisted",
+    "files": ["node_modules", "src", "action.yml"]
+  }
+}
+```
+
+If `build` is provided, the command runs on the `latest` branch: after it completes, the files from the `files` option are force-added and the release commit is amended before the refs are pushed. This is how `node_modules` or a compiled bundle end up in the published action without polluting the main branch.
+
+<Aside type="note">
+  `publish` creates the final action refs itself. If you also create a GitHub release, call `release` after `publish` so the release uses the built `v{version}` tag state — the default flows of the [GitHub Action](/github-action/) already do this.
+</Aside>
+
+This addon targets Node.js actions that use `package.json` as the release manifest. Composite and Docker actions can use [custom project addons](/js-api/project/) if they do not have a `package.json`.
+
+## Options
+
+### NodeGhaProject
+
+| Option | Description |
+| --- | --- |
+| `path` | Path to the `package.json` manifest file. Defaults to `'package.json'`. |
+| `changelogFile` | Path to the changelog file. Defaults to `'CHANGELOG.md'`. |
+| `compose` | Function to compose the main manifest with secondary manifests where the version should also be updated. Optional. |
+
+### publish
+
+| Option | Description |
+| --- | --- |
+| `skip` | Skip publishing. |
+| `latestBranch` | Branch that points to the latest built action state. Defaults to `'latest'`. |
+| `majorBranchPrefix` | Prefix for the major branch. Defaults to `'v'`. |
+| `tagPrefix` | Prefix for version tags. Defaults to `'v'`. |
+| `build` | Build or install command to run before publishing refs. Optional. |
+| `files` | Files to stage after `build`. Defaults to the `package.json` `files` field. |
+| `env` | Environment variables to set before running build commands. Defaults to `process.env`. |

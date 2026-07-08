@@ -1,0 +1,77 @@
+---
+title: Maintenance Branches
+description: Keep releasing fixes for previous major versions — branches created on major releases, released under their own npm tag without touching latest.
+sidebar:
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+After a new major ships, the previous one usually still has users. **Maintenance branches** keep those lines releasable: when a release crosses a major boundary, a branch is created from the previous release — and fixes pushed to it go through the same pull request flow and release from that branch, without disturbing the new major.
+
+The full lifecycle on an example:
+
+1. The project is released as `1.1.0`. A breaking change lands and the release pull request ships `2.0.0` — the action creates the `v1` branch from the `v1.1.0` tag.
+2. A `fix: ...` commit is pushed to `v1` — the action opens a release pull request targeting `v1` with the `1.1.1` bump.
+3. The pull request is squash-merged — `1.1.1` is tagged and published from the maintenance branch:
+   - the package goes to the `release-1.x` npm dist-tag, `latest` stays on `2.0.0`;
+   - the GitHub release is created without the **Latest** mark.
+
+## Setup
+
+Enable maintenance branch creation in the [config](/getting-started/configuration/):
+
+```json title=".simple-release.json" {5-7}
+{
+  "project": ["@simple-release/pnpm#PnpmWorkspacesProject", {
+    "mode": "fixed"
+  }],
+  "maintenanceBranch": {
+    "enabled": true
+  }
+}
+```
+
+And let the [release workflow](/github-action/release-automation/) react to pushes to the maintenance branches:
+
+```yaml title=".github/workflows/release.yml" {8}
+name: Release
+on:
+  issue_comment:
+    types: [created, deleted]
+  push:
+    branches:
+      - main
+      - 'v*'
+```
+
+For an independent monorepo the branches are named per package — `pkg-name@1` — so use the `'*@*'` pattern instead of `'v*'`.
+
+Instead of the config, creation can also be enabled per run with the `maintenance-branch` action input.
+
+## How branches are created
+
+The branch is created by the `release` workflow when the released version crosses a major boundary — for example `1.1.0` → `2.0.0`, but not `2.0.0` → `2.1.0`. It is created from the previous release tag and named after the previous major with the tag prefix: `v1` from `v1.1.0`. In independent monorepos each package gets its own branch with its tag prefix: `pkg-name@1` from `pkg-name@1.1.0` — only for packages that actually crossed a major.
+
+An existing branch is never overwritten — recreate it deliberately with the `force` option if needed.
+
+| Option | Description |
+| --- | --- |
+| `enabled` | Enable maintenance branch creation. Defaults to `false`. |
+| `force` | Recreate the branch if it already exists. |
+| `branchPrefix` | Prefix for the branch name, when it should differ from the tag prefix. Defaults to the tag prefix. |
+
+## Releasing from a maintenance branch
+
+Nothing special to learn: the flow on a maintenance branch is the same as on `main`. Push conventional commits, get a release pull request targeting the branch, squash-merge it — the release runs from the branch with the right base version.
+
+What differs is the "latest" handling, automatically:
+
+- the npm package is published under the `release-N.x` dist-tag of its major — `latest` keeps pointing at the newest line;
+- the GitHub release is not marked as **Latest**.
+
+Several maintenance lines can live side by side — `v1` and `v2` while `main` is on `3.x` — each releasing independently under its own `release-1.x` and `release-2.x` tags.
+
+<Aside type="note">
+  Consumers on the old major get maintenance fixes through their version ranges as usual — `^1.1.0` picks up `1.1.1` without any dist-tag involved. The `release-1.x` tag exists so that an explicit `npm i your-package@release-1.x` also works.
+</Aside>

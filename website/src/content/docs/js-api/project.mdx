@@ -1,0 +1,103 @@
+---
+title: Project
+description: The project adapter knows how to bump and publish a project — extend it to support any package manager or platform.
+sidebar:
+  order: 3
+---
+
+A **project** ties everything together: it owns the [manifest](/js-api/manifest/), computes the next version from commits, generates the changelog, and knows how to publish. The bundled project types cover [npm](/project-types/npm/), [pnpm](/project-types/pnpm/), and [GitHub Actions](/project-types/github-action/) — a custom one makes the whole pipeline work for any platform.
+
+## Project
+
+The abstract base class. Constructor options:
+
+| Option | Description |
+| --- | --- |
+| `manifest` | The [manifest](/js-api/manifest/) of the project. Required. |
+| `compose` | Hook to compose the manifest with secondary manifests. Optional. |
+| `changelogFile` | Path to the changelog file. Defaults to `'CHANGELOG.md'`. |
+| `gitClient` | The git client used to interact with the repository. Created from the manifest directory by default. |
+
+Everything except publishing is implemented by the base class:
+
+| Method | Description |
+| --- | --- |
+| `getNextVersion(options)` | Compute the next version from the commits since the last release. |
+| `bump(options)` | Write the next version to the manifest and generate the changelog section. |
+| `publish(options)` | Publish the project. **Abstract** — the only method a custom project must implement. |
+| `revert(options)` | Revert version updates made during the current run. |
+| `getCommitMessage()` | The `chore(release): ...` commit message for the pending updates. |
+| `getTags(options)` | Git tags to create for the pending release. |
+| `getReleaseData(options)` | Data for the hosting release: notes, tags, prerelease and latest flags. |
+| `getLastReleaseTag(options)` | The latest release tag of the current branch. |
+| `isLatestRelease(options)` | Whether the current version is the latest release — `false` for maintenance releases of previous majors. |
+| `getDefaultPublishTag(options)` | The default npm dist-tag: prerelease identifier for prereleases, `release-N.x` for maintenance releases. |
+| `getMaintenanceBranches(options)` | Maintenance branch refs to create after a major version release. |
+| `getHostedGitInfo()` | Repository information parsed from the git remote. |
+
+## PackageJsonProject
+
+The base class for projects with a `package.json` manifest — [npm](/project-types/npm/), [pnpm](/project-types/pnpm/), and [GitHub Action](/project-types/github-action/) project types extend it. It wires the manifest up from a path:
+
+```js frame="none"
+new PnpmProject({
+  path: 'package.json',
+  changelogFile: 'CHANGELOG.md'
+})
+```
+
+## MonorepoProject
+
+The base class for monorepos. It manages a collection of sub-projects and adds:
+
+| Member | Description |
+| --- | --- |
+| `mode` | `fixed` — all packages share one version; `independent` — each package has its own. |
+| `getProjects()` | Iterates the sub-projects. |
+| `getScope(name)` | Commit scope for a package. By default the package name without the npm scope. |
+| `getTagPrefix(scope)` | Tag prefix for a package. Defaults to `pkg-name@` in independent mode and `''` in fixed mode. |
+
+In independent mode versions, tags, changelogs, and releases are computed per package; commits are attributed to packages by their scope. `PackageJsonMonorepoProject` implements the collection for `package.json`-based workspaces.
+
+## Custom project: a Python package
+
+With the [`PyprojectManifest`](/js-api/manifest/#custom-manifest-pyprojecttoml) from the previous page, a complete project adapter for a Python package is one class — only `publish` needs to be written, everything else is inherited:
+
+```js title="python-project.js"
+import { spawn } from 'child_process'
+import { Project } from '@simple-release/core'
+import { PyprojectManifest } from './pyproject-manifest.js'
+
+function run(command, args, cwd) {
+  return new Promise((resolve, reject) => {
+    spawn(command, args, { cwd, stdio: 'inherit' })
+      .on('error', reject)
+      .on('close', code => (code ? reject(new Error(`${command} exited with ${code}`)) : resolve()))
+  })
+}
+
+export class PythonProject extends Project {
+  constructor(options = {}) {
+    const { path = PyprojectManifest.Filename } = options
+
+    super({
+      ...options,
+      manifest: new PyprojectManifest(path)
+    })
+  }
+
+  async publish(options = {}) {
+    if (options.skip) {
+      options.logger?.info('Skipping publish')
+      return
+    }
+
+    const { projectPath } = this.manifest
+
+    await run('python', ['-m', 'build'], projectPath)
+    await run('twine', ['upload', 'dist/*'], projectPath)
+  }
+}
+```
+
+That's the whole adapter. Used with the [Releaser](/js-api/releaser/), this Python project gets versions from Conventional Commits, a generated `CHANGELOG.md`, git tags, GitHub releases, and [maintenance branches](/github-action/maintenance-branches/) — none of it knows or cares that the package is not JavaScript. And since the project repository never runs `npm install` for it, pair it with the JSON [config](/getting-started/configuration/) and the [GitHub Action](/github-action/) by publishing the adapter as a package and naming it in the query.
