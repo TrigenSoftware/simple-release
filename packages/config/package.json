@@ -1,7 +1,7 @@
 {
   "name": "@simple-release/config",
   "type": "module",
-  "version": "3.0.0",
+  "version": "3.2.5",
   "description": "A simple-release config loader.",
   "author": {
     "name": "Dan Onoshko",
