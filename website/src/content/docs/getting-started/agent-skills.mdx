@@ -1,0 +1,59 @@
+---
+title: Agent Skills
+description: Universal agent skills for Simple Release, including the setup-simple-release-action skill that sets up release automation in your repository.
+sidebar:
+  order: 3
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components'
+
+The repository ships **universal agent skills** — instructions that teach an AI coding agent how to set up and use Simple Release in your project. They are compatible with Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, Windsurf, and other agents that support the [skills](https://github.com/vercel-labs/skills) format.
+
+## setup-simple-release-action
+
+The [`setup-simple-release-action`](https://github.com/TrigenSoftware/simple-release/tree/main/skills/setup-simple-release-action) skill sets up the [GitHub Action](/github-action/) in a repository end to end. Rather than pasting a template, the skill guides the agent to:
+
+- **Detect the project type from the repository** — lock files, workspace manifests, `action.yml` — and describe it in the [config](/getting-started/configuration/) with a version-pinned addon [query](/getting-started/configuration/#project-query). You can also just tell the agent what to use.
+- **Fill the workflow from your toolchain** — the Node.js version, the package manager and its version, the default branch, and the npm registry are read from the repository, not assumed.
+- **Add the optional flows on request** — [manual release](/github-action/manual-release/), [snapshot release](/github-action/snapshot-release/), and [maintenance branches](/github-action/maintenance-branches/). By default only the main [release automation](/github-action/release-automation/) flow is set up; if you have not said what you need, the agent asks once.
+- **Finish with a checklist** of the settings only you can change — allowing GitHub Actions to create pull requests, the `NPM_TOKEN` secret, squash merging for release pull requests.
+
+Install the skill into your project with either package runner:
+
+<Tabs syncKey="pkg">
+  <TabItem label="pnpm">
+    ```sh frame="none"
+    pnpx skills add TrigenSoftware/simple-release --skill setup-simple-release-action
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```sh frame="none"
+    npx skills add TrigenSoftware/simple-release --skill setup-simple-release-action
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside title="What gets installed">
+  The command copies the skill into your agent's skills directory. From then on, asking the agent to "set up release automation" runs the setup above — detection, the config and workflow files, and the checklist of manual steps.
+</Aside>
+
+## conventional-commit-message
+
+Simple Release derives versions and changelogs from your commit messages, so it pairs well with the [`conventional-commit-message`](https://conventional-changelog.js.org/getting-started/agent-skills/) skill from the conventional-changelog project. It teaches the agent to write Conventional Commit messages by release impact — choosing the type and scope that produce the right version bump, flagging breaking changes, and validating against your Commitlint config when it is available.
+
+This matters double in monorepos: a commit bumps a package only when its scope matches the package name, and the skill derives scopes from your workspace instead of guessing.
+
+<Tabs syncKey="pkg">
+  <TabItem label="pnpm">
+    ```sh frame="none"
+    pnpx skills add conventional-changelog/conventional-changelog --skill conventional-commit-message
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```sh frame="none"
+    npx skills add conventional-changelog/conventional-changelog --skill conventional-commit-message
+    ```
+  </TabItem>
+</Tabs>
+
+See the conventional-changelog [Agent Skills](https://conventional-changelog.js.org/getting-started/agent-skills/) page for the full details.

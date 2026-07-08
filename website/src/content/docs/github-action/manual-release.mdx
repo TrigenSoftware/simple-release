@@ -1,0 +1,97 @@
+---
+title: Manual Release
+description: Force a version, release type, or prerelease from a workflow dispatch form — the release still goes through the same pull request.
+sidebar:
+  order: 3
+---
+
+Sometimes the next version shouldn't be derived from commits: you want to promote a batch of fixes to a minor, cut a major on your own schedule, or start a prerelease line. A **manual release** forces the bump through a workflow dispatch form — and still goes through the same release pull request, so nothing is released without review.
+
+## Setup
+
+Extend the [release workflow](/github-action/release-automation/) with a `workflow_dispatch` trigger and pass its inputs to the `pull-request` job:
+
+```yaml title=".github/workflows/release.yml" {3-19,33-35}
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Force specific version
+        type: string
+      as:
+        description: Release type
+        type: choice
+        options:
+          - ''
+          - major
+          - minor
+          - patch
+          - prerelease
+      prerelease:
+        description: Pre-release identifier (e.g. alpha, beta)
+        type: string
+  # ...the issue_comment and push triggers stay as they are
+jobs:
+  # ...the check job stays as it is
+  pull-request:
+    # ...
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v7
+      - name: Create or update pull request
+        uses: TrigenSoftware/simple-release-action@v2
+        with:
+          workflow: pull-request
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          bump-version: ${{ inputs.version }}
+          bump-as: ${{ inputs.as }}
+          bump-prerelease: ${{ inputs.prerelease }}
+```
+
+On regular pushes the `inputs` context is empty, so the `bump-*` inputs stay unset and the flow behaves as usual.
+
+## Running it
+
+In the repository go to **Actions → Release → Run workflow**, fill the form, and run — or use the GitHub CLI:
+
+```sh frame="none"
+gh workflow run release.yml -f as=minor
+```
+
+The `check` job routes the dispatch to the `pull-request` flow, and the release pull request is created or updated with the forced bump. From there it is a normal release: review and squash-merge.
+
+For example, dispatching `as=minor` on a repository released as `1.0.0` with no new commits produces a pull request titled `chore(release): 1.1.0` with a changelog section saying "Version bump without any changes".
+
+| Input | Effect |
+| --- | --- |
+| `version` | Sets the exact version, e.g. `3.1.0`. Overrides everything else. |
+| `as` | Forces the release type: `major`, `minor`, `patch`, or `prerelease`. |
+| `prerelease` | Pre-release identifier — combine with `as: prerelease` to get `1.1.0-alpha.0`. |
+
+## Per-package bumps in monorepos
+
+For [independent monorepos](/project-types/pnpm/#pnpmworkspacesproject), the `bump-by-project` input shapes the bump per package. Add it to the form the same way:
+
+```yaml title=".github/workflows/release.yml"
+  workflow_dispatch:
+    inputs:
+      # ...
+      by-project:
+        description: JSON with per-project bump options
+        type: string
+# ...
+      - name: Create or update pull request
+        uses: TrigenSoftware/simple-release-action@v2
+        with:
+          # ...
+          bump-by-project: ${{ inputs.by-project }}
+```
+
+The value is a JSON object keyed by full package names:
+
+```sh frame="none"
+gh workflow run release.yml -f by-project='{"@your-org/pkg-a":{"as":"minor"}}'
+```
+
+This forces `pkg-a` to its next minor. Packages without an entry are still bumped by their commits as usual — to hold one back even though it has releasable changes, pass `{"skip": true}` for it.

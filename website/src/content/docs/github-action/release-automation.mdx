@@ -1,0 +1,142 @@
+---
+title: Release Automation
+description: Set up the main flow of simple-release-action — a release pull request on every push, released on squash merge.
+sidebar:
+  order: 2
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components'
+
+The main flow keeps a **release pull request** up to date and releases it on merge:
+
+1. You push commits to the main branch.
+2. The action computes the next version from the [Conventional Commits](/getting-started/complete-guide/) history and creates (or updates) a pull request with the version bump and changelog.
+3. You squash-merge the pull request — the action tags the release commit, publishes the packages, and creates the GitHub release.
+
+## Setup
+
+<Steps>
+
+1. Create a [config](/getting-started/configuration/) describing your project in the repository root:
+
+   ```json title=".simple-release.json"
+   {
+     "project": ["@simple-release/pnpm#PnpmWorkspacesProject", {
+       "mode": "fixed"
+     }]
+   }
+   ```
+
+   The action installs the addon named in the query by itself — no dependencies to add to your project.
+
+2. Create the release workflow:
+
+   ```yaml title=".github/workflows/release.yml"
+   name: Release
+   on:
+     issue_comment:
+       types: [created, deleted]
+     push:
+       branches:
+         - main
+   jobs:
+     check:
+       runs-on: ubuntu-latest
+       name: Context check
+       permissions:
+         contents: read
+       outputs:
+         continue: ${{ steps.check.outputs.continue }}
+         workflow: ${{ steps.check.outputs.workflow }}
+       steps:
+         - name: Checkout the repository
+           uses: actions/checkout@v7
+         - name: Context check
+           id: check
+           uses: TrigenSoftware/simple-release-action@v2
+           with:
+             workflow: check
+             github-token: ${{ secrets.GITHUB_TOKEN }}
+     pull-request:
+       runs-on: ubuntu-latest
+       name: Pull request
+       needs: check
+       if: needs.check.outputs.workflow == 'pull-request'
+       permissions:
+         contents: write
+         pull-requests: write
+       steps:
+         - name: Checkout the repository
+           uses: actions/checkout@v7
+         - name: Create or update pull request
+           uses: TrigenSoftware/simple-release-action@v2
+           with:
+             workflow: pull-request
+             github-token: ${{ secrets.GITHUB_TOKEN }}
+     release:
+       runs-on: ubuntu-latest
+       name: Release
+       needs: check
+       if: needs.check.outputs.workflow == 'release'
+       permissions:
+         contents: write
+       steps:
+         - name: Checkout the repository
+           uses: actions/checkout@v7
+         - name: Install pnpm
+           uses: pnpm/action-setup@v6
+           with:
+             version: 11
+         - name: Install Node.js
+           uses: actions/setup-node@v6
+           with:
+             node-version: 22
+             cache: 'pnpm'
+             registry-url: 'https://registry.npmjs.org'
+         - name: Install dependencies
+           run: pnpm install
+         - name: Release
+           uses: TrigenSoftware/simple-release-action@v2
+           with:
+             workflow: release
+             github-token: ${{ secrets.GITHUB_TOKEN }}
+             npm-token: ${{ secrets.NPM_TOKEN }}
+   ```
+
+   The three jobs map to the action [workflows](/github-action/#workflows): `check` decides what should run for the current event, `pull-request` maintains the release pull request, and `release` runs on the merged release commit — it creates the tags, publishes the packages, and creates the GitHub release.
+
+3. Allow the action to create pull requests: in the repository **Settings → Actions → General**, enable **Allow GitHub Actions to create and approve pull requests**. Without it the `pull-request` job fails with a "GitHub Actions is not permitted to create or approve pull requests" error.
+
+4. Push a `feat: ...` or `fix: ...` commit to `main` — the release pull request appears. Merge it with **squash** to release.
+
+</Steps>
+
+<Aside type="caution" title="Merge release pull requests with squash">
+  The `check` job recognizes the release commit by its `chore(release): ...` message on the branch head. Squash merge keeps that message as the commit title; a regular merge commit hides it and the release will not run.
+</Aside>
+
+## The first release
+
+No special setup is needed for a new project: when no release tags exist yet, the action treats the current manifest version as the first release — the pull request keeps the version from the manifest and generates the changelog from the whole history.
+
+## Options via pull request comments
+
+The pending release can be reshaped right from the release pull request: post a comment starting with `!simple-release/set-options` followed by a JSON block with releaser options. This is why the workflow subscribes to the `issue_comment` event — the action re-runs and regenerates the pull request with the options applied. Deleting the comment re-runs it again without them.
+
+For example, to turn the pending release into a major:
+
+````md
+!simple-release/set-options
+
+```json
+{
+  "bump": {
+    "as": "major"
+  }
+}
+```
+````
+
+A pull request that proposed `1.2.0` will be rebuilt as `2.0.0`. The JSON accepts the same step options as the [config file](/getting-started/configuration/#sections), and the comment options win over the config. Note that comments affect the pull request generation — so the options that matter here are the ones shaping it, `bump` first of all; options of the release-time steps like `publish` belong in the config. The body of every release pull request includes a cheatsheet with this command.
+
+To force a version or release type without leaving the terminal, there is also a workflow dispatch form — see [Manual Release](/github-action/manual-release/).

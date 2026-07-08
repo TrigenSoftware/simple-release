@@ -1,0 +1,38 @@
+---
+title: Simple Release
+description: A simple tool to automate version bumps, changelogs, and releases using Conventional Commits.
+template: splash
+editUrl: false
+hero:
+  tagline: Automate version bumps, changelogs, and releases — from your commit history, in one run.
+  image:
+    dark: ../../assets/rocket-dark.svg
+    light: ../../assets/rocket-light.svg
+  actions:
+    - text: Get Started
+      link: /getting-started/
+      icon: right-arrow
+    - text: GitHub
+      link: https://github.com/TrigenSoftware/simple-release
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## Features
+
+<CardGrid stagger>
+  <Card title="Powered by Conventional Commits" icon="pencil">
+    Uses [conventional-changelog](https://conventional-changelog.js.org) to parse commits, determine the next version, and generate a changelog — no hand-editing.
+  </Card>
+  <Card title="Monorepo support" icon="seti:folder">
+    Releases multiple packages in a single run — fixed or independent versioning, per-package tags, changelogs, and releases.
+  </Card>
+  <Card title="Flexible and extensible" icon="puzzle">
+    Project types, package managers, and hostings are addons. Write your own adapter for any language or registry — it is not limited to JavaScript projects.
+  </Card>
+  <Card title="GitHub Action" icon="github">
+    Automates the whole flow in CI: a release pull request with the version bump and changelog, released on merge. Manual releases, snapshots, and maintenance branches included.
+  </Card>
+</CardGrid>

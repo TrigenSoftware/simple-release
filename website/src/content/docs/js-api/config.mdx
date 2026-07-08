@@ -1,0 +1,63 @@
+---
+title: Config
+description: The config loader — find the .simple-release file, validate requirements, and instantiate addons from queries.
+sidebar:
+  order: 6
+---
+
+`@simple-release/config` loads the [config file](/getting-started/configuration/) and turns addon [queries](/getting-started/configuration/#project-query) into instances. It is how the [GitHub Action](/js-api/github-action/) reads the project setup, and it works the same in your own scripts.
+
+```js title="release.js"
+import { Releaser } from '@simple-release/core'
+import { load } from '@simple-release/config'
+
+const {
+  project,
+  hosting,
+  releaser,
+  ...options
+} = await load({
+  config: true,
+  project: true
+})
+
+await new Releaser({
+  project,
+  hosting,
+  ...releaser
+})
+  .setOptions(options)
+  .bump()
+  .commit()
+  .tag()
+  .push()
+  .publish()
+  .release()
+  .run()
+```
+
+## load
+
+`load(requirements, loader)` searches up from the current directory for the first config file — `.simple-release.js`, `.simple-release.mjs`, `.simple-release.cjs`, or `.simple-release.json` — imports it, validates it against the requirements, and instantiates the `project` and `hosting` queries.
+
+| Parameter | Description |
+| --- | --- |
+| `requirements` | Which keys must be present: `{ config: true }` — the config file itself must exist; any config key set to `true` — that key must be set, e.g. `{ project: true }`. |
+| `loader` | How to import a queried package: `(path, version, config) => Promise<module>`. Defaults to a plain `import()`. |
+
+The returned object is the parsed config with `project` and `hosting` already instantiated: the `releaser` key holds the [releaser options](/js-api/releaser/#options), and the rest are step options for `setOptions`.
+
+The `loader` is the extension point for environments where addons are not preinstalled — the [GitHub Action](/js-api/github-action/) passes a loader that installs the queried package with the pinned version into a cache directory before importing it.
+
+## parseImportQuery
+
+The query parser is exported for custom loaders:
+
+```js frame="none"
+import { parseImportQuery } from '@simple-release/config'
+
+parseImportQuery('@simple-release/pnpm@3.2.1#PnpmWorkspacesProject')
+// { path: '@simple-release/pnpm', version: '3.2.1', symbol: 'PnpmWorkspacesProject' }
+```
+
+`symbol` defaults to the module's default export when omitted.

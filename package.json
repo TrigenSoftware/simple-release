@@ -26,7 +26,8 @@
     "test": "run -p lint test:unit test:types",
     "commit": "cz",
     "updateGitHooks": "simple-git-hooks",
-    "release": "echo todo"
+    "docs:dev": "pnpm --filter website dev",
+    "docs:build": "pnpm --filter website build"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.0",

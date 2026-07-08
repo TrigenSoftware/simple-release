@@ -1,0 +1,98 @@
+---
+title: Configuration
+description: The .simple-release config file — supported formats, the project query syntax, step options, and how the GitHub Action installs addons for you.
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Simple Release is configured with a single file in the repository root. The config describes your project type and default options for the release steps.
+
+## Config file
+
+The first file found is used, searched in this order:
+
+| File | Format |
+| --- | --- |
+| `.simple-release.js` | ES module |
+| `.simple-release.mjs` | ES module |
+| `.simple-release.cjs` | CommonJS module |
+| `.simple-release.json` | JSON |
+
+The JSON config describes addons with [queries](#project-query) — strings that name the package to load:
+
+```json title=".simple-release.json"
+{
+  "project": ["@simple-release/pnpm#PnpmWorkspacesProject", {
+    "mode": "fixed"
+  }]
+}
+```
+
+The JS config can do the same, or instantiate addons directly — useful when you already have the packages installed:
+
+```js title=".simple-release.js"
+import { PnpmWorkspacesProject } from '@simple-release/pnpm'
+
+export const project = new PnpmWorkspacesProject({
+  mode: 'fixed'
+})
+```
+
+<Aside type="tip" title="Which one to pick?">
+  With the [GitHub Action](/github-action/) prefer the JSON config: the action reads the query and installs the addon by itself, so your project needs no extra dependencies — especially handy for non-JavaScript projects without a `package.json`. Prefer the JS config when you use the [JS API](/js-api/) directly and want full control.
+</Aside>
+
+## Project query
+
+A query names the class to load in the format `package[@version][#Export]`:
+
+| Query | Meaning |
+| --- | --- |
+| `@simple-release/pnpm#PnpmProject` | The `PnpmProject` export of the latest `@simple-release/pnpm` |
+| `@simple-release/pnpm@3.2.1#PnpmWorkspacesProject` | The same package pinned to version `3.2.1` |
+| `@simple-release/pnpm` | The default export of the package |
+
+To pass options to the class constructor, use a tuple of the query and an options object:
+
+```json frame="none"
+["@simple-release/pnpm#PnpmWorkspacesProject", { "mode": "independent" }]
+```
+
+<Aside type="note">
+  Pin the addon version in the query for reproducible releases — the GitHub Action caches installed addons, and an unpinned query means "whatever was latest when the cache was first built". Changing the pinned version also refreshes the cache.
+</Aside>
+
+## Sections
+
+Top-level keys of the config:
+
+| Key | Description |
+| --- | --- |
+| `project` | The project addon [query](#project-query) or instance. Describes how to read the version, bump, and publish. |
+| `hosting` | The hosting addon, e.g. `@simple-release/github#GithubHosting`. Creates releases and pull requests. The GitHub Action provides it automatically. |
+| `releaser` | Options for the [releaser](/js-api/releaser/) itself: `verbose`, `silent`, `dryRun`. |
+
+Every other key sets default options for the corresponding release step: `checkout`, `setUser`, `bump`, `commit`, `maintenanceBranch`, `tag`, `push`, `publish`, `release`, and `pullRequest`. See the [Releaser](/js-api/releaser/) page for the options of each step.
+
+A fuller example:
+
+```json title=".simple-release.json"
+{
+  "project": ["@simple-release/pnpm#PnpmWorkspacesProject", {
+    "mode": "fixed"
+  }],
+  "releaser": {
+    "verbose": true
+  },
+  "bump": {
+    "extraScopes": ["deps"]
+  },
+  "maintenanceBranch": {
+    "enabled": true
+  }
+}
+```
+
+This config releases a fixed-mode pnpm workspaces monorepo, logs verbosely, counts `fix(deps): ...` commits from Dependabot or Renovate towards version bumps, and creates a maintenance branch when a release crosses a major version boundary.

@@ -1,0 +1,76 @@
+---
+title: GitHub Action
+description: The API behind simple-release-action — ReleaserGithubAction flows, context helpers, and action input mapping.
+sidebar:
+  order: 7
+---
+
+`@simple-release/github-action` is the API that [simple-release-action](/github-action/) is built from. Use it to assemble a custom action or a script with the same flows.
+
+## ReleaserGithubAction
+
+An extension of the [Releaser](/js-api/releaser/) preconfigured for the GitHub Actions environment: the hosting is created from an Octokit instance, `setUser` defaults to the `github-actions[bot]` identity, `checkout` fetches and force-recreates the release branch, `tag` fetches fresh tags, and `push` force-pushes.
+
+```js frame="none"
+import { getOctokit } from '@actions/github'
+import { load } from '@simple-release/config'
+import { ReleaserGithubAction } from '@simple-release/github-action'
+
+const {
+  project,
+  releaser,
+  ...options
+} = await load({
+  config: true,
+  project: true
+})
+const action = new ReleaserGithubAction({
+  project,
+  octokit: getOctokit(process.env.GITHUB_TOKEN),
+  ...releaser
+})
+  .setOptions(options)
+```
+
+### Flows
+
+| Method | Description |
+| --- | --- |
+| `runPullRequestAction()` | The [main flow](/github-action/release-automation/) pull request side: checkout, fetch options from comments, bump, commit, push, pull request. |
+| `runReleaseAction(check)` | The release side: maintenance branches, tags, push, publish, release — guarded by `ifReleaseCommit` unless `check` is `false`. |
+| `runSnapshotAction(tag)` | The [snapshot flow](/github-action/snapshot-release/): fetch refs, bump with the timestamped snapshot identifier, publish under the tag, revert. |
+| `runAction()` | Detect the current event context and run the pull request or release flow. |
+
+### Extra steps
+
+On top of the [Releaser steps](/js-api/releaser/#steps):
+
+| Step | Description |
+| --- | --- |
+| `fetch()` | Fetch all commits and tags from the remote — unshallows the default `actions/checkout` state. |
+| `fetchOptions()` | Read extra releaser options from the [pull request comments](/github-action/release-automation/#options-via-pull-request-comments). |
+
+## Context helpers
+
+| Helper | Description |
+| --- | --- |
+| `ifReleaseCommit(releaser)` | Whether the current branch head is an unreleased `chore(release): ...` commit — the guard for the release flow. |
+| `ifSetOptionsComment()` | Whether the current event is a `!simple-release/set-options` comment on a release pull request. Returns the target branch, or `false` to stop. |
+| `getInputOptions()` | Read the action inputs and map them to releaser step options. |
+
+`getInputOptions` maps the [action inputs](/github-action/#inputs) as follows:
+
+| Input | Target option |
+| --- | --- |
+| `branch` | `checkout.branch` |
+| `bump-version` | `bump.version` |
+| `bump-as` | `bump.as` |
+| `bump-prerelease` | `bump.prerelease` |
+| `bump-snapshot` | `bump.snapshot` |
+| `bump-first-release` | `bump.firstRelease` |
+| `bump-skip` | `bump.skip` |
+| `bump-by-project` | `bump.byProject` |
+| `maintenance-branch` | `maintenanceBranch.enabled` |
+| `publish-skip` | `publish.skip` |
+| `publish-access` | `publish.access` |
+| `publish-tag` | `publish.tag` |

@@ -1,0 +1,36 @@
+---
+title: Introduction
+description: Simple Release automates version bumps, changelogs, and releases from your Conventional Commits history — an overview of the tool and where to start.
+sidebar:
+  order: 1
+---
+
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components'
+
+**Simple Release** automates the release routine: it reads your git history, determines the next version, updates manifests and changelogs, creates tags and releases, and publishes packages — all in one run. You write commit messages that follow [Conventional Commits](https://www.conventionalcommits.org/), and the tool does the rest, powered by [conventional-changelog](https://conventional-changelog.js.org) under the hood.
+
+- 📄 Parses commits to determine the next version and generate a changelog.
+- 🗂️ Supports monorepos — releases multiple packages in a single run, in fixed or independent versioning mode.
+- 🧩 Project types, package managers, and hostings are addons — extensible to any stack.
+- 🚀 Ships a [GitHub Action](/github-action/) that runs the whole flow in CI: a release pull request, released on merge.
+
+<Aside type="tip" title="New to Conventional Commits?">
+  Start with [The Complete Guide](/getting-started/complete-guide/) — it walks through the commit format and how to wire up a fully automated release pipeline.
+</Aside>
+
+## Where to start
+
+<CardGrid>
+  <Card title="Automate releases on GitHub" icon="github">
+    Add the [GitHub Action](/github-action/) with a couple of files: a [config](/getting-started/configuration/) describing your project and a release workflow. No dependencies to install — the action downloads the addons itself.
+  </Card>
+  <Card title="Script your own release" icon="seti:javascript">
+    Use the [JS API](/js-api/) to build a custom release pipeline for any CI — or a custom adapter for your project type, package manager, or hosting.
+  </Card>
+</CardGrid>
+
+## Not just for JavaScript
+
+Simple Release is written in JavaScript, but it is **platform agnostic by design**. A project is described by an adapter: the [manifest](/js-api/manifest/) knows how to read and write the version file, the [project](/js-api/project/) knows how to bump and publish. The bundled addons cover [npm](/project-types/npm/), [pnpm](/project-types/pnpm/), and [GitHub Actions](/project-types/github-action/) projects, and you can [write your own](/js-api/) for a Python package, a Go module, or anything else with a version and a changelog.
+
+With the JSON [config](/getting-started/configuration/) and the GitHub Action, a non-JavaScript project doesn't even need a `package.json` — the action installs the addons named in the config by itself.

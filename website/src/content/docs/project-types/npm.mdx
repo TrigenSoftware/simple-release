@@ -1,0 +1,81 @@
+---
+title: Npm
+description: The npm project addon — single packages and npm workspaces monorepos, published with npm publish.
+sidebar:
+  order: 1
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+`@simple-release/npm` describes projects managed with npm: `NpmProject` for a single package and `NpmWorkspacesProject` for an [npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces) monorepo. Publishing runs `npm publish`.
+
+<Tabs syncKey="pkg">
+  <TabItem label="pnpm">
+    ```sh frame="none"
+    pnpm add @simple-release/npm
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```sh frame="none"
+    npm i @simple-release/npm
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh frame="none"
+    yarn add @simple-release/npm
+    ```
+  </TabItem>
+</Tabs>
+
+Single package:
+
+```json title=".simple-release.json"
+{
+  "project": "@simple-release/npm#NpmProject"
+}
+```
+
+Workspaces monorepo — `NpmWorkspacesProject` reads the workspaces list from the `package.json` in the project root:
+
+```json title=".simple-release.json"
+{
+  "project": ["@simple-release/npm#NpmWorkspacesProject", {
+    "mode": "fixed"
+  }]
+}
+```
+
+## Options
+
+### NpmProject
+
+| Option | Description |
+| --- | --- |
+| `path` | Path to the `package.json` manifest file. Defaults to `'package.json'`. |
+| `changelogFile` | Path to the changelog file. Defaults to `'CHANGELOG.md'`. |
+| `compose` | Function to compose the main manifest with secondary manifests where the version should also be updated. Optional. |
+
+### NpmWorkspacesProject
+
+| Option | Description |
+| --- | --- |
+| `mode` | Versioning mode. Required. `independent` — each package has its own version; `fixed` — all packages share the same version. |
+| `root` | Path to the monorepo root. Defaults to the current working directory. |
+| `changelogFile` | Path to the changelog file. Defaults to `'CHANGELOG.md'`. |
+| `compose` | Same as for `NpmProject`, called for each manifest in the monorepo. Optional. |
+| `scope` | Function to format the scope name from the package name. By default the scope part of the package name is dropped: `@scope/pkg-name` → `pkg-name`. |
+| `tagPrefix` | Function to format the tag prefix from the scope name. Defaults to `pkg-name@` in independent mode and an empty string in fixed mode. |
+
+In monorepos, commits are attributed to packages by the commit scope — `fix(pkg-name): ...` bumps `pkg-name`. The scope must match the package name without the npm scope (or whatever your `scope` function returns).
+
+### publish
+
+Options of the `publish` step for both classes:
+
+| Option | Description |
+| --- | --- |
+| `skip` | Skip publishing. |
+| `access` | Access level for the package. |
+| `tag` | npm dist-tag — a string or a function of the version and prerelease components. When not set, prereleases get their prerelease identifier and maintenance releases of previous majors get `release-N.x`, so they never overwrite `latest`. |
+| `otp` | One-time password for publishing. |
+| `env` | Environment variables to set before publishing. Defaults to `process.env`. |
