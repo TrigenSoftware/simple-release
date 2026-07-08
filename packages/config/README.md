@@ -44,11 +44,7 @@ npm i @simple-release/config
 
 ## Usage
 
-This package provides a function to find and load js config file for simple-release. Possible config file names are:
-
-- `.simple-release.js`
-- `.simple-release.cjs`
-- `.simple-release.mjs`
+This package provides a function to find and load the config file for simple-release.
 
 ```js
 import { load } from '@simple-release/config'
@@ -58,43 +54,6 @@ await load({ config: true }) // Returns config object or throws an error if conf
 await load({ [propertyName]: true }) // Returns config object with desired property or null or throws an error if property is not set in config
 ```
 
-Also loader has a feature to load and instantiate addon's classes. For example, if you have a config like this:
+## Documentation
 
-```js
-export const project = [
-  '@simple-release/pnpm#PnpmWorkspacesProject',
-  {
-    mode: 'independent'
-  }
-]
-```
-
-You can load it like this:
-
-```js
-import { load } from '@simple-release/config'
-
-const config = await load()
-
-config.project // Will be an instance of PnpmWorkspacesProject
-```
-
-You can pass your own loader and use queries with version:
-
-```js
-export const project = [
-  '@simple-release/pnpm@1.0.0#PnpmWorkspacesProject',
-  {
-    mode: 'independent'
-  }
-]
-```
-
-```js
-import { load } from '@simple-release/config'
-
-const config = await load({}, async (name, version) => {
-  await install(name, version) // For example you can implement lazy install here
-  return import(name)
-})
-```
+For comprehensive guides and API reference, visit the [documentation website](https://simple-release.js.org/js-api/config/).

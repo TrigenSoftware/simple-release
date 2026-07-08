@@ -64,11 +64,6 @@ await new Releaser({
   .run()
 ```
 
-## Options
+## Documentation
 
-| Option | Description |
-|--------|-------------|
-| token | GitHub personal access token to authenticate with the GitHub API. |
-| octokit | Alternative to `token`, you can provide an instance of GitHub's Octokit client. |
-| owner | The GitHub owner (username or organization) of the repository. If not provided, it will be inferred from the remote URL. |
-| project | The GitHub project (repository name) to create releases in. If not provided, it will be inferred from the remote URL. |
+For comprehensive guides and API reference, visit the [documentation website](https://simple-release.js.org/hostings/github/).

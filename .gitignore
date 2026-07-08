@@ -43,3 +43,6 @@ tmp
 .claude
 .agents
 skills-lock.json
+
+# Local testing polygon
+dummy-space
