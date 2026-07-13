@@ -4,16 +4,21 @@ import {
   type Project,
   type ReleaserOptions,
   type ReleaserSetUserOptions,
+  type MonorepoProjectBumpOptions,
+  type MonorepoProjectBumpByProjectOptions,
   Releaser
 } from '@simple-release/core'
 import {
   type Octokit,
   GithubHosting
 } from '@simple-release/github'
-import { parseSetOptionsComment } from './comment.js'
+import {
+  parseSetOptionsComment,
+  parseSetPreambleComment
+} from './comment.js'
 import {
   ifReleaseCommit,
-  ifSetOptionsComment
+  ifCommandComment
 } from './conditions.js'
 
 export interface ReleaserGithubActionOptions<P extends Project = Project> extends Omit<ReleaserOptions<P, GithubHosting>, 'hosting'> {
@@ -89,26 +94,97 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
         ...repositoryId,
         issue_number: pr.number
       })
+      let optionsApplied = false
+      let preamble: string | undefined
+      const preambleByName = new Map<string, string>()
 
-      for (let i = comments.length - 1; i >= 0; i--) {
-        const json = parseSetOptionsComment(comments[i])
+      // Scan newest to oldest: the newest set-options comment wins, and for
+      // set-preamble the newest global and the newest per package win.
+      for (let i = comments.length - 1, comment; i >= 0; i--) {
+        comment = comments[i]
 
-        if (json) {
-          try {
-            const options = JSON.parse(json) as Record<string, unknown>
+        if (!optionsApplied) {
+          const json = parseSetOptionsComment(comment)
 
-            logger.verbose('fetch-options', 'Found set-options comment:')
-            logger.verbose('fetch-options', json)
+          if (json) {
+            try {
+              const options = JSON.parse(json) as Record<string, unknown>
 
-            super.setOptions(options)
-          } catch {
-            logger.verbose('fetch-options', 'Failed to parse parameters comment:')
-            logger.verbose('fetch-options', json)
+              logger.verbose('fetch-options', 'Found set-options comment:')
+              logger.verbose('fetch-options', json)
+
+              super.setOptions(options)
+              // Only stop scanning once options were actually applied, so a
+              // malformed newest comment falls through to older valid ones.
+              optionsApplied = true
+            } catch {
+              logger.verbose('fetch-options', 'Failed to parse parameters comment:')
+              logger.verbose('fetch-options', json)
+            }
+
+            continue
           }
+        }
 
-          break
+        const setPreamble = parseSetPreambleComment(comment)
+
+        if (setPreamble) {
+          const {
+            name,
+            preamble: markdown
+          } = setPreamble
+
+          if (name) {
+            if (!preambleByName.has(name)) {
+              preambleByName.set(name, markdown)
+            }
+          } else if (preamble === undefined) {
+            preamble = markdown
+          }
         }
       }
+
+      this.applyPreamble(preamble, preambleByName)
+    })
+  }
+
+  /**
+   * Apply preambles collected from pull request comments as bump options.
+   * A global preamble becomes `bump.preamble`; per-package preambles are merged
+   * into `bump.byProject[name].preamble` (keyed by full package name),
+   * preserving any existing `byProject` entries.
+   * @param preamble - The global preamble, if any.
+   * @param preambleByName - Preambles keyed by full package name.
+   */
+  private applyPreamble(preamble: string | undefined, preambleByName: Map<string, string>) {
+    if (preamble === undefined && preambleByName.size === 0) {
+      return
+    }
+
+    const bump: MonorepoProjectBumpOptions = {}
+
+    if (preamble !== undefined) {
+      this.logger.verbose('fetch-options', 'Found global set-preamble comment.')
+      bump.preamble = preamble
+    }
+
+    if (preambleByName.size > 0) {
+      const byProject: Record<string, MonorepoProjectBumpByProjectOptions> = {
+        ...(this.stepsOptions.bump as MonorepoProjectBumpOptions | undefined)?.byProject
+      }
+
+      for (const [name, markdown] of preambleByName) {
+        byProject[name] = {
+          ...byProject[name],
+          preamble: markdown
+        }
+      }
+
+      bump.byProject = byProject
+    }
+
+    super.setOptions({
+      bump: bump as PickOverridableOptions<P['bump']>
     })
   }
 
@@ -213,23 +289,22 @@ export class ReleaserGithubAction<P extends Project = Project> extends Releaser<
 
     logger.info('run', 'Detecting action...')
 
-    const isSetOptionsComment = ifSetOptionsComment()
+    const commandComment = ifCommandComment()
     let isReleaseCommit = false
 
-    if (isSetOptionsComment === false) {
+    if (commandComment === false) {
       logger.info('run', 'Action triggered by a pull request comment.')
-      logger.info('run', 'No set-options comment found in a comment. Stopping action.')
-      await this.run()
+      logger.info('run', 'No command comment found in a comment. Stopping action.')
       return
     }
 
-    if (isSetOptionsComment !== null) {
+    if (commandComment !== null) {
       logger.info('run', 'Action triggered by a pull request comment.')
 
       const currentBranch = await gitClient.getCurrentBranch()
 
-      if (currentBranch !== isSetOptionsComment) {
-        super.checkout(isSetOptionsComment, {
+      if (currentBranch !== commandComment) {
+        super.checkout(commandComment, {
           fetch: true,
           force: false
         })

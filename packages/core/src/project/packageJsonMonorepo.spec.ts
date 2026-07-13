@@ -250,6 +250,35 @@ describe('core', () => {
           ])
         })
 
+        it('should include global and per-project preambles in changelogs', async () => {
+          const { cwd } = await forkProject('bump-preamble', packageJsonIndependentMonorepoProject())
+          const project = new PackageJsonMonorepoProject({
+            mode: 'independent',
+            root: cwd,
+            getProjects
+          })
+          const result = await project.bump({
+            preamble: '## Global heads up',
+            byProject: {
+              'subproject-2': {
+                preamble: '## Subproject two only'
+              }
+            }
+          })
+
+          expect(result).toBe(true)
+
+          const [one, two, three] = project.versionUpdates
+
+          expect(one.notes).toContain('## Global heads up')
+          expect(one.notes).not.toContain('## Subproject two only')
+
+          expect(two.notes).toContain('## Subproject two only')
+          expect(two.notes).not.toContain('## Global heads up')
+
+          expect(three.notes).toContain('## Global heads up')
+        })
+
         it('should get commit message after bump', async () => {
           const { cwd } = await packageJsonIndependentMonorepoProject()
           const project = new PackageJsonMonorepoProject({

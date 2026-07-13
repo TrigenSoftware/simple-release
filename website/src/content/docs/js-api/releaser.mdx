@@ -80,6 +80,7 @@ releaser
 | `prerelease` | Pre-release identifier for prerelease bumps. |
 | `snapshot` | Pre-release identifier with a timestamp suffix for [snapshot builds](/github-action/snapshot-release/). Always applied when set. |
 | `skipChangelog` | Update versions without generating the changelog. |
+| `preamble` | Custom markdown inserted into the changelog after the version header, before the generated sections. In a monorepo it applies to every package; a per-package `byProject[name].preamble` overrides it for that package. |
 | `firstRelease` | Treat the current version as the first release. Auto-detected by default. |
 | `skip` | Skip the version bump. |
 | `forcePrivate` | Allow bumping private packages. |
