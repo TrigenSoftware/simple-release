@@ -68,6 +68,30 @@ describe('core', () => {
           expect(await project.getTags()).toEqual(['subproject-2@3.0.0', 'subproject-3@4.0.0'])
         })
 
+        it('should cache projects even when iteration stops early', async () => {
+          const { cwd } = await packageJsonIndependentMonorepoProject()
+          const project = new PackageJsonMonorepoProject({
+            mode: 'independent',
+            root: cwd,
+            getProjects
+          })
+
+          // Stop iterating after the first project: the cache must still resolve
+          // so a later call does not hang.
+          // oxlint-disable-next-line no-unused-vars
+          for await (const _ of project.getProjects()) {
+            break
+          }
+
+          const names: string[] = []
+
+          for await (const subProject of project.getProjects()) {
+            names.push(await subProject.manifest.getName())
+          }
+
+          expect(names).toEqual(['subproject-1', 'subproject-2', 'subproject-3'])
+        })
+
         it('should get release data', async () => {
           const { cwd } = await packageJsonIndependentMonorepoProject()
           const project = new PackageJsonMonorepoProject({

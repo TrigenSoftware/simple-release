@@ -65,24 +65,21 @@ export abstract class MonorepoProject extends Project {
         gitClient: this.gitClient,
         manifest: this.manifest
       }
-      const projects: Project[] = []
-      let resolve: (projects: Project[]) => void
 
-      this.projectsMutex = new Promise<Project[]>((r) => {
-        resolve = r
-      })
+      // Build and cache the list in a self-contained builder. Resolving the
+      // cache from a dedicated task (instead of after the loop below) keeps it
+      // from hanging when a consumer stops iterating early.
+      this.projectsMutex = (async () => {
+        const projects: Project[] = []
 
-      for await (const project of getProjects(options)) {
-        const isPrivate = await project.manifest.isPrivate()
-
-        if (!isPrivate) {
-          projects.push(project)
-          yield project
+        for await (const project of getProjects(options)) {
+          if (!await project.manifest.isPrivate()) {
+            projects.push(project)
+          }
         }
-      }
 
-      resolve!(projects)
-      return
+        return projects
+      })()
     }
 
     yield* await this.projectsMutex
