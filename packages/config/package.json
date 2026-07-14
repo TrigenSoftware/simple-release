@@ -45,10 +45,10 @@
     "clear": "del ./package ./dist ./coverage",
     "prepublishOnly": "run build clear:package clean-publish",
     "postpublish": "pnpm clear:package",
-    "build": "tsgo -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "oxlint",
     "test:unit": "vitest run --coverage",
-    "test:types": "tsgo --noEmit",
+    "test:types": "tsc --noEmit",
     "test": "run -p lint test:unit test:types"
   },
   "dependencies": {

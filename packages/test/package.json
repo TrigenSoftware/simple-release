@@ -27,7 +27,7 @@
   "exports": "./src/index.ts",
   "scripts": {
     "lint": "oxlint",
-    "test:types": "tsgo --noEmit",
+    "test:types": "tsc --noEmit",
     "test": "run -p lint test:types"
   },
   "dependencies": {
