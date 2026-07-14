@@ -140,3 +140,28 @@ For example, to turn the pending release into a major:
 A pull request that proposed `1.2.0` will be rebuilt as `2.0.0`. The JSON accepts the same step options as the [config file](/getting-started/configuration/#sections), and the comment options win over the config. Note that comments affect the pull request generation — so the options that matter here are the ones shaping it, `bump` first of all; options of the release-time steps like `publish` belong in the config. The body of every release pull request includes a cheatsheet with this command.
 
 To force a version or release type without leaving the terminal, there is also a workflow dispatch form — see [Manual Release](/github-action/manual-release/).
+
+### Custom changelog preamble
+
+A second command, `!simple-release/set-preamble`, adds custom markdown to the top of the changelog — right after the version header, before the generated sections. The markdown after the command line becomes the preamble, perfect for a "What's new?" summary:
+
+````md
+!simple-release/set-preamble
+
+## What's new?
+
+- The website was completely redesigned
+- The new API gives you awesome possibilities
+````
+
+In a monorepo, pass the full package name after the command to target one package's changelog. Wrap the name in backticks so GitHub keeps it as text instead of a mention:
+
+````md
+!simple-release/set-preamble `@your-org/core`
+
+## Core changes
+
+- New plugin system
+````
+
+Use one comment per package, plus one without a name for the whole release; the last comment for a given package wins. Like `set-options`, the command is honored only from repository owners, members, and collaborators, and deleting the comment drops the preamble on the next run.

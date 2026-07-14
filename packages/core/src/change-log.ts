@@ -32,7 +32,7 @@ export function preamblePartial(
 ) {
   return segments(
     preamble,
-    !commitGroups?.length && !noteGroups?.length && 'Version bump without any changes.'
+    !preamble && !commitGroups?.length && !noteGroups?.length && 'Version bump without any changes.'
   )
 }
 

@@ -402,6 +402,7 @@ export abstract class Project {
     const {
       tagPrefix,
       preset = bumpDefaultOptions.preset,
+      preamble,
       dryRun,
       skipChangelog,
       logger
@@ -441,7 +442,8 @@ export abstract class Project {
         .readRepository()
         .context({
           version: nextVersion,
-          previousTag: lastReleaseTag
+          previousTag: lastReleaseTag,
+          preamble
         })
         .writer({
           preamblePartial

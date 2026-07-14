@@ -45,7 +45,7 @@ export interface MonorepoProjectOptions extends ProjectOptions {
   gitClient?: ConventionalGitClient
 }
 
-export type MonorepoProjectBumpByProjectOptions = Pick<ProjectBumpOptions, 'version' | 'as' | 'prerelease' | 'snapshot' | 'skipChangelog' | 'firstRelease' | 'skip'>
+export type MonorepoProjectBumpByProjectOptions = Pick<ProjectBumpOptions, 'version' | 'as' | 'prerelease' | 'snapshot' | 'skipChangelog' | 'firstRelease' | 'skip' | 'preamble'>
 
 export interface MonorepoProjectBumpOptions extends Omit<ProjectBumpOptions, 'tagPrefix'> {
   /**

@@ -1,6 +1,6 @@
 import { context } from '@actions/github'
 import type { ReleaserGithubAction } from './releaser.js'
-import { SET_OPTION_COMMAND } from './comment.js'
+import { isCommandComment } from './comment.js'
 
 export async function ifReleaseCommit(releaser: ReleaserGithubAction) {
   const {
@@ -24,7 +24,15 @@ export async function ifReleaseCommit(releaser: ReleaserGithubAction) {
   return tags.length > 0
 }
 
-export function ifSetOptionsComment() {
+/**
+ * Detect whether the current event is a supported command comment
+ * (`!simple-release/set-options` or `!simple-release/set-preamble`) on an open
+ * release pull request.
+ * @returns The target branch when it is such a comment, `false` when it is a
+ * comment event but not a command comment, or `null` when it is not a comment
+ * event at all.
+ */
+export function ifCommandComment() {
   const {
     eventName,
     payload: {
@@ -43,7 +51,7 @@ export function ifSetOptionsComment() {
       && issueAuthor === 'github-actions[bot]'
       && issueState === 'open'
       && issueBody?.includes('simple-release-pull-request: true')
-      && commentBody?.includes(SET_OPTION_COMMAND)
+      && isCommandComment(commentBody)
     ) {
       const matches = issueBody.match(/simple-release-branch-to:\s*([^\s]+)/)
 
@@ -57,3 +65,9 @@ export function ifSetOptionsComment() {
 
   return null // continue
 }
+
+/**
+ * @deprecated Renamed to {@link ifCommandComment} — it now covers all
+ * `!simple-release/*` command comments, not only `set-options`.
+ */
+export const ifSetOptionsComment = ifCommandComment

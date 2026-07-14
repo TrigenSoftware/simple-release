@@ -61,6 +61,11 @@ export interface ProjectBumpOptions {
    */
   skipChangelog?: boolean
   /**
+   * Custom markdown inserted into the changelog after the version header,
+   * before the generated sections.
+   */
+  preamble?: string
+  /**
    * Whether this is the first release.
    * By default will be auto detected based on tag existence.
    */

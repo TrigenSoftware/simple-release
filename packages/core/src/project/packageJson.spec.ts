@@ -384,6 +384,43 @@ describe('core', () => {
         expect(project.versionUpdates[0].notes).not.toContain('Version bump without any changes.')
       })
 
+      it('should insert the preamble after the version header', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const result = await project.bump({
+          dryRun: true,
+          preamble: '## What\'s new?\n\n- Redesigned website'
+        })
+        const { notes } = project.versionUpdates[0]
+
+        expect(result).toBe(true)
+        expect(notes).toContain('## What\'s new?')
+        expect(notes).toContain('- Redesigned website')
+        // The preamble sits between the version header and the generated sections.
+        expect(notes.indexOf('## [2')).toBeLessThan(notes.indexOf('## What\'s new?'))
+        expect(notes.indexOf('## What\'s new?')).toBeLessThan(notes.indexOf('### '))
+      })
+
+      it('should replace the no-change placeholder with the preamble', async () => {
+        const { cwd } = await packageJsonProject({}, {
+          postReleaseCommits: false
+        })
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const result = await project.bump({
+          dryRun: true,
+          as: 'patch',
+          preamble: '## Heads up'
+        })
+
+        expect(result).toBe(true)
+        expect(project.versionUpdates[0].notes).toContain('## Heads up')
+        expect(project.versionUpdates[0].notes).not.toContain('Version bump without any changes.')
+      })
+
       it('should get commit message after bump', async () => {
         const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({
