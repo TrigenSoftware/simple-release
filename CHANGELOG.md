@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.0](https://github.com/TrigenSoftware/simple-release/compare/v3.2.5...v3.3.0) (2026-07-14)
+
+### Features
+
+* **core,github-action,github:** support custom changelog preamble ([#187](https://github.com/TrigenSoftware/simple-release/issues/187)) ([7ee2d19](https://github.com/TrigenSoftware/simple-release/commit/7ee2d193e317f0deb8604ba2e3ee28a2892249ce))
+
+### Bug Fixes
+
+* **core:** always resolve the getProjects cache ([fb94518](https://github.com/TrigenSoftware/simple-release/commit/fb9451867bfb804db85d57e3d44b75474b0a7f5e))
+* **deps:** update dependency argue-cli to v3 ([#184](https://github.com/TrigenSoftware/simple-release/issues/184)) ([329e3ef](https://github.com/TrigenSoftware/simple-release/commit/329e3ef65994b5430a1541ae5b410a4d8eec3739))
+* **deps:** update dependency starlight-llms-txt to ^0.11.0 ([#181](https://github.com/TrigenSoftware/simple-release/issues/181)) ([98e43fe](https://github.com/TrigenSoftware/simple-release/commit/98e43fea055a89addec8cc0f612edf5691fe842c))
+
 ## [3.2.5](https://github.com/TrigenSoftware/simple-release/compare/v3.2.4...v3.2.5) (2026-07-08)
 
 ### Bug Fixes

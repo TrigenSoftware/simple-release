@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.0](https://github.com/TrigenSoftware/simple-release/compare/v3.2.5...v3.3.0) (2026-07-14)
+
+### Features
+
+* support custom changelog preamble ([#187](https://github.com/TrigenSoftware/simple-release/issues/187)) ([7ee2d19](https://github.com/TrigenSoftware/simple-release/commit/7ee2d193e317f0deb8604ba2e3ee28a2892249ce))
+
 ## [3.2.5](https://github.com/TrigenSoftware/simple-release/compare/v3.2.0...v3.2.5) (2026-07-08)
 
 ### Bug Fixes

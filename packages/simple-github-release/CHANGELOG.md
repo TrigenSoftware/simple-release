@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/TrigenSoftware/simple-release/compare/v3.0.0...v3.3.0) (2026-07-14)
+
+### Bug Fixes
+
+* update dependency argue-cli to v3 ([#184](https://github.com/TrigenSoftware/simple-release/issues/184)) ([329e3ef](https://github.com/TrigenSoftware/simple-release/commit/329e3ef65994b5430a1541ae5b410a4d8eec3739))
+
 ## [3.0.0](https://github.com/TrigenSoftware/simple-release/compare/v2.4.0...v3.0.0) (2026-06-29)
 
 ### ⚠ BREAKING CHANGES
