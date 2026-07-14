@@ -38,7 +38,8 @@ export interface GithubCreatePullRequestOptions extends CreatePullRequestOptions
 }
 
 const OK = 200
-const noop = () => { /* no-op */ }
+
+function noop() { /* no-op */ }
 
 /**
  * A class that creates releases on GitHub using the GitHub REST API.

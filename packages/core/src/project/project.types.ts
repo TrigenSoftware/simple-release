@@ -17,11 +17,6 @@ export interface ProjectOptions {
    */
   manifest: ProjectManifest
   /**
-   * Hook function to compose the manifest.
-   * @param manifest - The manifest to compose.
-   */
-  compose?(manifest: ProjectManifest): ProjectManifest
-  /**
    * The path to the changelog file.
    * @default 'CHANGELOG.md'
    */
@@ -30,6 +25,11 @@ export interface ProjectOptions {
    * The git client used to interact with the repository.
    */
   gitClient?: ConventionalGitClient
+  /**
+   * Hook function to compose the manifest.
+   * @param manifest - The manifest to compose.
+   */
+  compose?(manifest: ProjectManifest): ProjectManifest
 }
 
 export interface ProjectBumpOptions {

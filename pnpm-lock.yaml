@@ -19,16 +19,16 @@ importers:
         version: 21.0.2
       '@commitlint/cz-commitlint':
         specifier: ^21.0.0
-        version: 21.1.0(@types/node@22.16.2)(commitizen@4.3.2(@types/node@22.16.2)(typescript@6.0.3))(typescript@6.0.3)
+        version: 21.1.0(@types/node@22.16.2)(commitizen@4.3.2(@types/node@22.16.2)(typescript@6.0.3))(inquirer@8.2.7(@types/node@22.16.2))(typescript@6.0.3)
       '@trigen/oxlint':
-        specifier: ^9.1.0
-        version: 9.1.0
+        specifier: ^10.1.1
+        version: 10.1.1
       '@trigen/oxlint-config':
-        specifier: ^9.3.0
-        version: 9.3.0(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))
+        specifier: ^10.1.2
+        version: 10.1.2(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))
       '@trigen/scripts':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^10.1.1
+        version: 10.1.1
       '@types/node':
         specifier: ^22.16.2
         version: 22.16.2
@@ -1546,8 +1546,8 @@ packages:
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
 
-  '@trigen/oxlint-config@9.3.0':
-    resolution: {integrity: sha512-ZYtSQvPOKC2/e6i9QJTtnAKiGwYa5mVz5NjfEV2qPvdW5ZDNV+vnL94XVyiR3OIM6cEkAE4wAFSlqhvX8XVw3Q==}
+  '@trigen/oxlint-config@10.1.2':
+    resolution: {integrity: sha512-v5RsINtl8dYo7VJnfL0FiP13ITtWuY66Po89WX8N3+u1LkBGc9l5i64ZJUnfYP59zY3l3067cPJ7s+Feas7UzA==}
     engines: {node: '>=22'}
     peerDependencies:
       oxlint: '>=1.0.0'
@@ -1556,12 +1556,12 @@ packages:
       oxlint-tsgolint:
         optional: true
 
-  '@trigen/oxlint@9.1.0':
-    resolution: {integrity: sha512-oatwPW3/TiswgA03jE8bweFU3Z8c0zswuvjLMJOWM/xWD6cD7xMiHUJf06lkq1JfpSRdz+jTjaX6qSVbD2ICKw==}
+  '@trigen/oxlint@10.1.1':
+    resolution: {integrity: sha512-nEhnu68eJsfSw89FFRd2bP1LJuJpUuAXhT9srcTbq/hopQcOCZPc3cUEDspQeWaVpPm7ChO5Jb2fr2UeHHXMUA==}
     engines: {node: '>=22'}
 
-  '@trigen/scripts@9.0.0':
-    resolution: {integrity: sha512-smerLGo2mzrvAZka5gwMa1c5m9zKJnt0qXxUOA3d6iOVdUuBD7fxRQhVWHyoNSFehuALLDwtNlnKACfCL6Fdrg==}
+  '@trigen/scripts@10.1.1':
+    resolution: {integrity: sha512-WbhrZPQAwnfuRVatVdSJ9Ea1zEQhRbcMZJrU1ZVwuBe1mSfXGZbTcPUCJNWQrj3fhoT73uV+ZRca11l6ziW4iQ==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -1586,8 +1586,14 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
+  '@types/estree@1.0.9':
+    resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
+
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
+
+  '@types/hast@3.0.5':
+    resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
 
   '@types/js-yaml@4.0.9':
     resolution: {integrity: sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg==}
@@ -1625,8 +1631,8 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  '@typescript-eslint/types@8.62.0':
-    resolution: {integrity: sha512-KvAclkktORPvM54TgLgA4z9HIV1M8zOgw9ZVNXl9f/8dLYfXYX1wkMXP7qmabpijQRV5bHJLOmoyGQbLMaUYeg==}
+  '@typescript-eslint/types@8.63.0':
+    resolution: {integrity: sha512-xyLtl9DUBBFrcJS4x2pIqGLH68/tC2uOa4Z7pUteW09D3bXnnXUom4dyPikzWgB7llmIc1zoeI3aoUdC4rPK/Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260707.2':
@@ -1826,10 +1832,6 @@ packages:
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
-
-  argue-cli@2.1.0:
-    resolution: {integrity: sha512-dgojXfc4SiqmNwe38PnbT3zJasrz7g62dLAPD+VFT5RJb8W7LGRqw2IFd2ES+plnhsp4HYNJmFqMU1tCThdCww==}
-    engines: {node: '>=14.0.0'}
 
   argue-cli@3.1.0:
     resolution: {integrity: sha512-DhBpBfXL4SS2uC0N922MMajKR3CdrTG0u2or1PNYgXMsrSzViJrbtvT0nCLlLGUI0plam/ZZCs7aAauHtW9thw==}
@@ -2713,8 +2715,8 @@ packages:
       typescript:
         optional: true
 
-  iconv-lite@0.7.2:
-    resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
+  iconv-lite@0.7.3:
+    resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
     engines: {node: '>=0.10.0'}
 
   ieee754@1.2.1:
@@ -3398,6 +3400,10 @@ packages:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
 
+  picomatch@4.0.5:
+    resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
+    engines: {node: '>=12'}
+
   postcss-nested@6.2.0:
     resolution: {integrity: sha512-HQbt28KulC5AJzG+cZtj9kvKB93CFCdLvog1WFLf1D+xmMvPGlBstkpTEZfK5+AN9hfJocyBFCNiqyS48bpgzQ==}
     engines: {node: '>=12.0'}
@@ -3610,6 +3616,9 @@ packages:
 
   satteri@0.9.4:
     resolution: {integrity: sha512-BKob126Tay84diOZsnVNH/Q/c+3njPJTCad3w5zLKa6j8bVjxskPNHDtxrMwYK4bN/RlqUSdMnPwKY4k65EMOQ==}
+
+  satteri@0.9.5:
+    resolution: {integrity: sha512-ZuWVl+vnM64y+/TtX8Kosv2c00W+hLQiiwnEL6H0UKVVrxFqMw4D2CJHHQaouVd89OAhtBBfjWLqhKi3TVUV4w==}
 
   sax@1.6.0:
     resolution: {integrity: sha512-6R3J5M4AcbtLUdZmRv2SygeVaM7IhrLXu9BmnOGmmACak8fiUtOsYNWUS4uK7upbmHIBbLBeFeI//477BKLBzA==}
@@ -4263,8 +4272,8 @@ packages:
     resolution: {integrity: sha512-4UEqdc2RYGHZc7Doyqkrqiln3p9X2DZVxaGbwhn2pi7MrRagKaOcIKe8L3OxYcbhXLgLFUS3zAYuQjKBQgmuNg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=23}
 
-  yocto-queue@1.2.1:
-    resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
+  yocto-queue@1.2.2:
+    resolution: {integrity: sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ==}
     engines: {node: '>=12.20'}
 
   zod@4.4.3:
@@ -4436,7 +4445,7 @@ snapshots:
       '@astrojs/internal-helpers': 0.10.1
       '@astrojs/prism': 4.0.2
       github-slugger: 2.0.0
-      satteri: 0.9.4
+      satteri: 0.9.5
 
   '@astrojs/mdx@7.0.2(@astrojs/markdown-satteri@0.3.3)(astro@7.0.6(@astrojs/markdown-remark@7.2.1)(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@24.13.2)(jiti@2.4.2)(yaml@2.9.0))':
     dependencies:
@@ -4619,12 +4628,13 @@ snapshots:
       '@commitlint/types': 21.1.0
       ajv: 8.17.1
 
-  '@commitlint/cz-commitlint@21.1.0(@types/node@22.16.2)(commitizen@4.3.2(@types/node@22.16.2)(typescript@6.0.3))(typescript@6.0.3)':
+  '@commitlint/cz-commitlint@21.1.0(@types/node@22.16.2)(commitizen@4.3.2(@types/node@22.16.2)(typescript@6.0.3))(inquirer@8.2.7(@types/node@22.16.2))(typescript@6.0.3)':
     dependencies:
       '@commitlint/ensure': 21.1.0
       '@commitlint/load': 21.1.0(@types/node@22.16.2)(typescript@6.0.3)
       '@commitlint/types': 21.1.0
       commitizen: 4.3.2(@types/node@22.16.2)(typescript@6.0.3)
+      inquirer: 8.2.7(@types/node@22.16.2)
       is-plain-obj: 4.1.0
       picocolors: 1.1.1
       word-wrap: 1.2.5
@@ -4999,7 +5009,7 @@ snapshots:
   '@inquirer/external-editor@1.0.3(@types/node@22.16.2)':
     dependencies:
       chardet: 2.2.0
-      iconv-lite: 0.7.2
+      iconv-lite: 0.7.3
     optionalDependencies:
       '@types/node': 22.16.2
 
@@ -5406,13 +5416,13 @@ snapshots:
   '@stylistic/eslint-plugin@5.10.0':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1
-      '@typescript-eslint/types': 8.62.0
+      '@typescript-eslint/types': 8.63.0
       eslint-visitor-keys: 4.2.1
       espree: 10.4.0
       estraverse: 5.3.0
-      picomatch: 4.0.4
+      picomatch: 4.0.5
 
-  '@trigen/oxlint-config@9.3.0(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))':
+  '@trigen/oxlint-config@10.1.2(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))':
     dependencies:
       '@stylistic/eslint-plugin': 5.10.0
       oxlint: 1.71.0(oxlint-tsgolint@0.24.0)
@@ -5421,13 +5431,13 @@ snapshots:
     transitivePeerDependencies:
       - eslint
 
-  '@trigen/oxlint@9.1.0': {}
+  '@trigen/oxlint@10.1.1': {}
 
-  '@trigen/scripts@9.0.0':
+  '@trigen/scripts@10.1.1':
     dependencies:
-      '@simple-libs/child-process-utils': 1.0.2
-      '@simple-libs/stream-utils': 1.2.0
-      argue-cli: 2.1.0
+      '@simple-libs/child-process-utils': 2.0.0
+      '@simple-libs/stream-utils': 2.0.0
+      argue-cli: 3.1.0
       p-limit: 7.3.0
 
   '@tybys/wasm-util@0.10.3':
@@ -5449,11 +5459,17 @@ snapshots:
 
   '@types/estree-jsx@1.0.5':
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.9
 
   '@types/estree@1.0.8': {}
 
+  '@types/estree@1.0.9': {}
+
   '@types/hast@3.0.4':
+    dependencies:
+      '@types/unist': 3.0.3
+
+  '@types/hast@3.0.5':
     dependencies:
       '@types/unist': 3.0.3
 
@@ -5493,7 +5509,7 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@typescript-eslint/types@8.62.0': {}
+  '@typescript-eslint/types@8.63.0': {}
 
   '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260707.2':
     optional: true
@@ -5647,6 +5663,10 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
+  acorn-jsx@5.3.2(acorn@8.17.0):
+    dependencies:
+      acorn: 8.17.0
+
   acorn@8.15.0: {}
 
   acorn@8.17.0: {}
@@ -5696,8 +5716,6 @@ snapshots:
   arg@5.0.2: {}
 
   argparse@2.0.1: {}
-
-  argue-cli@2.1.0: {}
 
   argue-cli@3.1.0: {}
 
@@ -6236,7 +6254,7 @@ snapshots:
   esast-util-from-js@2.0.1:
     dependencies:
       '@types/estree-jsx': 1.0.5
-      acorn: 8.15.0
+      acorn: 8.17.0
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.3
 
@@ -6366,8 +6384,8 @@ snapshots:
 
   espree@10.4.0:
     dependencies:
-      acorn: 8.15.0
-      acorn-jsx: 5.3.2(acorn@8.15.0)
+      acorn: 8.17.0
+      acorn-jsx: 5.3.2(acorn@8.17.0)
       eslint-visitor-keys: 4.2.1
 
   estraverse@5.3.0: {}
@@ -6804,7 +6822,7 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  iconv-lite@0.7.2:
+  iconv-lite@0.7.3:
     dependencies:
       safer-buffer: 2.1.2
 
@@ -7372,8 +7390,8 @@ snapshots:
 
   micromark-extension-mdxjs@3.0.0:
     dependencies:
-      acorn: 8.15.0
-      acorn-jsx: 5.3.2(acorn@8.15.0)
+      acorn: 8.17.0
+      acorn-jsx: 5.3.2(acorn@8.17.0)
       micromark-extension-mdx-expression: 3.0.1
       micromark-extension-mdx-jsx: 3.0.2
       micromark-extension-mdx-md: 2.0.0
@@ -7643,7 +7661,7 @@ snapshots:
 
   p-limit@7.3.0:
     dependencies:
-      yocto-queue: 1.2.1
+      yocto-queue: 1.2.2
 
   p-map@7.0.3: {}
 
@@ -7719,6 +7737,8 @@ snapshots:
   picomatch@2.3.1: {}
 
   picomatch@4.0.4: {}
+
+  picomatch@4.0.5: {}
 
   postcss-nested@6.2.0(postcss@8.5.15):
     dependencies:
@@ -8027,6 +8047,13 @@ snapshots:
       '@bruits/satteri-wasm32-wasi': 0.9.4
       '@bruits/satteri-win32-arm64-msvc': 0.9.4
       '@bruits/satteri-win32-x64-msvc': 0.9.4
+
+  satteri@0.9.5:
+    dependencies:
+      '@types/estree-jsx': 1.0.5
+      '@types/hast': 3.0.5
+      '@types/mdast': 4.0.4
+      '@types/unist': 3.0.3
 
   sax@1.6.0: {}
 
@@ -8637,7 +8664,7 @@ snapshots:
       y18n: 5.0.8
       yargs-parser: 22.0.0
 
-  yocto-queue@1.2.1: {}
+  yocto-queue@1.2.2: {}
 
   zod@4.4.3: {}
 

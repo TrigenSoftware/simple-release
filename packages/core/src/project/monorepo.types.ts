@@ -18,6 +18,10 @@ export interface MonorepoProjectOptions extends ProjectOptions {
    */
   mode: MonorepoMode
   /**
+   * The git client used to interact with the repository.
+   */
+  gitClient?: ConventionalGitClient
+  /**
    * Hook function to compose the manifest.
    * @param manifest - The manifest to compose.
    */
@@ -39,10 +43,6 @@ export interface MonorepoProjectOptions extends ProjectOptions {
    * @returns The tag prefix for the project.
    */
   tagPrefix?(scope: string): string | Promise<string>
-  /**
-   * The git client used to interact with the repository.
-   */
-  gitClient?: ConventionalGitClient
 }
 
 export type MonorepoProjectBumpByProjectOptions = Pick<ProjectBumpOptions, 'version' | 'as' | 'prerelease' | 'snapshot' | 'skipChangelog' | 'firstRelease' | 'skip' | 'preamble'>
