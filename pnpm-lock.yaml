@@ -24,8 +24,8 @@ importers:
         specifier: ^9.1.0
         version: 9.1.0
       '@trigen/oxlint-config':
-        specifier: ^9.3.0
-        version: 9.3.0(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))
+        specifier: ^10.0.0
+        version: 10.1.2(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))
       '@trigen/scripts':
         specifier: ^9.0.0
         version: 9.0.0
@@ -1549,8 +1549,8 @@ packages:
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
 
-  '@trigen/oxlint-config@9.3.0':
-    resolution: {integrity: sha512-ZYtSQvPOKC2/e6i9QJTtnAKiGwYa5mVz5NjfEV2qPvdW5ZDNV+vnL94XVyiR3OIM6cEkAE4wAFSlqhvX8XVw3Q==}
+  '@trigen/oxlint-config@10.1.2':
+    resolution: {integrity: sha512-v5RsINtl8dYo7VJnfL0FiP13ITtWuY66Po89WX8N3+u1LkBGc9l5i64ZJUnfYP59zY3l3067cPJ7s+Feas7UzA==}
     engines: {node: '>=22'}
     peerDependencies:
       oxlint: '>=1.0.0'
@@ -5449,7 +5449,7 @@ snapshots:
       estraverse: 5.3.0
       picomatch: 4.0.4
 
-  '@trigen/oxlint-config@9.3.0(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))':
+  '@trigen/oxlint-config@10.1.2(oxlint-tsgolint@0.24.0)(oxlint@1.71.0(oxlint-tsgolint@0.24.0))':
     dependencies:
       '@stylistic/eslint-plugin': 5.10.0
       oxlint: 1.71.0(oxlint-tsgolint@0.24.0)
@@ -5683,6 +5683,10 @@ snapshots:
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
       acorn: 8.15.0
+
+  acorn-jsx@5.3.2(acorn@8.17.0):
+    dependencies:
+      acorn: 8.17.0
 
   acorn@8.15.0: {}
 
@@ -6273,7 +6277,7 @@ snapshots:
   esast-util-from-js@2.0.1:
     dependencies:
       '@types/estree-jsx': 1.0.5
-      acorn: 8.15.0
+      acorn: 8.17.0
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.3
 
@@ -6403,8 +6407,8 @@ snapshots:
 
   espree@10.4.0:
     dependencies:
-      acorn: 8.15.0
-      acorn-jsx: 5.3.2(acorn@8.15.0)
+      acorn: 8.17.0
+      acorn-jsx: 5.3.2(acorn@8.17.0)
       eslint-visitor-keys: 4.2.1
 
   estraverse@5.3.0: {}
@@ -7409,8 +7413,8 @@ snapshots:
 
   micromark-extension-mdxjs@3.0.0:
     dependencies:
-      acorn: 8.15.0
-      acorn-jsx: 5.3.2(acorn@8.15.0)
+      acorn: 8.17.0
+      acorn-jsx: 5.3.2(acorn@8.17.0)
       micromark-extension-mdx-expression: 3.0.1
       micromark-extension-mdx-jsx: 3.0.2
       micromark-extension-mdx-md: 2.0.0
