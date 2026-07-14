@@ -58,7 +58,7 @@
     "@octokit/rest": "^22.0.0",
     "@simple-libs/child-process-utils": "^2.0.0",
     "@simple-libs/hosted-git-info": "^2.0.0",
-    "argue-cli": "^2.1.0",
+    "argue-cli": "^3.0.0",
     "lilconfig": "^3.0.0",
     "new-github-release-url": "^2.0.0",
     "open": "^11.0.0",
