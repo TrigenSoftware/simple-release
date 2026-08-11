@@ -44,7 +44,7 @@
     "del-cli": "^7.0.0",
     "nano-staged": "^1.0.0",
     "oxlint": "^1.71.0",
-    "oxlint-tsgolint": "^0.24.0",
+    "oxlint-tsgolint": "^0.25.0",
     "simple-git-hooks": "^2.7.0",
     "tsm": "^2.3.0",
     "typescript": "^7.0.0",
