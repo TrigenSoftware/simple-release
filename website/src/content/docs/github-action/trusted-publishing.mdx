@@ -1,0 +1,148 @@
+---
+title: Trusted Publishing
+description: Publish to npm from simple-release-action without a token — OIDC trusted publishing with automatic provenance, registered per workflow file on npmjs.com.
+sidebar:
+  order: 6
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components'
+
+[Trusted publishing](https://docs.npmjs.com/trusted-publishers) lets the release job authenticate with the npm registry through GitHub's OIDC token instead of a long-lived `NPM_TOKEN` secret: npm exchanges the workflow's identity — the repository and the workflow file — for a short-lived publish token, and provenance attestations are generated on the way. The action needs nothing for it. `npm publish` detects the OIDC environment by itself, and `pnpm publish` runs npm's publish under the hood, so the switch is a matter of job permissions and a registration on npmjs.com.
+
+## Requirements
+
+- The public npm registry and GitHub-hosted runners — npm does not support trusted publishing from self-hosted runners, and GitHub Packages authenticates with the workflow token anyway.
+- npm CLI 11.5.1 or later in the publishing jobs. Node.js 24 ships it (from 24.5.0); Node.js 22 ships npm 10, so use `node-version: 24` in the `release` and snapshot jobs even when the project itself targets an older Node.js.
+- A package that already exists on npm. The trusted publisher is configured in the package settings, so the first version of a new package has to be published with a token or from a maintainer's machine; trusted publishing takes over from the second one.
+- One registration per package and per workflow file. A monorepo needs a registration for every published package.
+
+## Setup
+
+<Steps>
+
+1. Register the trusted publisher for each package on npmjs.com — package **Settings → Trusted Publisher → GitHub Actions**: the organization or user, the repository name, the workflow filename `release.yml`, and optionally a GitHub environment. The same from the npm CLI (11.15 or later, two-factor authentication required):
+
+   ```sh frame="none"
+   npm trust github your-package --repository your-org/your-repo --file release.yml --allow-publish
+   ```
+
+   Nothing is validated at this point — a typo in the repository or the filename shows up only as an authentication error at publish time.
+
+2. Change the `release` job of the [release workflow](/github-action/release-automation/): grant it the `id-token: write` permission, drop `registry-url` from `actions/setup-node` and `npm-token` from the action step — there is no token to pass — and use Node.js 24:
+
+   ```yaml title=".github/workflows/release.yml" {8,20-21,25}
+   jobs:
+     # ...the check and pull-request jobs stay as they are
+     release:
+       runs-on: ubuntu-latest
+       name: Release
+       needs: check
+       if: needs.check.outputs.workflow == 'release'
+       permissions:
+         contents: write
+         id-token: write
+       steps:
+         - name: Checkout the repository
+           uses: actions/checkout@v7
+         - name: Install pnpm
+           uses: pnpm/action-setup@v6
+           with:
+             version: 11
+         - name: Install Node.js
+           uses: actions/setup-node@v6
+           with:
+             node-version: 24
+             cache: 'pnpm'
+         - name: Install dependencies
+           run: pnpm install
+         - name: Release
+           uses: TrigenSoftware/simple-release-action@v2
+           with:
+             workflow: release
+             github-token: ${{ secrets.GITHUB_TOKEN }}
+   ```
+
+3. Squash-merge the next release pull request. The publish step of the release job now reports the OIDC publish and the provenance statement:
+
+   ```text frame="none"
+   Publishing with command: pnpm publish --access public --recursive --no-git-checks
+   npm notice Publishing to https://registry.npmjs.org/ with tag latest and public access
+   npm notice publish Signed provenance statement with source and build information from GitHub Actions
+   npm notice publish Provenance statement published to transparency log: https://search.sigstore.dev/?logIndex=...
+   ```
+
+</Steps>
+
+<Aside type="caution" title="ENEEDAUTH">
+  An "Unable to authenticate" error from the publish step means the OIDC exchange was refused: the workflow filename or the repository does not match the registration, the job lacks `id-token: write`, npm is older than 11.5.1, or the package has never been published, so there was nothing to register the publisher on.
+</Aside>
+
+## Snapshots
+
+The registration is bound to the workflow file, so the [snapshot flow](/github-action/snapshot-release/) is better kept in `release.yml` than in a workflow of its own: a `snapshot` input on the `workflow_dispatch` trigger routes a run to a snapshot job, while pushes and comments keep running the regular flow because the input is empty for them.
+
+```yaml title=".github/workflows/release.yml" {4-7,15,26,29,45}
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      snapshot:
+        description: Snapshot tag — publish a snapshot under this npm dist-tag instead of a release (leave other inputs empty)
+        type: string
+  issue_comment:
+    types: [created, deleted]
+  push:
+    branches:
+      - main
+jobs:
+  check:
+    if: inputs.snapshot == ''
+    # ...the rest of the check job stays as it is
+  pull-request:
+    needs: check
+    if: needs.check.outputs.workflow == 'pull-request'
+    # ...
+  release:
+    needs: check
+    if: needs.check.outputs.workflow == 'release'
+    # ...
+  snapshot:
+    runs-on: ubuntu-latest
+    name: Snapshot
+    if: inputs.snapshot != ''
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v7
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Publish snapshot
+        uses: TrigenSoftware/simple-release-action@v2
+        with:
+          workflow: snapshot
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          bump-snapshot: ${{ inputs.snapshot }}
+```
+
+The `snapshot` input can sit next to the [manual release](/github-action/manual-release/) inputs in the same trigger. Dispatch it with the branch to snapshot:
+
+```sh frame="none"
+gh workflow run release.yml --ref my-feature-branch -f snapshot=canary
+```
+
+The `check`, `pull-request`, and `release` jobs are skipped for such a run, and the snapshot job publishes `1.2.0-canary.20260707111020` under the `canary` dist-tag with the same OIDC authentication. A separate `snapshot.yml` works too if it is registered as another trusted publisher — npm allows up to ten per package — but that doubles the registrations in a monorepo.
+
+## Provenance
+
+Publishing through trusted publishing from a public repository attaches a provenance attestation to every version: a signed statement of the commit and the workflow run it was built from, shown on npmjs.com and verifiable with `npm audit signatures`. Nothing has to be enabled for it, and private repositories simply publish without it. To opt out, set `publishConfig.provenance` to `false` in the package manifest.

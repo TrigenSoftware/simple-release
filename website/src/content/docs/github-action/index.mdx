@@ -33,7 +33,7 @@ The `workflow` input selects what the action does in the current job:
 | --- | --- |
 | `workflow` | Workflow to run. Defaults to `full`. |
 | `github-token` | GitHub token to authenticate with the GitHub API. Required. |
-| `npm-token` | npm token for publishing. Passed to the `NODE_AUTH_TOKEN` environment variable. |
+| `npm-token` | npm token for publishing. Passed to the `NODE_AUTH_TOKEN` environment variable. Not needed with [trusted publishing](/github-action/trusted-publishing/). |
 | `publish-token` | Generic token for the config file. Passed to the `PUBLISH_TOKEN` environment variable. |
 | `branch` | Branch to store release changes and create the pull request from. Defaults to `simple-release`. |
 | `bump-version` | Force a specific version. |

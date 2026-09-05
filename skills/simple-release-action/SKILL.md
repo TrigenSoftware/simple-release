@@ -57,8 +57,8 @@ From the release workflow — usually `.github/workflows/release.yml` — note:
 - `on.push.branches`: the flow runs only for pushes to these branches.
 - A `workflow_dispatch` trigger with `version`, `as`, `prerelease` (and `by-project`) inputs forwarded to the `bump-*` action inputs: the **manual release** add-on.
 - A `branch` input on the action steps: the release branch name. It defaults to `simple-release`; the `gh pr list --head` commands below use it.
-- A separate workflow running `workflow: snapshot` — usually `.github/workflows/snapshot.yml`: the **snapshot** add-on.
-- Whether the release job publishes to a registry (`registry-url`, `npm-token`). Node.js GitHub Action projects publish built git refs instead (the `latest` and `v{major}` branches and the `v{version}` tag), and projects with `publish.skip` only tag and create the GitHub release.
+- A job running `workflow: snapshot` — a separate `.github/workflows/snapshot.yml`, or a `snapshot` job in `release.yml` guarded by a `snapshot` dispatch input: the **snapshot** add-on.
+- How the release job publishes: `npm-token` and `registry-url` mean the token flow; `id-token: write` in the job permissions and no token mean [trusted publishing](https://simple-release.js.org/github-action/trusted-publishing/), where the trusted publisher on npmjs.com is bound to the workflow file — that is why the snapshot job then usually sits in `release.yml`. Node.js GitHub Action projects publish built git refs instead (the `latest` and `v{major}` branches and the `v{version}` tag), and projects with `publish.skip` only tag and create the GitHub release.
 
 A single job running `workflow: full` (the default) behaves like the three-job layout with `check`, `pull-request`, and `release` — the action picks the flow from the event, so everything below applies to both.
 
@@ -235,7 +235,7 @@ Notes:
 
 ## Snapshot from Any Branch
 
-Requires the snapshot workflow. A snapshot publishes the current state of a branch as a timestamped prerelease under its own npm dist-tag — nothing is committed, tagged, or written to the changelog. Not applicable to projects that publish nothing (Node.js GitHub Action projects, `publish.skip`).
+Requires the snapshot add-on. A snapshot publishes the current state of a branch as a timestamped prerelease under its own npm dist-tag — nothing is committed, tagged, or written to the changelog. Not applicable to projects that publish nothing (Node.js GitHub Action projects, `publish.skip`).
 
 ```bash
 git push -u origin my-feature
@@ -243,6 +243,13 @@ gh workflow run snapshot.yml --ref my-feature -f tag=canary
 gh run list --workflow snapshot.yml --limit 1
 gh run watch <run-id>
 npm view <package> dist-tags
+```
+
+When the snapshot job lives in `release.yml` (the trusted publishing layout), dispatch that workflow with its `snapshot` input instead — the `check` job and the release flow are skipped for such a run:
+
+```bash
+gh workflow run release.yml --ref my-feature -f snapshot=canary
+gh run list --workflow release.yml --event workflow_dispatch --limit 1
 ```
 
 The branch must exist on the remote — `--ref` names the branch to check out and to take the workflow file from. The `tag` input is both the prerelease identifier and the dist-tag: a repository released as `1.1.0` with a `feat` on the branch publishes `1.2.0-canary.20260707111020`, installable with `npm i <package>@canary`. Without new commits the version falls back to a patch bump, so a snapshot never collides with a real release. In a monorepo every package is snapshotted in one run, each from its own version.
@@ -294,6 +301,7 @@ gh api repos/{owner}/{repo}/actions/permissions/workflow
 | | The run happened but the options were not applied: invalid JSON, no `json` fence, or the author is not an owner, member, or collaborator | Fix and post again; with `releaser.verbose` the log says "Failed to parse parameters comment" for invalid JSON |
 | | The comment was edited — edits do not trigger runs | Post a new comment, or delete and re-post |
 | `gh workflow run` fails | "Workflow does not have 'workflow_dispatch' trigger", or unexpected inputs | The manual release or snapshot add-on is not set up — offer the setup skill |
+| Publish fails with `ENEEDAUTH` or "Unable to authenticate" | Trusted publishing: the workflow filename or repository does not match the trusted publisher registered on npmjs.com, the job lacks `id-token: write`, npm is older than 11.5.1 (Node.js below 24), or the package was never published, so no publisher could be registered. In the token flow: `NPM_TOKEN` missing or expired | Compare the registration with the workflow file name and repository, check the job permissions and Node.js version; publish a brand-new package's first version with a token; rotate the secret in the token flow |
 | Prerelease produced no pull request | An older action version: `as: prerelease` with an identifier on a stable version used to yield nothing | Update simple-release-action, or use the identifier alone or with `as` set to `major`, `minor`, or `patch` |
 | Renovate or Dependabot commits do not release a monorepo package | The `deps` scope is not a package name | `bump.extraScopes: ["deps"]` in the config |
 | Fixed monorepo: unchanged packages kept their version | By design — only changed packages are bumped | `bump.force: true` in the config |

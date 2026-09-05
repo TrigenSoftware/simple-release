@@ -48,7 +48,9 @@ By default set up only the **main flow** (release pull request → release on me
 2. **Snapshot release** — publish a temporary timestamped prerelease from any branch under its own npm dist-tag, without committing anything.
 3. **Maintenance branches** — when a release crosses a major boundary, create a branch for the previous major so fixes for it keep releasing under their own dist-tag.
 
-If the user has already said which add-ons they want — including "just the default" — do not ask. Otherwise ask once, in a single concise question listing the three add-ons with one-line explanations, with "none" as the default.
+Projects publishing to the npm registry have one more choice: authenticate with an **`NPM_TOKEN` secret** (the default, works for any package) or with **trusted publishing** (no secret — OIDC with automatic provenance; see the npm authentication point in the toolchain section for its prerequisites).
+
+If the user has already said which add-ons they want — including "just the default" — do not ask. Otherwise ask once, in a single concise question listing the three add-ons with one-line explanations, with "none" as the default, plus the token-or-trusted-publishing choice when the project publishes to npm.
 
 The user may also name the project type or addon explicitly (for example "this is a pnpm monorepo with independent versions"). An explicit statement always wins over detection.
 
@@ -105,6 +107,7 @@ Fill the workflow from the repository, not from assumptions:
 - **Node.js version** — in priority order: `.nvmrc` or `.node-version` file (then prefer `node-version-file` over a hardcoded `node-version` in `actions/setup-node`), the minimum major satisfying `engines.node`, `volta.node`, existing CI workflows. Fall back to the current LTS major.
 - **Package manager version** — if `package.json` has a `packageManager` field, use `pnpm/action-setup` **without** a `version` input — it reads the field. Otherwise infer the major from `pnpm-lock.yaml`'s `lockfileVersion` (`'6.0'` → pnpm 8, `'9.0'` → pnpm 9 or 10 — prefer the latest and tell the user what you assumed). npm needs no setup beyond `actions/setup-node`.
 - **Registry** — default `https://registry.npmjs.org`. If `publishConfig.registry` or `.npmrc` points to GitHub Packages (`npm.pkg.github.com`): set that `registry-url` plus `scope: '@owner'` in `actions/setup-node`, pass `npm-token: ${{ secrets.GITHUB_TOKEN }}`, and add `packages: write` to the release job permissions. GitHub Packages requires the package scope to match the repository owner — flag a mismatch instead of publishing into the void.
+- **npm authentication** — an `NPM_TOKEN` secret by default. Trusted publishing when the user chose it, or when the repository's existing workflows already publish that way (`id-token: write` on the publishing job and no npm token). Its prerequisites, per the npm docs: the public npm registry (not GitHub Packages), GitHub-hosted runners, npm CLI 11.5.1 or later — use `node-version: 24` in the publishing jobs, Node.js 22 ships npm 10 — and packages that already exist on npm, because the trusted publisher is registered in the package settings. Check every published package with `npm view <name> version`; a 404 means its first version has to be published with a token or by hand, tell the user. Documentation: <https://simple-release.js.org/github-action/trusted-publishing/>.
 - **Existing workflows** — reuse the action versions and conventions the repository already has where they don't conflict with this setup.
 
 ## Generate the Config
@@ -237,6 +240,7 @@ Variations:
 - **npm project** — drop the `Install pnpm` step, use `cache: 'npm'` and `run: npm ci`.
 - **Node.js GitHub Action project** — keep the package manager and Node.js setup and the install step in the `release` job (the configured `build` command needs them), but drop `registry-url` and `npm-token`: publishing pushes git refs, not registry packages.
 - **No publishing** (`publish.skip` in the config) — drop `registry-url` and `npm-token` from the `release` job.
+- **Trusted publishing** — in the `release` job add `id-token: write` to `permissions`, drop `registry-url` from `actions/setup-node` and `npm-token` from the action step, and use `node-version: 24`; the config needs nothing. The snapshot flow then lives in the same workflow file — see the snapshot add-on.
 - **GitHub Packages** — see the registry point in the toolchain section.
 
 ### Manual release add-on
@@ -337,6 +341,40 @@ jobs:
 
 The package manager, Node.js, and registry setup follows the same detection as the release job. Snapshots publish to a registry — skip this add-on for project types that do not (a Node.js GitHub Action).
 
+With trusted publishing the trusted publisher is registered per workflow file, so put the snapshot flow into `release.yml` instead of a second workflow: a `snapshot` input on the `workflow_dispatch` trigger, a guard on the `check` job so a snapshot dispatch does not run the pull request flow, and a `snapshot` job with the same `id-token: write` permission:
+
+```yaml
+on:
+  workflow_dispatch:
+    inputs:
+      # ...the manual release inputs, if any
+      snapshot:
+        description: Snapshot tag — publish a snapshot under this npm dist-tag instead of a release (leave other inputs empty)
+        type: string
+  # ...the issue_comment and push triggers stay as they are
+jobs:
+  check:
+    if: inputs.snapshot == ''
+    # ...the rest of the check job stays as it is
+  snapshot:
+    runs-on: ubuntu-latest
+    name: Snapshot
+    if: inputs.snapshot != ''
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      # ...the same checkout, package manager, Node.js 24, and install steps as the release job, without registry-url
+      - name: Publish snapshot
+        uses: TrigenSoftware/simple-release-action@v2
+        with:
+          workflow: snapshot
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          bump-snapshot: ${{ inputs.snapshot }}
+```
+
+On push and comment events `inputs.snapshot` is empty, so `check` runs as usual and `snapshot` is skipped. This layout needs the `workflow_dispatch` trigger even without the manual release add-on.
+
 ## Validate
 
 - The config must be valid JSON and the workflows valid YAML — parse them (for example with `node -e` or a YAML-aware tool). Run `actionlint` on the workflows if it is available.
@@ -353,7 +391,13 @@ Finish with a checklist of the steps that cannot be automated:
      -F can_approve_pull_request_reviews=true
    ```
 
-2. **`NPM_TOKEN` secret** — required when publishing to the npm registry: an npm automation (granular) token with publish permission for the packages. Not needed for GitHub Packages (the workflow token is used) or for non-publishing projects.
+2. **npm authentication** — with the token flow, an `NPM_TOKEN` secret: an npm automation (granular) token with publish permission for the packages. With trusted publishing, no secret; instead register the trusted publisher for every published package on npmjs.com — package **Settings → Trusted Publisher → GitHub Actions**: the organization or user, the repository, the workflow filename `release.yml`, and optionally an environment — or with the npm CLI (11.15 or later, two-factor authentication required):
+
+   ```bash
+   npm trust github <package> --repository <owner>/<repo> --file release.yml --allow-publish
+   ```
+
+   A package that was never published has no settings to register on: publish its first version with a token first. Neither is needed for GitHub Packages (the workflow token is used) or for non-publishing projects.
 3. **Squash-merge release pull requests** — the release is recognized by the `chore(release): ...` commit title on the branch head. A regular merge commit hides it and the release job will not run. Recommend enabling squash merging for the repository.
 4. **The first release** — after the setup is merged, the next push of a releasable commit (or the setup push itself) opens a release pull request. When no release tags exist yet, the version is taken from the manifest as is and the changelog covers the whole history.
 5. **Reshaping a pending release** — a comment on the release pull request starting with `!simple-release/set-options` followed by a JSON code block (for example `{"bump": {"as": "major"}}`) rebuilds it with those options. A `!simple-release/set-preamble` comment (optionally followed by a full package name to target one package in a monorepo) inserts the markdown after it into the changelog. Both are documented in the cheatsheet included in every release pull request body.
