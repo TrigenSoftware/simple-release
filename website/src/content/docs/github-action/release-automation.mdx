@@ -143,12 +143,12 @@ To force a version or release type without leaving the terminal, there is also a
 
 ### Custom changelog preamble
 
-A second command, `!simple-release/set-preamble`, adds custom markdown to the top of the changelog — right after the version header, before the generated sections. The markdown after the command line becomes the preamble, perfect for a "What's new?" summary:
+A second command, `!simple-release/set-preamble`, adds custom markdown to the top of the changelog — right after the version header, before the generated sections. The markdown after the command line becomes the preamble, perfect for a "What's new?" summary. Start its headings at `###` — the version header is `##` and the generated sections like `### Features` are `###`, so the preamble reads as one of them:
 
 ````md
 !simple-release/set-preamble
 
-## What's new?
+### What's new?
 
 - The website was completely redesigned
 - The new API gives you awesome possibilities
@@ -159,7 +159,7 @@ In a monorepo, pass the full package name after the command to target one packag
 ````md
 !simple-release/set-preamble `@your-org/core`
 
-## Core changes
+### Core changes
 
 - New plugin system
 ````
