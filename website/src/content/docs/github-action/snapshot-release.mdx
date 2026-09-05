@@ -61,6 +61,8 @@ jobs:
 
 The `tag` input doubles as the prerelease identifier and the npm dist-tag the snapshot is published under.
 
+With [trusted publishing](/github-action/trusted-publishing/#snapshots) the snapshot job moves into the release workflow instead, because the trusted publisher is registered per workflow file.
+
 ## Running it
 
 Go to **Actions → Snapshot → Run workflow**, pick the branch and the tag, and run — or from the CLI:
