@@ -359,3 +359,5 @@ Finish with a checklist of the steps that cannot be automated:
 5. **Reshaping a pending release** — a comment on the release pull request starting with `!simple-release/set-options` followed by a JSON code block (for example `{"bump": {"as": "major"}}`) rebuilds it with those options. A `!simple-release/set-preamble` comment (optionally followed by a full package name to target one package in a monorepo) inserts the markdown after it into the changelog. Both are documented in the cheatsheet included in every release pull request body.
 
 Suggest a hidden-type commit message for the setup itself, such as `ci: set up release automation`.
+
+For operating the flow after the setup — merging release pull requests, reshaping a pending release with comments, manual releases, snapshots, maintenance branches, and diagnostics — point the user to the companion `simple-release-action` skill.

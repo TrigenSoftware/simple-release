@@ -1,6 +1,6 @@
 ---
 title: Agent Skills
-description: Universal agent skills for Simple Release, including the setup-simple-release-action skill that sets up release automation in your repository.
+description: Universal agent skills for Simple Release — setup-simple-release-action sets up release automation in your repository, and simple-release-action operates it.
 sidebar:
   order: 3
 ---
@@ -36,6 +36,28 @@ Install the skill into your project with either package runner:
 <Aside title="What gets installed">
   The command copies the skill into your agent's skills directory. From then on, asking the agent to "set up release automation" runs the setup above — detection, the config and workflow files, and the checklist of manual steps.
 </Aside>
+
+## simple-release-action
+
+The [`simple-release-action`](https://github.com/TrigenSoftware/simple-release/tree/main/skills/simple-release-action) skill is the companion for repositories where the action is already set up — it teaches the agent to operate the release flow day to day:
+
+- **Ship the regular release** — find the release pull request, check its title, squash-merge it with the GitHub CLI, and follow the release run to the tag, the package, and the GitHub release.
+- **Reshape the pending release** — post `!simple-release/set-options` and `!simple-release/set-preamble` [comments](/github-action/release-automation/#options-via-pull-request-comments) the way the action honors them: at the very start of the comment, from a collaborator account, with a valid `json` block, and as a new comment rather than an edit.
+- **Run the optional flows** — [manual releases](/github-action/manual-release/) and [snapshots](/github-action/snapshot-release/) with `gh workflow run`, and fixes for previous majors on [maintenance branches](/github-action/maintenance-branches/) — after reading from the workflows which of them the repository actually has.
+- **Diagnose** why a release did not happen — hidden commit types and wrong scopes, a merge commit instead of a squash, a release job that failed after the tag was created — and repair it.
+
+<Tabs syncKey="pkg">
+  <TabItem label="pnpm">
+    ```sh frame="none"
+    pnpx skills add TrigenSoftware/simple-release --skill simple-release-action
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```sh frame="none"
+    npx skills add TrigenSoftware/simple-release --skill simple-release-action
+    ```
+  </TabItem>
+</Tabs>
 
 ## conventional-commit-message
 
