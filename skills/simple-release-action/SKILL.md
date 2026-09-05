@@ -152,7 +152,7 @@ The command line, then a fenced `json` block with releaser step options — the 
 | Option | Effect |
 | --- | --- |
 | `version` | Exact version, e.g. `"3.0.0"`. Overrides everything else. |
-| `as` | Release type: `major`, `minor`, `patch`, or `prerelease`. |
+| `as` | Release type: `major`, `minor`, `patch`, or `prerelease`. The last one keeps the type derived from the commits (a patch when there are none) and makes the version a prerelease. |
 | `prerelease` | Pre-release identifier, e.g. `"alpha"`. |
 | `byProject` | Per-package options in monorepos, keyed by full package name: `version`, `as`, `prerelease`, `firstRelease`, `skip`, `preamble`. |
 | `firstRelease` | Release the current manifest version as is, as if no release existed yet. |
@@ -167,11 +167,12 @@ Recipes for a pull request that proposes `1.2.0` on top of the released `1.1.0`:
 | `{"bump": {"version": "3.0.0"}}` | `3.0.0` |
 | `{"bump": {"prerelease": "alpha"}}` | `1.2.0-alpha.0` — the release type still comes from the commits |
 | `{"bump": {"as": "major", "prerelease": "alpha"}}` | `2.0.0-alpha.0` |
+| `{"bump": {"as": "prerelease", "prerelease": "alpha"}}` | `1.2.0-alpha.0` — like the identifier alone, but released even without new commits (`1.1.1-alpha.0` then) |
 | `{"bump": {"byProject": {"@org/pkg-a": {"as": "minor"}, "@org/pkg-b": {"skip": true}}}}` | Independent monorepo: `pkg-a` gets a minor, `pkg-b` is held back, the rest follow their commits |
 
 Prerelease lines: once `1.2.0-alpha.0` is released, the next pull request is computed from the commits after that tag. With `prerelease: "alpha"` again it becomes `1.2.0-alpha.1`, without it `1.2.0` (graduation), with `prerelease: "beta"` `1.2.0-beta.0`, and a breaking change moves it to `2.0.0-alpha.0`. To graduate when no releasable commits landed since the last prerelease, force the type: `{"bump": {"as": "patch"}}` gives `1.2.0`.
 
-Do not combine `as: "prerelease"` with a `prerelease` identifier on a stable version — the version resolution yields nothing and no pull request is produced. Start a line with the identifier alone or with `as` set to `major`, `minor`, or `patch`; `as: "prerelease"` is for advancing an existing prerelease.
+Older action versions produced no pull request for `as: "prerelease"` with an identifier on a stable version. If that happens, start the line with the identifier alone or with `as` set to `major`, `minor`, or `patch`.
 
 ### `!simple-release/set-preamble`
 
@@ -220,7 +221,7 @@ gh run watch <run-id>
 | Input | Effect |
 | --- | --- |
 | `version` | Exact version. Overrides everything else. |
-| `as` | Release type: `major`, `minor`, `patch`, or `prerelease`. |
+| `as` | Release type: `major`, `minor`, `patch`, or `prerelease`. The last one keeps the type derived from the commits (a patch when there are none) and makes the version a prerelease. |
 | `prerelease` | Pre-release identifier — `as=minor` with `prerelease=beta` on `1.0.0` gives `1.1.0-beta.0`. |
 | `by-project` | JSON keyed by full package names with per-package `version`, `as`, `prerelease`, and `skip`. |
 
@@ -230,7 +231,7 @@ Notes:
 - With no releasable commits since the last release, `as` produces a "Version bump without any changes." release — the way to cut a version on a schedule.
 - A dispatch with no inputs just re-runs the pull request flow for the branch head — a way to regenerate the pull request after a config change without pushing anything.
 - `--ref` picks the branch: the default branch when omitted, a maintenance branch such as `v1` to force a release there.
-- The prerelease caveat applies here too: `as=prerelease` together with `prerelease=<id>` on a stable version produces nothing.
+- The same caveat as for comments: older action versions produced nothing for `as=prerelease` with an identifier on a stable version — use `as=minor` (or `patch`, `major`) with the identifier there.
 
 ## Snapshot from Any Branch
 
@@ -293,7 +294,7 @@ gh api repos/{owner}/{repo}/actions/permissions/workflow
 | | The run happened but the options were not applied: invalid JSON, no `json` fence, or the author is not an owner, member, or collaborator | Fix and post again; with `releaser.verbose` the log says "Failed to parse parameters comment" for invalid JSON |
 | | The comment was edited — edits do not trigger runs | Post a new comment, or delete and re-post |
 | `gh workflow run` fails | "Workflow does not have 'workflow_dispatch' trigger", or unexpected inputs | The manual release or snapshot add-on is not set up — offer the setup skill |
-| Prerelease produced no pull request | `as: prerelease` with an identifier on a stable version | Use the identifier alone, or with `as` set to `major`, `minor`, or `patch` |
+| Prerelease produced no pull request | An older action version: `as: prerelease` with an identifier on a stable version used to yield nothing | Update simple-release-action, or use the identifier alone or with `as` set to `major`, `minor`, or `patch` |
 | Renovate or Dependabot commits do not release a monorepo package | The `deps` scope is not a package name | `bump.extraScopes: ["deps"]` in the config |
 | Fixed monorepo: unchanged packages kept their version | By design — only changed packages are bumped | `bump.force: true` in the config |
 

@@ -66,8 +66,8 @@ For example, dispatching `as=minor` on a repository released as `1.0.0` with no 
 | Input | Effect |
 | --- | --- |
 | `version` | Sets the exact version, e.g. `3.1.0`. Overrides everything else. |
-| `as` | Forces the release type: `major`, `minor`, `patch`, or `prerelease`. |
-| `prerelease` | Pre-release identifier — combine with `as: prerelease` to get `1.1.0-alpha.0`. |
+| `as` | Forces the release type: `major`, `minor`, `patch`, or `prerelease`. The last one keeps the type derived from the commits — a patch when there are none — and makes the version a prerelease. |
+| `prerelease` | Pre-release identifier. `as=prerelease` with `prerelease=alpha` on `1.0.0` with a `feat` commit gives `1.1.0-alpha.0`; `as=minor` with the same identifier forces the minor regardless of the commits. |
 
 ## Per-package bumps in monorepos
 

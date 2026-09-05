@@ -339,9 +339,11 @@ export abstract class Project {
       return setSnapshotIdentifier(version, snapshot)
     }
 
+    // A forced prerelease keeps the release type derived from the commits.
+    const forcePrerelease = as === 'prerelease'
     let releaseType: ReleaseType | null = null
 
-    if (as) {
+    if (as && !forcePrerelease) {
       releaseType = as
     } else {
       const bump = await new Bumper(gitClient)
@@ -360,16 +362,19 @@ export abstract class Project {
     }
 
     if (!releaseType) {
-      if (!snapshot) {
+      if (!snapshot && !forcePrerelease) {
         return null
       }
 
-      // Snapshot versions always should be released, even without new commits.
+      // Snapshot and forced prerelease versions always should be released, even without new commits.
       releaseType = 'patch'
     }
 
     const prereleaseIdentifier = getPrereleaseIdentifier(
-      prerelease,
+      // A forced prerelease without an identifier still has to become a prerelease.
+      forcePrerelease
+        ? prerelease || ''
+        : prerelease,
       snapshot
     )
     const nextVersion = semver.inc(
