@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/TrigenSoftware/simple-release/compare/v3.3.0...v3.3.1) (2026-09-05)
+
+### Bug Fixes
+
+* drop publish options and fix preamble heading level in the pull request cheatsheet ([#195](https://github.com/TrigenSoftware/simple-release/issues/195)) ([b753abb](https://github.com/TrigenSoftware/simple-release/commit/b753abbd0aeee5293ad109321e39e11baf613ed2))
+
 ## [3.3.0](https://github.com/TrigenSoftware/simple-release/compare/v3.2.5...v3.3.0) (2026-07-14)
 
 ### Features
