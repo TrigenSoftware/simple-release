@@ -9,32 +9,23 @@ You can configure the bot's behavior through a pull request comment using the \`
 
 \`\`\`json
 {
-  "bump": {},
-  "publish": {}
+  "bump": {}
 }
 \`\`\`
 \`\`\`\`
 
 ### Useful Parameters
 
-#### Bump
+The options shape the pull request generation, so the \`bump\` ones matter here. Release-time options like \`publish\` belong in the config file.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | \`version\` | \`string\` | Force set specific version |
-| \`as\` | \`'major' \\| 'minor' \\| 'patch' \\| 'prerelease'\` | Release type |
+| \`as\` | \`'major' \\| 'minor' \\| 'patch' \\| 'prerelease'\` | Release type. \`prerelease\` keeps the type derived from the commits and makes the version a prerelease |
 | \`prerelease\` | \`string\` | Pre-release identifier (e.g., "alpha", "beta") |
 | \`firstRelease\` | \`boolean\` | Whether this is the first release |
 | \`skip\` | \`boolean\` | Skip version bump |
 | \`byProject\` | \`Record<string, object>\` | Per-project bump options for monorepos |
-
-#### Publish
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| \`skip\` | \`boolean\` | Skip publishing |
-| \`access\` | \`'public' \\| 'restricted'\` | Package access level |
-| \`tag\` | \`string\` | Tag for npm publication |
 
 ### Usage Examples
 
@@ -80,32 +71,14 @@ You can configure the bot's behavior through a pull request comment using the \`
 \`\`\`
 \`\`\`\`
 
-#### Publish with specific access and tag
-
-\`\`\`\`md
-!simple-release/set-options
-
-\`\`\`json
-{
-  "bump": {
-    "prerelease": "beta"
-  },
-  "publish": {
-    "access": "public",
-    "tag": "beta"
-  }
-}
-\`\`\`
-\`\`\`\`
-
 ### Custom Changelog Preamble
 
-You can add custom markdown to the top of the changelog (right after the version header) using the \`!simple-release/set-preamble\` command. The markdown after the command line becomes the preamble.
+You can add custom markdown to the top of the changelog (right after the version header) using the \`!simple-release/set-preamble\` command. The markdown after the command line becomes the preamble. Start its headings at \`###\` — the level of the generated changelog sections like \`### Features\`.
 
 \`\`\`md
 !simple-release/set-preamble
 
-## What's new?
+### What's new?
 
 - The website was completely redesigned
 - The new API gives you awesome possibilities
@@ -116,7 +89,7 @@ In a monorepo, pass the full package name after the command to target a single p
 \`\`\`md
 !simple-release/set-preamble \`@your-org/core\`
 
-## Core changes
+### Core changes
 
 - New plugin system
 \`\`\`
