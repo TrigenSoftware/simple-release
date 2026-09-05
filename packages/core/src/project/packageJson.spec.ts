@@ -182,6 +182,61 @@ describe('core', () => {
         expect(version).toBe('2.1.0-alpha.0')
       })
 
+      it('should get next prerelease version with forced prerelease type', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          as: 'prerelease',
+          prerelease: 'alpha'
+        })
+
+        expect(version).toBe('2.1.0-alpha.0')
+      })
+
+      it('should get next prerelease version with forced prerelease type without identifier', async () => {
+        const { cwd } = await packageJsonProject()
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          as: 'prerelease'
+        })
+
+        expect(version).toBe('2.1.0-0')
+      })
+
+      it('should get next prerelease version with forced prerelease type without new commits', async () => {
+        const { cwd } = await packageJsonProject({}, {
+          postReleaseCommits: false
+        })
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          as: 'prerelease',
+          prerelease: 'alpha'
+        })
+
+        expect(version).toBe('2.0.1-alpha.0')
+      })
+
+      it('should advance prerelease version with forced prerelease type', async () => {
+        const { cwd } = await packageJsonProject({
+          version: '2.1.0-alpha.0'
+        })
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const version = await project.getNextVersion({
+          as: 'prerelease',
+          prerelease: 'alpha'
+        })
+
+        expect(version).toBe('2.1.0-alpha.1')
+      })
+
       it('should get next snapshot version from commits', async () => {
         const { cwd } = await packageJsonProject()
         const project = new PackageJsonProject({

@@ -46,6 +46,8 @@ export interface ProjectBumpOptions {
   /**
    * The type of release to bump to.
    * If not provided, the version will be determined based on the commits.
+   * `prerelease` keeps the type determined based on the commits (patch if there are none)
+   * and makes the version a prerelease.
    */
   as?: ReleaseType
   /**
