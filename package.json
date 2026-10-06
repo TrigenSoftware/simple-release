@@ -18,11 +18,11 @@
     "node": ">=22"
   },
   "scripts": {
-    "clear": "pnpm -r --parallel clear",
-    "build": "pnpm -r --parallel build",
-    "lint": "pnpm -r --parallel --if-present lint",
-    "test:unit": "pnpm -r --parallel --if-present test:unit",
-    "test:types": "pnpm -r --parallel --if-present test:types",
+    "clear": "pnpm -r --no-sort clear",
+    "build": "pnpm -r --no-sort build",
+    "lint": "pnpm -r --no-sort --if-present lint",
+    "test:unit": "pnpm -r --no-sort --if-present test:unit",
+    "test:types": "pnpm -r --no-sort --if-present test:types",
     "test": "run -p lint test:unit test:types",
     "commit": "cz",
     "updateGitHooks": "simple-git-hooks",
