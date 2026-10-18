@@ -20,56 +20,56 @@ import { Aside, Steps } from '@astrojs/starlight/components'
 
 <Steps>
 
-1. Register the trusted publisher for each package on npmjs.com — package **Settings → Trusted Publisher → GitHub Actions**: the organization or user, the repository name, the workflow filename `release.yml`, and optionally a GitHub environment. The same from the npm CLI (11.15 or later, two-factor authentication required):
+1.  Register the trusted publisher for each package on npmjs.com — package **Settings → Trusted Publisher → GitHub Actions**: the organization or user, the repository name, the workflow filename `release.yml`, and optionally a GitHub environment. The same from the npm CLI (11.15 or later, two-factor authentication required):
 
-   ```sh frame="none"
-   npm trust github your-package --repository your-org/your-repo --file release.yml --allow-publish
-   ```
+    ```sh frame="none"
+    npm trust github your-package --repository your-org/your-repo --file release.yml --allow-publish
+    ```
 
-   Nothing is validated at this point — a typo in the repository or the filename shows up only as an authentication error at publish time.
+    Nothing is validated at this point — a typo in the repository or the filename shows up only as an authentication error at publish time.
 
-2. Change the `release` job of the [release workflow](/github-action/release-automation/): grant it the `id-token: write` permission, drop `registry-url` from `actions/setup-node` and `npm-token` from the action step — there is no token to pass — and use Node.js 24:
+2.  Change the `release` job of the [release workflow](/github-action/release-automation/): grant it the `id-token: write` permission, drop `registry-url` from `actions/setup-node` and `npm-token` from the action step — there is no token to pass — and use Node.js 24:
 
-   ```yaml title=".github/workflows/release.yml" {8,20-21,25}
-   jobs:
-     # ...the check and pull-request jobs stay as they are
-     release:
-       runs-on: ubuntu-latest
-       name: Release
-       needs: check
-       if: needs.check.outputs.workflow == 'release'
-       permissions:
-         contents: write
-         id-token: write
-       steps:
-         - name: Checkout the repository
-           uses: actions/checkout@v7
-         - name: Install pnpm
-           uses: pnpm/action-setup@v6
-           with:
-             version: 11
-         - name: Install Node.js
-           uses: actions/setup-node@v6
-           with:
-             node-version: 24
-             cache: 'pnpm'
-         - name: Install dependencies
-           run: pnpm install
-         - name: Release
-           uses: TrigenSoftware/simple-release-action@v2
-           with:
-             workflow: release
-             github-token: ${{ secrets.GITHUB_TOKEN }}
-   ```
+    ```yaml title=".github/workflows/release.yml" {8,20-21,25}
+    jobs:
+      # ...the check and pull-request jobs stay as they are
+      release:
+        runs-on: ubuntu-latest
+        name: Release
+        needs: check
+        if: needs.check.outputs.workflow == 'release'
+        permissions:
+          contents: write
+          id-token: write
+        steps:
+          - name: Checkout the repository
+            uses: actions/checkout@v7
+          - name: Install pnpm
+            uses: pnpm/action-setup@v6
+            with:
+              version: 11
+          - name: Install Node.js
+            uses: actions/setup-node@v6
+            with:
+              node-version: 24
+              cache: 'pnpm'
+          - name: Install dependencies
+            run: pnpm install
+          - name: Release
+            uses: TrigenSoftware/simple-release-action@v2
+            with:
+              workflow: release
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+    ```
 
-3. Squash-merge the next release pull request. The publish step of the release job now reports the OIDC publish and the provenance statement:
+3.  Squash-merge the next release pull request. The publish step of the release job now reports the OIDC publish and the provenance statement:
 
-   ```text frame="none"
-   Publishing with command: pnpm publish --access public --recursive --no-git-checks
-   npm notice Publishing to https://registry.npmjs.org/ with tag latest and public access
-   npm notice publish Signed provenance statement with source and build information from GitHub Actions
-   npm notice publish Provenance statement published to transparency log: https://search.sigstore.dev/?logIndex=...
-   ```
+    ```text frame="none"
+    Publishing with command: pnpm publish --access public --recursive --no-git-checks
+    npm notice Publishing to https://registry.npmjs.org/ with tag latest and public access
+    npm notice publish Signed provenance statement with source and build information from GitHub Actions
+    npm notice publish Provenance statement published to transparency log: https://search.sigstore.dev/?logIndex=...
+    ```
 
 </Steps>
 

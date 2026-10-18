@@ -11,11 +11,11 @@ After a new major ships, the previous one usually still has users. **Maintenance
 
 The full lifecycle on an example:
 
-1. The project is released as `1.1.0`. A breaking change lands and the release pull request ships `2.0.0` — the action creates the `v1` branch from the `v1.1.0` tag.
-2. A `fix: ...` commit is pushed to `v1` — the action opens a release pull request targeting `v1` with the `1.1.1` bump.
-3. The pull request is squash-merged — `1.1.1` is tagged and published from the maintenance branch:
-   - the package goes to the `release-1.x` npm dist-tag, `latest` stays on `2.0.0`;
-   - the GitHub release is created without the **Latest** mark.
+1.  The project is released as `1.1.0`. A breaking change lands and the release pull request ships `2.0.0` — the action creates the `v1` branch from the `v1.1.0` tag.
+2.  A `fix: ...` commit is pushed to `v1` — the action opens a release pull request targeting `v1` with the `1.1.1` bump.
+3.  The pull request is squash-merged — `1.1.1` is tagged and published from the maintenance branch:
+    - the package goes to the `release-1.x` npm dist-tag, `latest` stays on `2.0.0`;
+    - the GitHub release is created without the **Latest** mark.
 
 ## Setup
 
