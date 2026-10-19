@@ -384,23 +384,23 @@ On push and comment events `inputs.snapshot` is empty, so `check` runs as usual 
 
 Finish with a checklist of the steps that cannot be automated:
 
-1. **Allow pull request creation**: repository **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**. Without it the `pull-request` job fails with "GitHub Actions is not permitted to create or approve pull requests". With the GitHub CLI:
+1.  **Allow pull request creation**: repository **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**. Without it the `pull-request` job fails with "GitHub Actions is not permitted to create or approve pull requests". With the GitHub CLI:
 
-   ```bash
-   gh api -X PUT repos/{owner}/{repo}/actions/permissions/workflow \
-     -F can_approve_pull_request_reviews=true
-   ```
+    ```bash
+    gh api -X PUT repos/{owner}/{repo}/actions/permissions/workflow \
+      -F can_approve_pull_request_reviews=true
+    ```
 
-2. **npm authentication** — with the token flow, an `NPM_TOKEN` secret: an npm automation (granular) token with publish permission for the packages. With trusted publishing, no secret; instead register the trusted publisher for every published package on npmjs.com — package **Settings → Trusted Publisher → GitHub Actions**: the organization or user, the repository, the workflow filename `release.yml`, and optionally an environment — or with the npm CLI (11.15 or later, two-factor authentication required):
+2.  **npm authentication** — with the token flow, an `NPM_TOKEN` secret: an npm automation (granular) token with publish permission for the packages. With trusted publishing, no secret; instead register the trusted publisher for every published package on npmjs.com — package **Settings → Trusted Publisher → GitHub Actions**: the organization or user, the repository, the workflow filename `release.yml`, and optionally an environment — or with the npm CLI (11.15 or later, two-factor authentication required):
 
-   ```bash
-   npm trust github <package> --repository <owner>/<repo> --file release.yml --allow-publish
-   ```
+    ```bash
+    npm trust github <package> --repository <owner>/<repo> --file release.yml --allow-publish
+    ```
 
-   A package that was never published has no settings to register on: publish its first version with a token first. Neither is needed for GitHub Packages (the workflow token is used) or for non-publishing projects.
-3. **Squash-merge release pull requests** — the release is recognized by the `chore(release): ...` commit title on the branch head. A regular merge commit hides it and the release job will not run. Recommend enabling squash merging for the repository.
-4. **The first release** — after the setup is merged, the next push of a releasable commit (or the setup push itself) opens a release pull request. When no release tags exist yet, the version is taken from the manifest as is and the changelog covers the whole history.
-5. **Reshaping a pending release** — a comment on the release pull request starting with `!simple-release/set-options` followed by a JSON code block (for example `{"bump": {"as": "major"}}`) rebuilds it with those options. A `!simple-release/set-preamble` comment (optionally followed by a full package name to target one package in a monorepo) inserts the markdown after it into the changelog. Both are documented in the cheatsheet included in every release pull request body.
+    A package that was never published has no settings to register on: publish its first version with a token first. Neither is needed for GitHub Packages (the workflow token is used) or for non-publishing projects.
+3.  **Squash-merge release pull requests** — the release is recognized by the `chore(release): ...` commit title on the branch head. A regular merge commit hides it and the release job will not run. Recommend enabling squash merging for the repository.
+4.  **The first release** — after the setup is merged, the next push of a releasable commit (or the setup push itself) opens a release pull request. When no release tags exist yet, the version is taken from the manifest as is and the changelog covers the whole history.
+5.  **Reshaping a pending release** — a comment on the release pull request starting with `!simple-release/set-options` followed by a JSON code block (for example `{"bump": {"as": "major"}}`) rebuilds it with those options. A `!simple-release/set-preamble` comment (optionally followed by a full package name to target one package in a monorepo) inserts the markdown after it into the changelog. Both are documented in the cheatsheet included in every release pull request body.
 
 Suggest a hidden-type commit message for the setup itself, such as `ci: set up release automation`.
 
