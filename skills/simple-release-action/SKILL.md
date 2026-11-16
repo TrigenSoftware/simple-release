@@ -108,7 +108,7 @@ In independent monorepos the tags and GitHub releases are per package: `pkg-name
 
 - No release tags yet: the manifest version is released as is and the changelog covers the whole history.
 - Otherwise the bump is derived from the commits since the last release tag. No releasable commits — no pull request; the pull request job logs "No version changes detected".
-- Fixed monorepo: only packages with changes are bumped, all to the same shared version. `bump.force: true` in the config bumps every package on every release (strict lockstep).
+- Fixed monorepo: packages with changes are bumped, all to the same shared version. When the new version is breaking for any of them — a major bump, a minor bump of `0.x`, or a patch bump of `0.0.x`, including a major prerelease and its graduation — the packages without changes are bumped too, so their version ranges of each other stay valid, and their changelogs say "Version bump to keep in sync with breaking changes in other packages." `bump.force: true` in the config bumps every package on every release (strict lockstep), `false` never bumps packages without changes. The bump comes from the project addon: addons before 4.0.0, such as a pinned `@simple-release/pnpm@3` or an older cached install, bump only the packages with changes.
 - Independent monorepo: each package is bumped from its own `pkg-name@X.Y.Z` tag; packages without matching commits are left out of the release.
 - Forcing a release type when nothing releasable happened (a dispatch with `as`, or a `set-options` comment) produces a changelog section saying "Version bump without any changes."
 
@@ -157,7 +157,7 @@ The command line, then a fenced `json` block with releaser step options — the 
 | `byProject` | Per-package options in monorepos, keyed by full package name: `version`, `as`, `prerelease`, `firstRelease`, `skip`, `preamble`. |
 | `firstRelease` | Release the current manifest version as is, as if no release existed yet. |
 | `extraScopes` | Extra commit scopes counted for every package in a monorepo, e.g. `["deps"]`. Better set permanently in the config. |
-| `force` | Fixed monorepos: bump every package, not only the changed ones. |
+| `force` | Fixed monorepos: which packages without changes to bump — `"breaking"` (default) on breaking releases, `true` always, `false` never. |
 
 Recipes for a pull request that proposes `1.2.0` on top of the released `1.1.0`:
 
@@ -271,7 +271,7 @@ Anything that should hold for every release belongs in `.simple-release.json`, n
 | Key | Effect |
 | --- | --- |
 | `bump.extraScopes` | Scopes counted for every package in a monorepo, e.g. `["deps"]` for Renovate and Dependabot commits. |
-| `bump.force` | Fixed monorepos: lockstep bumps of every package. |
+| `bump.force` | Fixed monorepos: `true` for lockstep bumps of every package, `false` to bump only the packages with changes, even on breaking releases. |
 | `maintenanceBranch.enabled` | Create maintenance branches on major releases. |
 | `publish.skip`, `publish.access`, `publish.tag` | Release-time publish options. |
 | `pullRequest.draft` | Open new release pull requests as drafts. |
@@ -302,9 +302,11 @@ gh api repos/{owner}/{repo}/actions/permissions/workflow
 | | The comment was edited — edits do not trigger runs | Post a new comment, or delete and re-post |
 | `gh workflow run` fails | "Workflow does not have 'workflow_dispatch' trigger", or unexpected inputs | The manual release or snapshot add-on is not set up — offer the setup skill |
 | Publish fails with `ENEEDAUTH` or "Unable to authenticate" | Trusted publishing: the workflow filename or repository does not match the trusted publisher registered on npmjs.com, the job lacks `id-token: write`, npm is older than 11.5.1 (Node.js below 24), or the package was never published, so no publisher could be registered. In the token flow: `NPM_TOKEN` missing or expired | Compare the registration with the workflow file name and repository, check the job permissions and Node.js version; publish a brand-new package's first version with a token; rotate the secret in the token flow |
+| Publish of one package fails with 404 Not Found, pnpm also logs `Skipped OIDC` with status code 404 | Trusted publishing: no trusted publisher is registered for that package. Typical for a monorepo package not released since the switch to trusted publishing — a breaking release of a fixed monorepo publishes it too | Register every published package (`npm trust github <package> --repository <owner>/<repo> --file release.yml --allow-publish`, npm 11.15 or later, two-factor authentication), then recover as for a release job that failed halfway |
 | Prerelease produced no pull request | An older action version: `as: prerelease` with an identifier on a stable version used to yield nothing | Update simple-release-action, or use the identifier alone or with `as` set to `major`, `minor`, or `patch` |
 | Renovate or Dependabot commits do not release a monorepo package | The `deps` scope is not a package name | `bump.extraScopes: ["deps"]` in the config |
-| Fixed monorepo: unchanged packages kept their version | By design — only changed packages are bumped | `bump.force: true` in the config |
+| Fixed monorepo: unchanged packages kept their version | By design when the release is not breaking, or `bump.force` is `false` — only changed packages are bumped then | `bump.force: true` in the config |
+| Fixed monorepo: packages without changes released along with a major | By design — a breaking release bumps every package, so their version ranges of each other stay valid | `bump.force: false` in the config |
 
 ## Report Back
 
