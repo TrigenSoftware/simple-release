@@ -378,17 +378,21 @@ export abstract class MonorepoProject extends Project {
     }
 
     if (fixedVersion) {
+      // The fixed version already has the snapshot identifier,
+      // applying it again would put a new timestamp into each project version.
       hasBump = await super.bump({
         ...options,
         forcePrivate: true,
         version: fixedVersion,
+        snapshot: undefined,
         tagPrefix
       })
 
       for (const { project, options } of updatedProjects) {
         hasBump = await project.bump({
           ...options,
-          version: fixedVersion
+          version: fixedVersion,
+          snapshot: undefined
         }) || hasBump
 
         this.changedFiles.push(
