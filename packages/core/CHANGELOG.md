@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/TrigenSoftware/simple-release/compare/v3.3.1...v4.0.0) (2026-11-16)
+
+### ⚠ BREAKING CHANGES
+
+* breaking releases in fixed mode bump all packages, set `force: false` to opt out.
+
+### Features
+
+* bump projects without changes on breaking releases in fixed mode ([#215](https://github.com/TrigenSoftware/simple-release/issues/215)) ([4382e2b](https://github.com/TrigenSoftware/simple-release/commit/4382e2b2b7ef95517441cc14801017f58a8af891))
+
+### Bug Fixes
+
+* bump all projects to the same snapshot version in fixed mode ([#214](https://github.com/TrigenSoftware/simple-release/issues/214)) ([7845d95](https://github.com/TrigenSoftware/simple-release/commit/7845d959f755da97699016fe0de2807dbc1ec070))
+* keep release notes when changelog has no version headers yet ([#211](https://github.com/TrigenSoftware/simple-release/issues/211)) ([24f1ccc](https://github.com/TrigenSoftware/simple-release/commit/24f1cccfd5eac268327e40586229b21ab7095656)), closes [#210](https://github.com/TrigenSoftware/simple-release/issues/210)
+
 ## [3.3.1](https://github.com/TrigenSoftware/simple-release/compare/v3.3.0...v3.3.1) (2026-09-05)
 
 ### Bug Fixes
