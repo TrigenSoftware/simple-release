@@ -49,9 +49,14 @@ export type MonorepoProjectBumpByProjectOptions = Pick<ProjectBumpOptions, 'vers
 
 export interface MonorepoProjectBumpOptions extends Omit<ProjectBumpOptions, 'tagPrefix'> {
   /**
-   * Force bump projects without changes in the monorepo with fixed mode.
+   * Bump projects without changes in the monorepo with fixed mode:
+   * `'breaking'` - when the new version is breaking for any bumped project,
+   * so projects keep valid version ranges of each other;
+   * `true` - always;
+   * `false` - never.
+   * @default 'breaking'
    */
-  force?: boolean
+  force?: boolean | 'breaking'
   /**
    * Extra scopes to include in the project's changelog.
    * For example, to include commits like "fix(deps): voulnerability in dependency fix" you can add "deps" to the extraScopes.

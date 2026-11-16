@@ -68,6 +68,8 @@ Workspaces monorepo — `PnpmWorkspacesProject` reads the package list from `pnp
 
 In monorepos, commits are attributed to packages by the commit scope — `fix(pkg-name): ...` bumps `pkg-name`. The scope must match the package name without the npm scope (or whatever your `scope` function returns).
 
+In fixed mode, only packages with changes get the new version. When it is breaking for one of them — a major bump, a minor bump of a `0.x` version or a patch bump of a `0.0.x` version, including a major prerelease and its graduation — the packages without changes are bumped too, so packages that depend on each other keep matching version ranges. Set the `force` bump option to `false` to turn it off, or to `true` to always bump all packages.
+
 ### publish
 
 Options of the `publish` step for both classes:

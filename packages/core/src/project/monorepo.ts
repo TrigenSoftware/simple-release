@@ -2,6 +2,7 @@ import semver from 'semver'
 import { packagePrefix } from '@conventional-changelog/git-client'
 import type { ReleaseData } from '../hosting/hosting.js'
 import type { ProjectManifest } from '../manifest/index.js'
+import { isBreakingBump } from '../utils.js'
 import type {
   MonorepoMode,
   MonorepoProjectOptions,
@@ -19,6 +20,12 @@ import {
 } from './project.js'
 
 export type * from './monorepo.types.js'
+
+interface FixedBumpProject {
+  project: Project
+  options: MonorepoProjectBumpOptions
+  version: string | null
+}
 
 export abstract class MonorepoProject extends Project {
   /**
@@ -340,14 +347,52 @@ export abstract class MonorepoProject extends Project {
     return hasBump
   }
 
+  /**
+   * Get whether and why projects without changes should be bumped in fixed mode.
+   * @param projects - Projects with their next versions, `null` for projects without changes.
+   * @param fixedVersion - The next fixed version.
+   * @param options - The bump options.
+   * @returns `'breaking'` when the new version is breaking for any bumped project, `true` when the bump is forced, `false` otherwise.
+   */
+  private async getUnchangedProjectsBump(
+    projects: FixedBumpProject[],
+    fixedVersion: string,
+    options: MonorepoProjectBumpOptions
+  ): Promise<boolean | 'breaking'> {
+    const {
+      force = 'breaking',
+      logger
+    } = options
+
+    if (force !== 'breaking') {
+      return force
+    }
+
+    for (const {
+      project,
+      version
+    } of projects) {
+      if (!version) {
+        continue
+      }
+
+      const { manifest } = project
+      const currentVersion = await manifest.getVersion()
+
+      if (isBreakingBump(currentVersion, fixedVersion)) {
+        logger?.verbose(`${await manifest.getName()}: ${currentVersion} -> ${fixedVersion} is a breaking bump, bumping all projects`)
+
+        return 'breaking'
+      }
+    }
+
+    return false
+  }
+
   private async fixedBump(
     options: MonorepoProjectBumpOptions = {}
   ) {
-    const { force } = options
-    const updatedProjects: {
-      project: Project
-      options: MonorepoProjectBumpOptions
-    }[] = []
+    const projects: FixedBumpProject[] = []
     const baseVersion = await this.manifest.getVersion()
     const tagPrefix = await this.getTagPrefix('')
     const firstRelease = !await this.getLastReleaseTag({
@@ -365,19 +410,20 @@ export abstract class MonorepoProject extends Project {
       )
       const version = await project.getNextVersion(projectBumpOptions)
 
-      if (version || force) {
-        updatedProjects.push({
-          project,
-          options: projectBumpOptions
-        })
+      projects.push({
+        project,
+        options: projectBumpOptions,
+        version
+      })
 
-        if (version && (!fixedVersion || semver.gt(version, fixedVersion))) {
-          fixedVersion = version
-        }
+      if (version && (!fixedVersion || semver.gt(version, fixedVersion))) {
+        fixedVersion = version
       }
     }
 
     if (fixedVersion) {
+      const unchangedBump = await this.getUnchangedProjectsBump(projects, fixedVersion, options)
+
       // The fixed version already has the snapshot identifier,
       // applying it again would put a new timestamp into each project version.
       hasBump = await super.bump({
@@ -388,11 +434,20 @@ export abstract class MonorepoProject extends Project {
         tagPrefix
       })
 
-      for (const { project, options } of updatedProjects) {
+      for (const {
+        project,
+        options,
+        version
+      } of projects) {
+        if (!version && !unchangedBump) {
+          continue
+        }
+
         hasBump = await project.bump({
           ...options,
           version: fixedVersion,
-          snapshot: undefined
+          snapshot: undefined,
+          breakingSync: !version && unchangedBump === 'breaking'
         }) || hasBump
 
         this.changedFiles.push(

@@ -68,6 +68,11 @@ export interface ProjectBumpOptions {
    */
   preamble?: string
   /**
+   * Whether the project is bumped without changes to keep in sync with breaking changes in other projects.
+   * The changelog says so instead of the note about no changes.
+   */
+  breakingSync?: boolean
+  /**
    * Whether this is the first release.
    * By default will be auto detected based on tag existence.
    */

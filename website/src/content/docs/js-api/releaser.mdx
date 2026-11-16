@@ -88,6 +88,7 @@ releaser
 | `tagPrefix` | Prefix for release tags. Defaults to `v`. |
 | `extraScopes` | Extra commit scopes counted towards every package in a monorepo. |
 | `byProject` | Per-package bump options for monorepos, keyed by package name. |
+| `force` | Which packages without changes to bump in a fixed-mode monorepo: `'breaking'` (default) — all of them when the new version is breaking for any bumped package, `true` — always all of them, `false` — none. |
 
 ### maintenanceBranch
 
