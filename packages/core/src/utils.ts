@@ -18,8 +18,8 @@ export async function isFileExists(filePath: string) {
 
 const HASH_BASE = 36
 
-export function tmpfile(prefix: string) {
-  return join(os.tmpdir(), `${prefix}-${Math.random().toString(HASH_BASE).slice(2)}`)
+export function tmpfile(prefix: string, dir = os.tmpdir()) {
+  return join(dir, `${prefix}-${Math.random().toString(HASH_BASE).slice(2)}`)
 }
 
 const nonPreReleaseTypes = [

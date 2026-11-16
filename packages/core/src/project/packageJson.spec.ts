@@ -386,6 +386,30 @@ describe('core', () => {
         expect(await fs.readFile(join(cwd, 'CHANGELOG.md'), 'utf8')).toMatch(/## \[2\.(0\.1|1\.0)\]/)
       })
 
+      it('should add release notes to a changelog without version headers', async () => {
+        const { cwd } = await forkProject('bump-changelog-without-versions', packageJsonProject())
+        const changelogPath = join(cwd, 'CHANGELOG.md')
+        const changelog = '# Changelog\n\nAll notable changes to this project will be documented in this file.\n'
+
+        await fs.writeFile(changelogPath, changelog)
+
+        const project = new PackageJsonProject({
+          path: join(cwd, 'package.json')
+        })
+        const result = await project.bump()
+        const { notes } = project.versionUpdates[0]
+
+        expect(result).toBe(true)
+        expect(notes).toMatch(/^## \[2\.1\.0\]/)
+        expect(await project.getReleaseData()).toMatchObject([
+          {
+            version: '2.1.0',
+            notes: expect.stringContaining('### Features')
+          }
+        ])
+        expect(await fs.readFile(changelogPath, 'utf8')).toBe(`${changelog}\n${notes}`)
+      })
+
       it('should add placeholder when generated release notes are empty', async () => {
         const { cwd } = await forkProject(
           'bump-empty-notes',
