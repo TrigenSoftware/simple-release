@@ -6,7 +6,7 @@ import {
 import { fileURLToPath } from 'url'
 import fs from 'fs'
 import path from 'path'
-import { readLastChangesFromStream } from './change-log.js'
+import { readLastChangesFromStream } from './changelog.js'
 
 const dirname = fileURLToPath(new URL('.', import.meta.url))
 const mocks = path.join(dirname, '..', 'test', 'mocks')
