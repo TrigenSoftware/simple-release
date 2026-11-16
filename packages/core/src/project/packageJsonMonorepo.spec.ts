@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import { join } from 'path'
 import {
+  vi,
   describe,
   it,
   expect
@@ -13,7 +14,7 @@ import {
   dummyCommit
 } from 'test'
 import type { GetProjectsOptions } from './monorepo.js'
-import type { Project } from './project.js'
+import { Project } from './project.js'
 import { PackageJsonMonorepoProject } from './packageJsonMonorepo.js'
 
 async function* getProjects(options: GetProjectsOptions) {
@@ -551,6 +552,40 @@ describe('core', () => {
               to: '4.1.0'
             }
           ])
+        })
+
+        it('should bump all projects to the same snapshot version', async () => {
+          const { cwd } = await packageJsonFixedMonorepoProject()
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+          const { getNextVersion } = Project.prototype
+
+          vi.useFakeTimers({
+            toFake: ['Date']
+          })
+          // The clock moves on after every version computation, as during a slow bump.
+          vi.spyOn(Project.prototype, 'getNextVersion').mockImplementation(async function slowGetNextVersion(this: Project, ...args) {
+            const version = await getNextVersion.apply(this, args)
+
+            vi.setSystemTime(Date.now() + 1000)
+
+            return version
+          })
+
+          try {
+            await project.bump({
+              snapshot: 'next',
+              dryRun: true
+            })
+          } finally {
+            vi.restoreAllMocks()
+            vi.useRealTimers()
+          }
+
+          expect(new Set(project.versionUpdates.map(({ to }) => to)).size).toBe(1)
         })
 
         it('should generate release notes for a new project after a fixed release tag', async () => {
