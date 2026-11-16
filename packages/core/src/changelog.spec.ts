@@ -14,7 +14,7 @@ import {
   addReleaseNotes,
   extractLastRelease,
   extractLastReleaseFromFile
-} from './change-log.js'
+} from './changelog.js'
 
 async function* stringToIterable(str: string) {
   const lines = str.split('\n')

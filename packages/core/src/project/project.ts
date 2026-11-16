@@ -12,7 +12,7 @@ import {
   extractLastRelease,
   extractLastReleaseFromFile,
   preamblePartial
-} from '../change-log.js'
+} from '../changelog.js'
 import {
   getPrereleaseIdentifier,
   getPrereleaseIdentifierBase,
