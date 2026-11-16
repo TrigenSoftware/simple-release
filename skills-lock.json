@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "skills": {
+    "conventional-commit-message": {
+      "source": "conventional-changelog/conventional-changelog",
+      "sourceType": "github",
+      "skillPath": "skills/conventional-commit-message/SKILL.md",
+      "computedHash": "ca7c5705c61159b955cd3022f035c839bdded58e06b8641dd875df34e3919a44"
+    },
+    "setup-simple-release-action": {
+      "source": "TrigenSoftware/simple-release",
+      "sourceType": "github",
+      "skillPath": "skills/setup-simple-release-action/SKILL.md",
+      "computedHash": "1bcce8c33ac51ab49086af8601f9598fcd4a6bd8c7dc51704a6c63613aac7e03"
+    },
+    "simple-release-action": {
+      "source": "TrigenSoftware/simple-release",
+      "sourceType": "github",
+      "skillPath": "skills/simple-release-action/SKILL.md",
+      "computedHash": "91b51ca3fda685cd532b2fd349d5da4b70bc5661f2e76a014876d7dbe5189242"
+    },
+    "unit-tests": {
+      "source": "TrigenSoftware/scripts",
+      "sourceType": "github",
+      "skillPath": "skills/unit-tests/SKILL.md",
+      "computedHash": "c8dba59fb9c504a0ab5cd8ba80829b641a845cbeb2648a682d7e8dcbbc005a47"
+    }
+  }
+}
