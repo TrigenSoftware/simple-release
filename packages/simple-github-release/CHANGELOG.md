@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/TrigenSoftware/simple-release/compare/v3.3.0...v4.0.0) (2026-11-16)
+
+### Bug Fixes
+
+* keep release notes of large changelogs intact ([#212](https://github.com/TrigenSoftware/simple-release/issues/212)) ([bb1db2f](https://github.com/TrigenSoftware/simple-release/commit/bb1db2fbaf45461fa995548f9e0a947486b5d1f7))
+
 ## [3.3.0](https://github.com/TrigenSoftware/simple-release/compare/v3.0.0...v3.3.0) (2026-07-14)
 
 ### Bug Fixes
