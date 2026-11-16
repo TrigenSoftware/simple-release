@@ -11,6 +11,7 @@ import { Readable } from 'stream'
 import { pipeline } from 'stream/promises'
 import {
   type FinalTemplateContext,
+  type TemplateContext,
   segments
 } from '@conventional-changelog/template'
 import {
@@ -32,16 +33,31 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 `
 
+/**
+ * Changelog template context with extra fields of simple-release.
+ */
+export interface ChangelogContext extends TemplateContext {
+  /**
+   * The project is bumped without changes to keep in sync with breaking changes in other projects.
+   */
+  breakingSync?: boolean
+}
+
 export function preamblePartial(
   {
     preamble,
     commitGroups,
-    noteGroups
-  }: FinalTemplateContext
+    noteGroups,
+    breakingSync
+  }: FinalTemplateContext & ChangelogContext
 ) {
   return segments(
     preamble,
-    !preamble && !commitGroups?.length && !noteGroups?.length && 'Version bump without any changes.'
+    !preamble && !commitGroups?.length && !noteGroups?.length && (
+      breakingSync
+        ? 'Version bump to keep in sync with breaking changes in other packages.'
+        : 'Version bump without any changes.'
+    )
   )
 }
 

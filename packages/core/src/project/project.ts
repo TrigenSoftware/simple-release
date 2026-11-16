@@ -8,6 +8,7 @@ import semver, { type ReleaseType } from 'semver'
 import type { ProjectManifest } from '../manifest/index.js'
 import type { ReleaseData } from '../hosting/index.js'
 import {
+  type ChangelogContext,
   addReleaseNotes,
   extractLastRelease,
   extractLastReleaseFromFile,
@@ -408,6 +409,7 @@ export abstract class Project {
       tagPrefix,
       preset = bumpDefaultOptions.preset,
       preamble,
+      breakingSync,
       dryRun,
       skipChangelog,
       logger
@@ -435,6 +437,13 @@ export abstract class Project {
       const lastReleaseTag = await this.getLastReleaseTag({
         tagPrefix
       }) || undefined
+      // The writer passes extra context fields through to the template partials.
+      const context: ChangelogContext = {
+        version: nextVersion,
+        previousTag: lastReleaseTag,
+        preamble,
+        breakingSync
+      }
       const notes = new ConventionalChangelog(gitClient)
         .loadPreset(preset, _ => import(_))
         .commits({
@@ -445,11 +454,7 @@ export abstract class Project {
           prefix: tagPrefix
         })
         .readRepository()
-        .context({
-          version: nextVersion,
-          previousTag: lastReleaseTag,
-          preamble
-        })
+        .context(context)
         .writer({
           preamblePartial
         })

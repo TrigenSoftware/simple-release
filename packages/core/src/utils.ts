@@ -96,3 +96,30 @@ export function getReleaseType(
 
   return releaseType
 }
+
+/**
+ * Check whether the version bump is breaking for dependents:
+ * the next version is out of the caret range of the current one.
+ * Entering a major prerelease and graduating from it are breaking,
+ * bumps within the same prerelease are not.
+ * @param currentVersion - The current version.
+ * @param nextVersion - The next version.
+ * @returns Whether the bump is breaking.
+ */
+export function isBreakingBump(currentVersion: string, nextVersion: string) {
+  switch (semver.diff(currentVersion, nextVersion)) {
+    case 'major':
+    case 'premajor':
+      return true
+    case 'minor':
+    case 'preminor':
+      return semver.major(currentVersion) === 0
+    case 'patch':
+    case 'prepatch':
+      return semver.major(currentVersion) === 0 && semver.minor(currentVersion) === 0
+    case 'prerelease':
+    case 'release':
+    case null:
+      return false
+  }
+}

@@ -11,7 +11,8 @@ import {
   packageJsonIndependentMonorepoProject,
   packageJsonFixedMonorepoProject,
   forkProject,
-  dummyCommit
+  dummyCommit,
+  updateDummyFile
 } from 'test'
 import type { GetProjectsOptions } from './monorepo.js'
 import { Project } from './project.js'
@@ -19,6 +20,20 @@ import { PackageJsonMonorepoProject } from './packageJsonMonorepo.js'
 
 async function* getProjects(options: GetProjectsOptions) {
   yield* (await fg(join(options.manifest.projectPath, 'packages', '**', 'package.json'))).sort()
+}
+
+async function breakingFixedMonorepoProject(id: string) {
+  const ctx = await forkProject(id, packageJsonFixedMonorepoProject())
+
+  await ctx.run([
+    ({ cwd }) => updateDummyFile(cwd),
+    ({ git }) => git.add('dummy'),
+    ({ git }) => git.commit({
+      message: 'feat(subproject-2)!: drop deprecated api'
+    })
+  ], join(ctx.cwd, 'packages', 'subproject-2'))
+
+  return ctx
 }
 
 describe('core', () => {
@@ -535,7 +550,10 @@ describe('core', () => {
             root: cwd,
             getProjects
           })
-          const result = await project.bump()
+          // Projects jump from 2.0.0 to 4.1.0, which is breaking, so projects without changes are kept out explicitly.
+          const result = await project.bump({
+            force: false
+          })
 
           expect(result).toBe(true)
           expect(project.versionUpdates).toMatchObject([
@@ -550,6 +568,150 @@ describe('core', () => {
             {
               name: 'subproject-3',
               to: '4.1.0'
+            }
+          ])
+        })
+
+        it('should bump projects without changes when the release is breaking', async () => {
+          const { cwd } = await breakingFixedMonorepoProject('fixed-breaking-bump')
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+          const result = await project.bump()
+
+          expect(result).toBe(true)
+          expect(project.versionUpdates).toMatchObject([
+            {
+              name: 'package-json-monorepo-project',
+              from: '2.0.0',
+              to: '3.0.0'
+            },
+            {
+              name: 'subproject-1',
+              from: '2.0.0',
+              to: '3.0.0'
+            },
+            {
+              name: 'subproject-2',
+              from: '2.0.0',
+              to: '3.0.0'
+            },
+            {
+              name: 'subproject-3',
+              from: '2.0.0',
+              to: '3.0.0'
+            }
+          ])
+        })
+
+        it('should add a note about breaking changes in other packages to projects without changes', async () => {
+          const { cwd } = await breakingFixedMonorepoProject('fixed-breaking-sync-note')
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+
+          await project.bump({
+            dryRun: true
+          })
+
+          expect(project.versionUpdates.find(({ name }) => name === 'subproject-1')?.notes).toContain('Version bump to keep in sync with breaking changes in other packages.')
+        })
+
+        it('should keep the preamble of projects without changes when the release is breaking', async () => {
+          const { cwd } = await breakingFixedMonorepoProject('fixed-breaking-sync-preamble')
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+
+          await project.bump({
+            dryRun: true,
+            preamble: 'Release highlights.'
+          })
+
+          const notes = project.versionUpdates.find(({ name }) => name === 'subproject-1')?.notes
+
+          expect(notes).toContain('Release highlights.')
+          expect(notes).not.toContain('keep in sync')
+        })
+
+        it('should add the no-change note to projects without changes when force is enabled', async () => {
+          const { cwd } = await breakingFixedMonorepoProject('fixed-breaking-sync-force')
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+
+          await project.bump({
+            dryRun: true,
+            force: true
+          })
+
+          expect(project.versionUpdates.find(({ name }) => name === 'subproject-1')?.notes).toContain('Version bump without any changes.')
+        })
+
+        it('should not bump projects without changes when the release is breaking and force is disabled', async () => {
+          const { cwd } = await breakingFixedMonorepoProject('fixed-breaking-bump-without-force')
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+          const result = await project.bump({
+            force: false
+          })
+
+          expect(result).toBe(true)
+          expect(project.versionUpdates).toMatchObject([
+            {
+              name: 'package-json-monorepo-project',
+              to: '3.0.0'
+            },
+            {
+              name: 'subproject-2',
+              to: '3.0.0'
+            },
+            {
+              name: 'subproject-3',
+              to: '3.0.0'
+            }
+          ])
+        })
+
+        it('should bump projects without changes when the prerelease is breaking', async () => {
+          const { cwd } = await breakingFixedMonorepoProject('fixed-breaking-prerelease')
+          const project = new PackageJsonMonorepoProject({
+            mode: 'fixed',
+            root: cwd,
+            getProjects
+          })
+          const result = await project.bump({
+            prerelease: 'alpha'
+          })
+
+          expect(result).toBe(true)
+          expect(project.versionUpdates).toMatchObject([
+            {
+              name: 'package-json-monorepo-project',
+              to: '3.0.0-alpha.0'
+            },
+            {
+              name: 'subproject-1',
+              to: '3.0.0-alpha.0'
+            },
+            {
+              name: 'subproject-2',
+              to: '3.0.0-alpha.0'
+            },
+            {
+              name: 'subproject-3',
+              to: '3.0.0-alpha.0'
             }
           ])
         })
