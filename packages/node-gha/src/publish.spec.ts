@@ -30,7 +30,7 @@ describe('node-gha', () => {
         path: join(cwd, 'package.json')
       })
 
-      await project.gitClient.exec('-C', remote, 'init', '--bare')
+      await project.gitClient.exec('-C', remote, 'init', '--bare', '--initial-branch=master')
       await project.gitClient.exec('remote', 'set-url', 'origin', remote)
 
       await project.publish({
@@ -66,7 +66,7 @@ describe('node-gha', () => {
         recursive: true
       })
       await fs.writeFile(join(cwd, 'dist/index.js'), 'existing\n')
-      await project.gitClient.exec('-C', remote, 'init', '--bare')
+      await project.gitClient.exec('-C', remote, 'init', '--bare', '--initial-branch=master')
       await project.gitClient.exec('remote', 'set-url', 'origin', remote)
 
       await project.publish()
@@ -88,7 +88,7 @@ describe('node-gha', () => {
         path: join(cwd, 'package.json')
       })
 
-      await sourceProject.gitClient.exec('-C', remote, 'init', '--bare')
+      await sourceProject.gitClient.exec('-C', remote, 'init', '--bare', '--initial-branch=master')
       await sourceProject.gitClient.exec('remote', 'set-url', 'origin', remote)
       await sourceProject.gitClient.push('master', {
         verify: false
@@ -123,7 +123,7 @@ describe('node-gha', () => {
         path: join(cwd, 'package.json')
       })
 
-      await project.gitClient.exec('-C', remote, 'init', '--bare')
+      await project.gitClient.exec('-C', remote, 'init', '--bare', '--initial-branch=master')
       await project.gitClient.exec('remote', 'set-url', 'origin', remote)
 
       await project.publish({

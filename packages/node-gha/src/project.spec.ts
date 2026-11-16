@@ -30,7 +30,7 @@ describe('node-gha', () => {
         })
 
         await run([
-          ({ git }) => git.exec('-C', remote, 'init', '--bare'),
+          ({ git }) => git.exec('-C', remote, 'init', '--bare', '--initial-branch=master'),
           ({ git }) => git.exec('remote', 'set-url', 'origin', remote),
           ({ cwd }) => fs.writeFile(
             join(cwd, 'package.json'),
@@ -81,7 +81,7 @@ describe('node-gha', () => {
         })
 
         await run([
-          ({ git }) => git.exec('-C', remote, 'init', '--bare'),
+          ({ git }) => git.exec('-C', remote, 'init', '--bare', '--initial-branch=master'),
           ({ git }) => git.exec('remote', 'set-url', 'origin', remote),
           ({ cwd }) => fs.writeFile(
             join(cwd, 'package.json'),

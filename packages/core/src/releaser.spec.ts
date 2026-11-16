@@ -114,7 +114,7 @@ describe('core', () => {
           enabled: true
         })
 
-      await remoteGit.exec('init', '--bare')
+      await remoteGit.exec('init', '--bare', '--initial-branch=master')
       await project.gitClient.exec('remote', 'set-url', 'origin', remote)
       await releaser.run()
 
@@ -139,7 +139,7 @@ describe('core', () => {
           enabled: true
         })
 
-      await remoteGit.exec('init', '--bare')
+      await remoteGit.exec('init', '--bare', '--initial-branch=master')
       await project.gitClient.exec('remote', 'set-url', 'origin', remote)
       await project.gitClient.exec('branch', '--', 'v2', 'v2.0.0')
       await project.gitClient.push('v2', {
@@ -171,7 +171,7 @@ describe('core', () => {
           branchPrefix: 'maintenance-v'
         })
 
-      await remoteGit.exec('init', '--bare')
+      await remoteGit.exec('init', '--bare', '--initial-branch=master')
       await project.gitClient.exec('remote', 'set-url', 'origin', remote)
       await releaser.run()
 

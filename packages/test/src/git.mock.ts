@@ -48,7 +48,7 @@ export async function createRepository(tmpdir: string) {
     git
   }
 
-  await git.init()
+  await git.exec('init', '--initial-branch=master')
   await sh(tmpdir, 'git remote add origin git@github.com:TrigenSoftware/test-repo.git')
   await sh(tmpdir, 'git config user.email "nobody@unknown.test"')
   await sh(tmpdir, 'git config user.name "Tester Testerson"')
