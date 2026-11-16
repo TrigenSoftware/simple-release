@@ -5,6 +5,7 @@ import {
 } from 'vitest'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
+import os from 'os'
 import path from 'path'
 import { readLastChangesFromStream } from './changelog.js'
 
@@ -90,6 +91,27 @@ describe('simple-github-release', () => {
           ",
           ]
         `)
+      })
+
+      it('should read last changes crossing a read chunk boundary', async () => {
+        // Default chunk size of fs read streams.
+        const readChunkSize = 64 * 1024
+        const header = '# Changelog\n\n## [1.1.0] - 2023-10-01\n\n- '
+        // The line with "é" starts in the first read chunk and ends in the second one, "é" bytes are split too.
+        const line = `${'x'.repeat(readChunkSize - 1 - header.length)}é tail`
+        const dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'changelog-'))
+        const changelogPath = path.join(dir, 'CHANGELOG.md')
+
+        try {
+          await fs.promises.writeFile(changelogPath, `${header}${line}\n- Second line\n\n## [1.0.0] - 2023-09-01\n\n- Old release\n`)
+
+          expect(await readLastChangesFromStream(fs.createReadStream(changelogPath))).toEqual(['1.1.0', `- ${line}\n- Second line\n`])
+        } finally {
+          await fs.promises.rm(dir, {
+            recursive: true,
+            force: true
+          })
+        }
       })
     })
   })
